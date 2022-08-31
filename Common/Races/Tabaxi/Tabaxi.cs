@@ -181,5 +181,17 @@ namespace MrPlagueRaces.Common.Races.Tabaxi
 		public bool phased;
 		public int phaseChargeCounter;
 		public int phaseActiveCounter;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.TabaxiSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(TabaxiSpawn.X);
+			packet.Write(TabaxiSpawn.Y);
+			packet.Write(phased);
+			packet.Write(phaseChargeCounter);
+			packet.Write(phaseActiveCounter);
+		}
 	}
 }

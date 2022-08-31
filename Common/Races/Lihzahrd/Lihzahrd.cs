@@ -274,6 +274,24 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 		public int direction;
 		public bool closeMenu;
 
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.LihzahrdSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(fullRotation);
+			packet.Write(targetFullRotation);
+			packet.Write(headRotation);
+			packet.Write(targetHeadRotation);
+			packet.Write(crawlFrame);
+			packet.Write(crawlFrameCounter);
+			packet.Write(legFrame);
+			packet.Write(legFrameCounter);
+			packet.Write(selectedGolem);
+			packet.Write(direction);
+			packet.Write(closeMenu);
+		}
+
 		public bool ExposedToSun()
 		{
 			Tile[] wallTiles = new Tile[6];

@@ -150,6 +150,16 @@ namespace MrPlagueRaces.Common.Races.Vampire
 		public int LeechTongue;
 		public bool Leeching;
 
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.VampireSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(stealthTimer);
+			packet.Write(LeechTongue);
+			packet.Write(Leeching);
+		}
+
 		public bool ExposedToSun()
 		{
 			Tile[] smallWallTiles = new Tile[2];

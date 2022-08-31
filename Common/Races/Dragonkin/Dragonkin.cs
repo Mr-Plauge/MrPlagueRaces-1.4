@@ -154,5 +154,18 @@ namespace MrPlagueRaces.Common.Races.Dragonkin
 		public int firingSmoke;
 		public int burningOut;
 		public int soundInterval;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.DragonkinSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(headRotation);
+			packet.Write(targetHeadRotation);
+			packet.Write(breathingSmoke);
+			packet.Write(firingSmoke);
+			packet.Write(burningOut);
+			packet.Write(soundInterval);
+		}
 	}
 }

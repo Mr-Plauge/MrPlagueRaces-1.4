@@ -237,6 +237,18 @@ namespace MrPlagueRaces.Common.Races.Kenku
 		public int wingFrame;
 		public int wingFrameCounter;
 		public int dashTime;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.KenkuSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(wingTime);
+			packet.Write(flying);
+			packet.Write(wingFrame);
+			packet.Write(wingFrameCounter);
+			packet.Write(dashTime);
+		}
 	}
 
 	public class KenkuWings : PlayerDrawLayer

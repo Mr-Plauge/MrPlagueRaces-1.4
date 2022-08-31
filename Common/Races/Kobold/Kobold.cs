@@ -133,6 +133,17 @@ namespace MrPlagueRaces.Common.Races.Kobold
 		public int triggeringMine;
 		public int firingMine = 0;
 
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.KoboldSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(headRotation);
+			packet.Write(targetHeadRotation);
+			packet.Write(triggeringMine);
+			packet.Write(firingMine);
+		}
+
 		public override void PreUpdate()
 		{
 			if (!Player.dead) {

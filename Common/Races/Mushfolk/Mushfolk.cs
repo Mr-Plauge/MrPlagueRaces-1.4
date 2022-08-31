@@ -105,5 +105,14 @@ namespace MrPlagueRaces.Common.Races.Mushfolk
 	{
 		public bool growingMushrooms = false;
 		public int sporeless = 0;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.MushfolkSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(growingMushrooms);
+			packet.Write(sporeless);
+		}
 	}
 }

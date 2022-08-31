@@ -196,5 +196,13 @@ namespace MrPlagueRaces.Common.Races.Goblin
 		{
 			return ((IsAccessory(Item) || IsTool(Item) || IsWeapon(Item)) && Item.IsCandidateForReforge);
 		}
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.GoblinSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(harvesterCounter);
+		}
 	}
 }

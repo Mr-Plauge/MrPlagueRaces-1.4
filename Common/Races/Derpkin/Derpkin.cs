@@ -128,5 +128,15 @@ namespace MrPlagueRaces.Common.Races.Derpkin
 		public float headRotation;
 		public float targetHeadRotation;
 		public int counterSpin;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.DerpkinSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(headRotation);
+			packet.Write(targetHeadRotation);
+			packet.Write(counterSpin);
+		}
 	}
 }

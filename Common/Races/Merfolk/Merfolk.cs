@@ -229,5 +229,21 @@ namespace MrPlagueRaces.Common.Races.Merfolk
 		public int breathHurt;
 		public int breathInterval = 7;
 		public int breathMeter = 200;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.MerfolkSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(fullRotation);
+			packet.Write(targetFullRotation);
+			packet.Write(headRotation);
+			packet.Write(targetHeadRotation);
+			packet.Write(swimming);
+			packet.Write(diveCount);
+			packet.Write(breathHurt);
+			packet.Write(breathInterval);
+			packet.Write(breathMeter);
+		}
 	}
 }

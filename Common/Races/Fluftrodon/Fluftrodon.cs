@@ -163,5 +163,16 @@ namespace MrPlagueRaces.Common.Races.Fluftrodon
 		public float jumpCharge = 0;
 		public bool canWallJump = true;
 		public bool closeMenu = false;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.FluftrodonSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(selectedPaint);
+			packet.Write(jumpCharge);
+			packet.Write(canWallJump);
+			packet.Write(closeMenu);
+		}
 	}
 }

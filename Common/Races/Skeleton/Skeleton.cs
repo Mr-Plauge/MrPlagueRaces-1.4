@@ -234,5 +234,17 @@ namespace MrPlagueRaces.Common.Races.Skeleton
 		public bool teleportThree;
 		public int spirit;
 		public int currentBody = 1;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.SkeletonSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(teleportOne);
+			packet.Write(teleportTwo);
+			packet.Write(teleportThree);
+			packet.Write(spirit);
+			packet.Write(currentBody);
+		}
 	}
 }

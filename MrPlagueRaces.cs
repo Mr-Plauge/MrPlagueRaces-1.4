@@ -17,7 +17,21 @@ namespace MrPlagueRaces
 {
 	internal enum MrPlagueRacesMessageType : byte
 	{
-		MrPlagueRacesPlayerSyncPlayer
+		ExecuteRaceSound,
+		MrPlagueRacesPlayerSyncPlayer,
+		DerpkinSyncPlayer,
+		DragonkinSyncPlayer,
+		FluftrodonSyncPlayer,
+		GoblinSyncPlayer,
+		KenkuSyncPlayer,
+		KoboldSyncPlayer,
+		LihzahrdSyncPlayer,
+		MerfolkSyncPlayer,
+		MushfolkSyncPlayer,
+		SkeletonSyncPlayer,
+		TabaxiSyncPlayer,
+		VampireSyncPlayer,
+		WendigoSyncPlayer
 	}
 	public class MrPlagueRaces : Mod
 	{
@@ -40,30 +54,146 @@ namespace MrPlagueRaces
 
 			switch (msgType) 
 			{
-				case MrPlagueRacesMessageType.MrPlagueRacesPlayerSyncPlayer:
+				case MrPlagueRacesMessageType.ExecuteRaceSound:
 					byte playernumber = reader.ReadByte();
 					MrPlagueRacesPlayer MrPlagueRacesPlayer = Main.player[playernumber].GetModPlayer<MrPlagueRacesPlayer>();
+					MrPlagueRacesPlayer.ExecuteRaceSound(Main.player[playernumber], reader.ReadString());
+					break;
+				case MrPlagueRacesMessageType.MrPlagueRacesPlayerSyncPlayer:
+					playernumber = reader.ReadByte();
+					MrPlagueRacesPlayer = Main.player[playernumber].GetModPlayer<MrPlagueRacesPlayer>();
 					int PlayerRace = reader.ReadInt32();
 					if (RaceLoader.TryGetRace(PlayerRace, out var race))
 					{
 						MrPlagueRacesPlayer.race = race;
 					}
-					int detailColorR = reader.ReadInt32();
-					int detailColorG = reader.ReadInt32();
-					int detailColorB = reader.ReadInt32();
-					int colorDetailR = reader.ReadInt32();
-					int colorDetailG = reader.ReadInt32();
-					int colorDetailB = reader.ReadInt32();
-					int colorEyesR = reader.ReadInt32();
-					int colorEyesG = reader.ReadInt32();
-					int colorEyesB = reader.ReadInt32();
-					int colorSkinR = reader.ReadInt32();
-					int colorSkinG = reader.ReadInt32();
-					int colorSkinB = reader.ReadInt32();
-					int colorHairR = reader.ReadInt32();
-					int colorHairG = reader.ReadInt32();
-					int colorHairB = reader.ReadInt32();
-
+					MrPlagueRacesPlayer.detailColor.R = reader.ReadByte();
+					MrPlagueRacesPlayer.detailColor.G = reader.ReadByte();
+					MrPlagueRacesPlayer.detailColor.B = reader.ReadByte();
+					MrPlagueRacesPlayer.colorDetail.R = reader.ReadByte();
+					MrPlagueRacesPlayer.colorDetail.G = reader.ReadByte();
+					MrPlagueRacesPlayer.colorDetail.B = reader.ReadByte();
+					MrPlagueRacesPlayer.colorEyes.R = reader.ReadByte();
+					MrPlagueRacesPlayer.colorEyes.G = reader.ReadByte();
+					MrPlagueRacesPlayer.colorEyes.B = reader.ReadByte();
+					MrPlagueRacesPlayer.colorSkin.R = reader.ReadByte();
+					MrPlagueRacesPlayer.colorSkin.G = reader.ReadByte();
+					MrPlagueRacesPlayer.colorSkin.B = reader.ReadByte();
+					MrPlagueRacesPlayer.colorHair.R = reader.ReadByte();
+					MrPlagueRacesPlayer.colorHair.G = reader.ReadByte();
+					MrPlagueRacesPlayer.colorHair.B = reader.ReadByte();
+					break;
+				case MrPlagueRacesMessageType.DerpkinSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Derpkin.DerpkinPlayer DerpkinPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Derpkin.DerpkinPlayer>();
+					DerpkinPlayer.headRotation = reader.ReadByte();
+					DerpkinPlayer.targetHeadRotation = reader.ReadByte();
+					DerpkinPlayer.counterSpin = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.DragonkinSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Dragonkin.DragonkinPlayer DragonkinPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Dragonkin.DragonkinPlayer>();
+					DragonkinPlayer.headRotation = reader.ReadByte();
+					DragonkinPlayer.targetHeadRotation = reader.ReadByte();
+					DragonkinPlayer.breathingSmoke = reader.ReadBoolean();
+					DragonkinPlayer.firingSmoke = reader.ReadInt32();
+					DragonkinPlayer.burningOut = reader.ReadInt32();
+					DragonkinPlayer.soundInterval = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.FluftrodonSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Fluftrodon.FluftrodonPlayer FluftrodonPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Fluftrodon.FluftrodonPlayer>();
+					FluftrodonPlayer.selectedPaint = reader.ReadInt32();
+					FluftrodonPlayer.jumpCharge = reader.ReadByte();
+					FluftrodonPlayer.canWallJump = reader.ReadBoolean();
+					FluftrodonPlayer.closeMenu = reader.ReadBoolean();
+					break;
+				case MrPlagueRacesMessageType.GoblinSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Goblin.GoblinPlayer GoblinPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Goblin.GoblinPlayer>();
+					GoblinPlayer.harvesterCounter = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.KenkuSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Kenku.KenkuPlayer KenkuPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Kenku.KenkuPlayer>();
+					KenkuPlayer.wingTime = reader.ReadByte();
+					KenkuPlayer.flying = reader.ReadBoolean();
+					KenkuPlayer.wingFrame = reader.ReadInt32();
+					KenkuPlayer.wingFrameCounter = reader.ReadInt32();
+					KenkuPlayer.dashTime = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.KoboldSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Kobold.KoboldPlayer KoboldPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Kobold.KoboldPlayer>();
+					KoboldPlayer.headRotation = reader.ReadByte();
+					KoboldPlayer.targetHeadRotation = reader.ReadByte();
+					KoboldPlayer.triggeringMine = reader.ReadInt32();
+					KoboldPlayer.firingMine = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.LihzahrdSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Lihzahrd.LihzahrdPlayer LihzahrdPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Lihzahrd.LihzahrdPlayer>();
+					LihzahrdPlayer.fullRotation = reader.ReadByte();
+					LihzahrdPlayer.targetFullRotation = reader.ReadByte();
+					LihzahrdPlayer.headRotation = reader.ReadByte();
+					LihzahrdPlayer.targetHeadRotation = reader.ReadByte();
+					LihzahrdPlayer.crawlFrame = reader.ReadInt32();
+					LihzahrdPlayer.crawlFrameCounter = reader.ReadInt32();
+					LihzahrdPlayer.legFrame = reader.ReadInt32();
+					LihzahrdPlayer.legFrameCounter = reader.ReadInt32();
+					LihzahrdPlayer.selectedGolem = reader.ReadInt32();
+					LihzahrdPlayer.direction = reader.ReadInt32();
+					LihzahrdPlayer.closeMenu = reader.ReadBoolean();
+					break;
+				case MrPlagueRacesMessageType.MerfolkSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Merfolk.MerfolkPlayer MerfolkPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Merfolk.MerfolkPlayer>();
+					MerfolkPlayer.fullRotation = reader.ReadByte();
+					MerfolkPlayer.targetFullRotation = reader.ReadByte();
+					MerfolkPlayer.headRotation = reader.ReadByte();
+					MerfolkPlayer.targetHeadRotation = reader.ReadByte();
+					MerfolkPlayer.swimming = reader.ReadBoolean();
+					MerfolkPlayer.diveCount = reader.ReadInt32();
+					MerfolkPlayer.breathHurt = reader.ReadInt32();
+					MerfolkPlayer.breathInterval = reader.ReadInt32();
+					MerfolkPlayer.breathMeter = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.MushfolkSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Mushfolk.MushfolkPlayer MushfolkPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Mushfolk.MushfolkPlayer>();
+					MushfolkPlayer.sporeless = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.SkeletonSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Skeleton.SkeletonPlayer SkeletonPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Skeleton.SkeletonPlayer>();
+					SkeletonPlayer.teleportOne = reader.ReadBoolean();
+					SkeletonPlayer.teleportTwo = reader.ReadBoolean();
+					SkeletonPlayer.teleportThree = reader.ReadBoolean();
+					SkeletonPlayer.spirit = reader.ReadInt32();
+					SkeletonPlayer.currentBody = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.TabaxiSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Tabaxi.TabaxiPlayer TabaxiPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Tabaxi.TabaxiPlayer>();
+					TabaxiPlayer.TabaxiSpawn.X = reader.ReadByte();
+					TabaxiPlayer.TabaxiSpawn.Y = reader.ReadByte();
+					TabaxiPlayer.phased = reader.ReadBoolean();
+					TabaxiPlayer.phaseChargeCounter = reader.ReadInt32();
+					TabaxiPlayer.phaseActiveCounter = reader.ReadInt32();
+					break;
+				case MrPlagueRacesMessageType.VampireSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Vampire.VampirePlayer VampirePlayer = Main.player[playernumber].GetModPlayer<Common.Races.Vampire.VampirePlayer>();
+					VampirePlayer.stealthTimer = reader.ReadInt32();
+					VampirePlayer.LeechTongue = reader.ReadInt32();
+					VampirePlayer.Leeching = reader.ReadBoolean();
+					break;
+				case MrPlagueRacesMessageType.WendigoSyncPlayer:
+					playernumber = reader.ReadByte();
+					Common.Races.Wendigo.WendigoPlayer WendigoPlayer = Main.player[playernumber].GetModPlayer<Common.Races.Wendigo.WendigoPlayer>();
+					WendigoPlayer.rending = reader.ReadBoolean();
+					WendigoPlayer.rendDelay = reader.ReadInt32();
+					WendigoPlayer.rendTimer = reader.ReadInt32();
 					break;
 				default:
 					Logger.WarnFormat("MrPlagueRaces: Unknown Message type: {0}", msgType);

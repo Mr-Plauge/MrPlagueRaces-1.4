@@ -141,5 +141,15 @@ namespace MrPlagueRaces.Common.Races.Wendigo
 		public bool rending = false;
 		public int rendDelay;
 		public int rendTimer = 120;
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.WendigoSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(rending);
+			packet.Write(rendDelay);
+			packet.Write(rendTimer);
+		}
 	}
 }

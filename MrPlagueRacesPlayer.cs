@@ -35,7 +35,7 @@ namespace MrPlagueRaces
 
 		public override void SaveData(TagCompound tag)
         {
-			if (race != null && race != null)
+			if (race != null)
 			{
 				tag["Race"] = race.FullName;
 				tag["detailColorR"] = detailColor.R;
@@ -46,33 +46,30 @@ namespace MrPlagueRaces
 
 		public override void LoadData(TagCompound tag)
         {
-			if (race != null)
+			if ((tag.ContainsKey("Race") && RaceLoader.TryGetRace(tag.GetString("Race"), out var loadedRace)))
 			{
-				if ((tag.ContainsKey("Race") && RaceLoader.TryGetRace(tag.GetString("Race"), out var loadedRace)))
-				{
-					race = loadedRace;
-				}
-				else
-				{
-					race = ModContent.GetInstance<Human>();
-				}
-				if (tag.ContainsKey("detailColorR"))
-				{
-					detailColor.R = (byte)tag["detailColorR"];
-				}
-				if (tag.ContainsKey("detailColorG"))
-				{
-					detailColor.G = (byte)tag["detailColorG"];
-				}
-				if (tag.ContainsKey("detailColorB"))
-				{
-					detailColor.B = (byte)tag["detailColorB"];
-				}
+				race = loadedRace;
+			}
+			else
+			{
+				race = ModContent.GetInstance<Human>();
+			}
+			if (tag.ContainsKey("detailColorR"))
+			{
+				detailColor.R = (byte)tag["detailColorR"];
+			}
+			if (tag.ContainsKey("detailColorG"))
+			{
+				detailColor.G = (byte)tag["detailColorG"];
+			}
+			if (tag.ContainsKey("detailColorB"))
+			{
+				detailColor.B = (byte)tag["detailColorB"];
+			}
 
-				if ((Player.hair + 1) > GetRaceHairCount(Player) && GetRaceHairCount(Player) != 0)
-				{
-					Player.hair = (GetRaceHairCount(Player) - 1);
-				}
+			if ((Player.hair + 1) > GetRaceHairCount(Player) && GetRaceHairCount(Player) != 0)
+			{
+				Player.hair = (GetRaceHairCount(Player) - 1);
 			}
         }
 
@@ -201,6 +198,23 @@ namespace MrPlagueRaces
 		}
 
 		public void PlayRaceSound(Player player, string soundPath)
+		{
+			if (race != null)
+			{
+				if (Main.netMode == NetmodeID.Server) {
+					ModPacket packet = Mod.GetPacket();
+					packet.Write((byte)MrPlagueRacesMessageType.ExecuteRaceSound);
+					packet.Write((byte)player.whoAmI);
+					packet.Write(soundPath);
+					packet.Send();
+				}
+				else {
+					ExecuteRaceSound(player, soundPath);
+				}
+			}
+		}
+
+		public void ExecuteRaceSound(Player player, string soundPath)
 		{
 			if (race != null)
 			{
