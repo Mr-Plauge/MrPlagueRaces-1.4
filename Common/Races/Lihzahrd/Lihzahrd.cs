@@ -38,11 +38,14 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 
 		public override void ResetEffects(Player player)
 		{
-			player.tileSpeed += 0.1f;
-			player.pickSpeed -= 0.3f;
-			player.GetDamage(DamageClass.Generic).Base -= 5f;
-			if (player.mount.Type == MountType<Crawl>()) {
-				player.noKnockback = true;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.tileSpeed += 0.1f;
+				player.pickSpeed -= 0.3f;
+				player.GetDamage(DamageClass.Generic).Base -= 5f;
+				if (player.mount.Type == MountType<Crawl>()) {
+					player.noKnockback = true;
+				}
 			}
 		}
 
@@ -50,152 +53,157 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) > 0 && player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
-				lihzahrdPlayer.selectedGolem -= 1;
-				if (lihzahrdPlayer.selectedGolem < 0) {
-					lihzahrdPlayer.selectedGolem = 5;
-				}
-			}
-			if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) < 0 && player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
-				lihzahrdPlayer.selectedGolem += 1;
-				if (lihzahrdPlayer.selectedGolem > 5) {
-					lihzahrdPlayer.selectedGolem = 0;
-				}
-					
-			}
-			if (player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
-				if (player.controlUseItem) {
-					player.controlUseItem = false;
-				}
-			}
-			if (!player.dead)
-			{
-				if (MrPlagueRaces.RaceAbilityKeybind1.Current)
-				{
-					if (player.mount.Type != MountType<Crawl>()) {
-						player.mount.SetMount(MountType<Crawl>(), player, false);
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) > 0 && player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
+					lihzahrdPlayer.selectedGolem -= 1;
+					if (lihzahrdPlayer.selectedGolem < 0) {
+						lihzahrdPlayer.selectedGolem = 5;
 					}
 				}
-				else
-				{
-					if (player.mount.Type == MountType<Crawl>()) {
-						player.mount.Dismount(player);
+				if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) < 0 && player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
+					lihzahrdPlayer.selectedGolem += 1;
+					if (lihzahrdPlayer.selectedGolem > 5) {
+						lihzahrdPlayer.selectedGolem = 0;
 					}
+						
 				}
-				if (player.mount.Type == MountType<Crawl>()) {
+				if (player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
 					if (player.controlUseItem) {
 						player.controlUseItem = false;
 					}
-					if ((player.controlLeft || player.controlRight) && player.velocity.X == 0) {
-						if (player.velocity.Y > 0) {
-							player.velocity.Y = -((player.maxRunSpeed / 3) + player.accRunSpeed);
-						}
-						player.velocity.Y -= 1f;
-						if (player.velocity.Y < -((player.maxRunSpeed / 3) + player.accRunSpeed)) {
-							player.velocity.Y = -((player.maxRunSpeed / 3) + player.accRunSpeed);
-						}
-						lihzahrdPlayer.crawlFrameCounter++;
-						if (lihzahrdPlayer.crawlFrameCounter > 4)
-						{
-							lihzahrdPlayer.crawlFrame++;
-							lihzahrdPlayer.crawlFrameCounter = 0;
-							if (lihzahrdPlayer.crawlFrame >= 6)
-							{
-								lihzahrdPlayer.crawlFrame = 0;
-							}
-						}
-						lihzahrdPlayer.legFrameCounter++;
-						if (lihzahrdPlayer.legFrameCounter > 4)
-						{
-							lihzahrdPlayer.legFrame++;
-							lihzahrdPlayer.legFrameCounter = 0;
-							if (lihzahrdPlayer.legFrame >= 20)
-							{
-								lihzahrdPlayer.legFrame = 6;
-							}
-						}
-					}
-					else {
-						lihzahrdPlayer.crawlFrame = -1;
-						lihzahrdPlayer.crawlFrameCounter = 0;
-						lihzahrdPlayer.legFrame = 6;
-						lihzahrdPlayer.legFrameCounter = 0;
-					}
 				}
-				if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+				if (!player.dead)
 				{
-					if (player.ownedProjectileCounts[ProjectileType<GolemSelect>()] == 0) {
-						Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, 0, 0, ProjectileType<GolemSelect>(), 0, 0, player.whoAmI);
-					}
-					else {
-						lihzahrdPlayer.closeMenu = true;
-					}
-				}
-				if (player.controlLeft) {
-					lihzahrdPlayer.direction = -1;
-				}
-				if (player.controlRight) {
-					lihzahrdPlayer.direction = 1;
-				}
-				if (Main.mouseLeft && Main.mouseLeftRelease && player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
-					switch (lihzahrdPlayer.selectedGolem)
+					if (MrPlagueRaces.RaceAbilityKeybind1.Current)
 					{
-						case 0:
-							for (int i = 0; i < Main.maxProjectiles; i++) {
-								Projectile projectile = Main.projectile[i];
-								if (projectile.active && projectile.type == ProjectileType<BoulderGolem>() && projectile.owner == player.whoAmI)
-									projectile.Kill();
+						if (player.mount.Type != MountType<Crawl>()) {
+							player.mount.SetMount(MountType<Crawl>(), player, false);
+						}
+					}
+					else
+					{
+						if (player.mount.Type == MountType<Crawl>()) {
+							player.mount.Dismount(player);
+						}
+					}
+					if (player.mount.Type == MountType<Crawl>()) {
+						if (player.controlUseItem) {
+							player.controlUseItem = false;
+						}
+						if ((player.controlLeft || player.controlRight) && player.velocity.X == 0) {
+							if (player.velocity.Y > 0) {
+								player.velocity.Y = -((player.maxRunSpeed / 3) + player.accRunSpeed);
 							}
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<BoulderGolem>(), 0, 0, player.whoAmI);
-							break;
-						case 1:
-							for (int i = 0; i < Main.maxProjectiles; i++) {
-								Projectile projectile = Main.projectile[i];
-								if (projectile.active && projectile.type == ProjectileType<TetherGolem>() && projectile.owner == player.whoAmI)
-									projectile.Kill();
+							player.velocity.Y -= 1f;
+							if (player.velocity.Y < -((player.maxRunSpeed / 3) + player.accRunSpeed)) {
+								player.velocity.Y = -((player.maxRunSpeed / 3) + player.accRunSpeed);
 							}
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<TetherGolem>(), 0, 0, player.whoAmI);
-							break;
-						case 2:
-							for (int i = 0; i < Main.maxProjectiles; i++) {
-								Projectile projectile = Main.projectile[i];
-								if (projectile.active && projectile.type == ProjectileType<LaserGolem>() && projectile.owner == player.whoAmI)
-									projectile.Kill();
+							lihzahrdPlayer.crawlFrameCounter++;
+							if (lihzahrdPlayer.crawlFrameCounter > 4)
+							{
+								lihzahrdPlayer.crawlFrame++;
+								lihzahrdPlayer.crawlFrameCounter = 0;
+								if (lihzahrdPlayer.crawlFrame >= 6)
+								{
+									lihzahrdPlayer.crawlFrame = 0;
+								}
 							}
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<LaserGolem>(), 0, 0, player.whoAmI);
-							break;
-						case 3:
-							for (int i = 0; i < Main.maxProjectiles; i++) {
-								Projectile projectile = Main.projectile[i];
-								if (projectile.active && projectile.type == ProjectileType<BarrierGolem>() && projectile.owner == player.whoAmI)
-									projectile.Kill();
+							lihzahrdPlayer.legFrameCounter++;
+							if (lihzahrdPlayer.legFrameCounter > 4)
+							{
+								lihzahrdPlayer.legFrame++;
+								lihzahrdPlayer.legFrameCounter = 0;
+								if (lihzahrdPlayer.legFrame >= 20)
+								{
+									lihzahrdPlayer.legFrame = 6;
+								}
 							}
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<BarrierGolem>(), 0, 0, player.whoAmI);
-							break;
-						case 4:
-							for (int i = 0; i < Main.maxProjectiles; i++) {
-								Projectile projectile = Main.projectile[i];
-								if (projectile.active && projectile.type == ProjectileType<SpiderGolem>() && projectile.owner == player.whoAmI)
-									projectile.Kill();
-							}
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<SpiderGolem>(), 0, 0, player.whoAmI);
-							break;
-						default:
-							for (int i = 0; i < Main.maxProjectiles; i++) {
-								Projectile projectile = Main.projectile[i];
-								if (projectile.active && projectile.type == ProjectileType<LifeGolem>() && projectile.owner == player.whoAmI)
-									projectile.Kill();
-							}
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<LifeGolem>(), 0, 0, player.whoAmI);
-							break;
+						}
+						else {
+							lihzahrdPlayer.crawlFrame = -1;
+							lihzahrdPlayer.crawlFrameCounter = 0;
+							lihzahrdPlayer.legFrame = 6;
+							lihzahrdPlayer.legFrameCounter = 0;
+						}
+					}
+					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+					{
+						if (player.ownedProjectileCounts[ProjectileType<GolemSelect>()] == 0) {
+							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, 0, 0, ProjectileType<GolemSelect>(), 0, 0, player.whoAmI);
+						}
+						else {
+							lihzahrdPlayer.closeMenu = true;
+						}
+					}
+					if (player.controlLeft) {
+						lihzahrdPlayer.direction = -1;
+					}
+					if (player.controlRight) {
+						lihzahrdPlayer.direction = 1;
+					}
+					if (Main.mouseLeft && Main.mouseLeftRelease && player.ownedProjectileCounts[ProjectileType<GolemSelect>()] != 0) {
+						switch (lihzahrdPlayer.selectedGolem)
+						{
+							case 0:
+								for (int i = 0; i < Main.maxProjectiles; i++) {
+									Projectile projectile = Main.projectile[i];
+									if (projectile.active && projectile.type == ProjectileType<BoulderGolem>() && projectile.owner == player.whoAmI)
+										projectile.Kill();
+								}
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<BoulderGolem>(), 0, 0, player.whoAmI);
+								break;
+							case 1:
+								for (int i = 0; i < Main.maxProjectiles; i++) {
+									Projectile projectile = Main.projectile[i];
+									if (projectile.active && projectile.type == ProjectileType<TetherGolem>() && projectile.owner == player.whoAmI)
+										projectile.Kill();
+								}
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<TetherGolem>(), 0, 0, player.whoAmI);
+								break;
+							case 2:
+								for (int i = 0; i < Main.maxProjectiles; i++) {
+									Projectile projectile = Main.projectile[i];
+									if (projectile.active && projectile.type == ProjectileType<LaserGolem>() && projectile.owner == player.whoAmI)
+										projectile.Kill();
+								}
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<LaserGolem>(), 0, 0, player.whoAmI);
+								break;
+							case 3:
+								for (int i = 0; i < Main.maxProjectiles; i++) {
+									Projectile projectile = Main.projectile[i];
+									if (projectile.active && projectile.type == ProjectileType<BarrierGolem>() && projectile.owner == player.whoAmI)
+										projectile.Kill();
+								}
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<BarrierGolem>(), 0, 0, player.whoAmI);
+								break;
+							case 4:
+								for (int i = 0; i < Main.maxProjectiles; i++) {
+									Projectile projectile = Main.projectile[i];
+									if (projectile.active && projectile.type == ProjectileType<SpiderGolem>() && projectile.owner == player.whoAmI)
+										projectile.Kill();
+								}
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<SpiderGolem>(), 0, 0, player.whoAmI);
+								break;
+							default:
+								for (int i = 0; i < Main.maxProjectiles; i++) {
+									Projectile projectile = Main.projectile[i];
+									if (projectile.active && projectile.type == ProjectileType<LifeGolem>() && projectile.owner == player.whoAmI)
+										projectile.Kill();
+								}
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42, 0, 0, ProjectileType<LifeGolem>(), 0, 0, player.whoAmI);
+								break;
+						}
 					}
 				}
 			}
 		}
 		public override void PreUpdate(Player player) {
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			if (!lihzahrdPlayer.ExposedToSun()) {
-				player.AddBuff(BuffType<Sluggish>(), 2);
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!lihzahrdPlayer.ExposedToSun()) {
+					player.AddBuff(BuffType<Sluggish>(), 2);
+				}
 			}
 		}
 
@@ -211,50 +219,52 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			if (!player.dead) {
-				if (player.mount.Type == MountType<Crawl>()) {
-					player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
-					player.bodyRotation = (player.direction == 1 ? 1.575f : -1.575f);
-					player.legRotation = (player.direction == 1 ? 1.575f : -1.575f);
-					if (player.bodyFrame.Y == player.bodyFrame.Height * 0 || player.bodyFrame.Y == player.bodyFrame.Height * 5) {
-						player.bodyFrame.Y = player.bodyFrame.Height * 14;
-						player.legFrame.Y = player.legFrame.Height * 6;
-					}
-					player.headPosition = new Vector2(player.direction == 1 ? 12 : -12, 25);
-					player.bodyPosition = new Vector2(player.direction == 1 ? 9 : -9, 21);
-					player.legPosition = new Vector2(player.direction == 1 ? -5 : 5, 7);
-					if (player.velocity.Y < 0 && (player.controlLeft || player.controlRight) && player.velocity.X == 0) {
-						player.fullRotation = player.velocity.Y * (float)player.direction * 1f;
-						if ((double)player.fullRotation < -1.575f)
-						{
-							player.fullRotation = -1.575f;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead) {
+					if (player.mount.Type == MountType<Crawl>()) {
+						player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
+						player.bodyRotation = (player.direction == 1 ? 1.575f : -1.575f);
+						player.legRotation = (player.direction == 1 ? 1.575f : -1.575f);
+						if (player.bodyFrame.Y == player.bodyFrame.Height * 0 || player.bodyFrame.Y == player.bodyFrame.Height * 5) {
+							player.bodyFrame.Y = player.bodyFrame.Height * 14;
+							player.legFrame.Y = player.legFrame.Height * 6;
 						}
-						if ((double)player.fullRotation > 1.575f)
-						{
-							player.fullRotation = 1.575f;
+						player.headPosition = new Vector2(player.direction == 1 ? 12 : -12, 25);
+						player.bodyPosition = new Vector2(player.direction == 1 ? 9 : -9, 21);
+						player.legPosition = new Vector2(player.direction == 1 ? -5 : 5, 7);
+						if (player.velocity.Y < 0 && (player.controlLeft || player.controlRight) && player.velocity.X == 0) {
+							player.fullRotation = player.velocity.Y * (float)player.direction * 1f;
+							if ((double)player.fullRotation < -1.575f)
+							{
+								player.fullRotation = -1.575f;
+							}
+							if ((double)player.fullRotation > 1.575f)
+							{
+								player.fullRotation = 1.575f;
+							}
 						}
-					}
-					else if (player.velocity.Y < 0 && !((player.controlLeft || player.controlRight) && player.velocity.X == 0)) {
-						player.fullRotation = player.velocity.Y * (float)player.direction * 0.5f;
-						if ((double)player.fullRotation < -0.78f)
-						{
-							player.fullRotation = -0.78f;
+						else if (player.velocity.Y < 0 && !((player.controlLeft || player.controlRight) && player.velocity.X == 0)) {
+							player.fullRotation = player.velocity.Y * (float)player.direction * 0.5f;
+							if ((double)player.fullRotation < -0.78f)
+							{
+								player.fullRotation = -0.78f;
+							}
+							if ((double)player.fullRotation > 0.78f)
+							{
+								player.fullRotation = 0.78f;
+							}
 						}
-						if ((double)player.fullRotation > 0.78f)
-						{
-							player.fullRotation = 0.78f;
+						else if (!player.sleeping.isSleeping) {
+							player.fullRotation = 0f;
 						}
 					}
 					else if (!player.sleeping.isSleeping) {
-						player.fullRotation = 0f;
+						player.bodyRotation = 0f;
+						player.legRotation = 0f;
+						player.headPosition = new Vector2(0, 0);
+						player.bodyPosition = new Vector2(0, 0);
+						player.legPosition = new Vector2(0, 0);
 					}
-				}
-				else if (!player.sleeping.isSleeping) {
-					player.bodyRotation = 0f;
-					player.legRotation = 0f;
-					player.headPosition = new Vector2(0, 0);
-					player.bodyPosition = new Vector2(0, 0);
-					player.legPosition = new Vector2(0, 0);
 				}
 			}
 		}
@@ -400,47 +410,47 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 				.AddIngredient(ItemID.MudstoneBlock, 10)
 				.AddIngredient(ItemID.ChlorophyteOre, 1)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 			Recipe.Create(ItemID.SuperDartTrap, 1)
 				.AddIngredient(ItemID.DartTrap, 1)
 				.AddIngredient(ItemID.LihzahrdBrick, 5)
 				.AddIngredient(ItemID.JungleSpores, 3)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 			Recipe.Create(ItemID.SpikyBallTrap, 1)
 				.AddIngredient(ItemID.GeyserTrap, 1)
 				.AddIngredient(ItemID.LihzahrdBrick, 5)
 				.AddIngredient(ItemID.JungleSpores, 3)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 			Recipe.Create(ItemID.FlameTrap, 1)
 				.AddIngredient(ItemID.DartTrap, 1)
 				.AddIngredient(ItemID.LihzahrdBrick, 5)
 				.AddIngredient(ItemID.Moonglow, 3)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 			Recipe.Create(ItemID.SpearTrap, 1)
 				.AddIngredient(ItemID.GeyserTrap, 1)
 				.AddIngredient(ItemID.LihzahrdBrick, 5)
 				.AddIngredient(ItemID.Moonglow, 3)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 			Recipe.Create(ItemID.DartTrap, 1)
 				.AddIngredient(ItemID.StoneBlock, 15)
 				.AddIngredient(ItemID.JungleSpores, 3)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 			Recipe.Create(ItemID.GeyserTrap, 1)
 				.AddIngredient(ItemID.StoneBlock, 15)
 				.AddIngredient(ItemID.Moonglow, 3)
 				.AddTile(TileID.LihzahrdFurnace)
-				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd)
+				.AddCondition(NetworkText.FromKey("RecipeConditions.LowHealth"), r => Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().race is Lihzahrd && Main.LocalPlayer.GetModPlayer<MrPlagueRacesPlayer>().statsEnabled)
 				.Register();
 		}
 	}

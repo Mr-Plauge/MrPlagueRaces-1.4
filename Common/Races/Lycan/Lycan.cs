@@ -33,40 +33,45 @@ namespace MrPlagueRaces.Common.Races.Lycan
 
 		public override void ResetEffects(Player player)
 		{
-			player.GetDamage(DamageClass.Generic).Base += 15f;
-			player.endurance += 0.1f;
-			player.moveSpeed += 0.15f;
-			player.jumpSpeedBoost += 0.05f;
-			player.tileSpeed -= 0.1f;
-			player.wallSpeed -= 0.1f;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.GetDamage(DamageClass.Generic).Base += 15f;
+				player.endurance += 0.1f;
+				player.moveSpeed += 0.15f;
+				player.jumpSpeedBoost += 0.05f;
+				player.tileSpeed -= 0.1f;
+				player.wallSpeed -= 0.1f;
+			}
 		}
 
 		public override void ProcessTriggers(Player player, TriggersSet triggersSet)
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var rewindPlayer = player.GetModPlayer<RewindPlayer>();
-			float sqrMaxDetectDistance = 600 * 600;
-			bool nearTimeline = false;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				float sqrMaxDetectDistance = 600 * 600;
+				bool nearTimeline = false;
 
-			if (!player.dead)
-			{
-				if (MrPlagueRaces.RaceAbilityKeybind1.Current && !player.HasBuff(BuffType<TemporalRecoil>()) && rewindPlayer.timelineCounter == 0) {
-					rewindPlayer.chargingRewind = true;
-				}
-				else {
-					rewindPlayer.chargingRewind = false;
-				}
-
-				float sqrDistanceToTarget = Vector2.DistanceSquared(rewindPlayer.rewindPosition[0], player.Center);
-				if (sqrDistanceToTarget < sqrMaxDetectDistance || rewindPlayer.timelineCounter > 0) {
-					nearTimeline = true;
-				}
-				if (nearTimeline) {
-					if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Rebounded>()) && rewindPlayer.rewindCounter == 0 && rewindPlayer.rewindPosition[0] != Vector2.Zero) {
-						rewindPlayer.chargingTimeline = true;
+				if (!player.dead)
+				{
+					if (MrPlagueRaces.RaceAbilityKeybind1.Current && !player.HasBuff(BuffType<TemporalRecoil>()) && rewindPlayer.timelineCounter == 0) {
+						rewindPlayer.chargingRewind = true;
 					}
 					else {
-						rewindPlayer.chargingTimeline = false;
+						rewindPlayer.chargingRewind = false;
+					}
+
+					float sqrDistanceToTarget = Vector2.DistanceSquared(rewindPlayer.rewindPosition[0], player.Center);
+					if (sqrDistanceToTarget < sqrMaxDetectDistance || rewindPlayer.timelineCounter > 0) {
+						nearTimeline = true;
+					}
+					if (nearTimeline) {
+						if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Rebounded>()) && rewindPlayer.rewindCounter == 0 && rewindPlayer.rewindPosition[0] != Vector2.Zero) {
+							rewindPlayer.chargingTimeline = true;
+						}
+						else {
+							rewindPlayer.chargingTimeline = false;
+						}
 					}
 				}
 			}

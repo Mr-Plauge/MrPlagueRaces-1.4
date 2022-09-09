@@ -33,76 +33,100 @@ namespace MrPlagueRaces.Common.Races.Fluftrodon
 
 		public override void ResetEffects(Player player)
 		{
-			player.tileSpeed += 0.5f;
-			player.blockRange += 10;
-			player.pickSpeed -= 0.25f;
-			player.GetDamage(DamageClass.Generic).Base -= 15f;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.tileSpeed += 0.5f;
+				player.blockRange += 10;
+				player.pickSpeed -= 0.25f;
+				player.GetDamage(DamageClass.Generic).Base -= 15f;
+			}
 		}
 
 		public override void ProcessTriggers(Player player, TriggersSet triggersSet)
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var fluftrodonPlayer = player.GetModPlayer<FluftrodonPlayer>();
-			if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) > 0 && player.ownedProjectileCounts[ProjectileType<PaintMenu>()] != 0) {
-				fluftrodonPlayer.selectedPaint -= 1;
-				if (fluftrodonPlayer.selectedPaint < 0) {
-					fluftrodonPlayer.selectedPaint = 30;
-				}
-			}
-			if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) < 0 && player.ownedProjectileCounts[ProjectileType<PaintMenu>()] != 0) {
-				fluftrodonPlayer.selectedPaint += 1;
-				if (fluftrodonPlayer.selectedPaint > 30) {
-					fluftrodonPlayer.selectedPaint = 0;
-				}
-					
-			}
-			if (player.ownedProjectileCounts[ProjectileType<PaintMenu>()] != 0) {
-				if (player.controlUseItem) {
-					player.controlUseItem = false;
-				}
-				if (Main.mouseLeft) {
-					WorldGen.paintTile(Player.tileTargetX, Player.tileTargetY, (byte)fluftrodonPlayer.selectedPaint, true);
-				}
-				if (Main.mouseRight) {
-					WorldGen.paintWall(Player.tileTargetX, Player.tileTargetY, (byte)fluftrodonPlayer.selectedPaint, true);
-				}
-			}
-			if (!player.dead)
-			{
-				if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
-				{
-					if (player.ownedProjectileCounts[ProjectileType<PaintMenu>()] == 0) {
-						Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, 0, 0, ProjectileType<PaintMenu>(), 0, 0, player.whoAmI);
-					}
-					else {
-						fluftrodonPlayer.closeMenu = true;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) > 0 && player.ownedProjectileCounts[ProjectileType<PaintMenu>()] != 0) {
+					fluftrodonPlayer.selectedPaint -= 1;
+					if (fluftrodonPlayer.selectedPaint < 0) {
+						fluftrodonPlayer.selectedPaint = 30;
 					}
 				}
-				if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Airborne>()))
+				if ((PlayerInput.MouseInfo.ScrollWheelValue - PlayerInput.MouseInfoOld.ScrollWheelValue) < 0 && player.ownedProjectileCounts[ProjectileType<PaintMenu>()] != 0) {
+					fluftrodonPlayer.selectedPaint += 1;
+					if (fluftrodonPlayer.selectedPaint > 30) {
+						fluftrodonPlayer.selectedPaint = 0;
+					}
+						
+				}
+				if (player.ownedProjectileCounts[ProjectileType<PaintMenu>()] != 0) {
+					if (player.controlUseItem) {
+						player.controlUseItem = false;
+					}
+					if (Main.mouseLeft) {
+						WorldGen.paintTile(Player.tileTargetX, Player.tileTargetY, (byte)fluftrodonPlayer.selectedPaint, true);
+					}
+					if (Main.mouseRight) {
+						WorldGen.paintWall(Player.tileTargetX, Player.tileTargetY, (byte)fluftrodonPlayer.selectedPaint, true);
+					}
+				}
+				if (!player.dead)
 				{
-					if (fluftrodonPlayer.jumpCharge == 0) {
-						SoundEngine.PlaySound(SoundID.Item105, player.Center);
-						for (int i = 0; i < 10; i++) {
-							int dust = Dust.NewDust(player.position, player.width, player.height, 264);
-							Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
-							Main.dust[dust].noGravity = true;
-							Main.dust[dust].velocity *= 2f;
-							dust = Dust.NewDust(player.position, player.width, player.height, 264);
-							Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
-							Main.dust[dust].noGravity = true;
-							Main.dust[dust].velocity *= 1f;
+					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+					{
+						if (player.ownedProjectileCounts[ProjectileType<PaintMenu>()] == 0) {
+							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, 0, 0, ProjectileType<PaintMenu>(), 0, 0, player.whoAmI);
+						}
+						else {
+							fluftrodonPlayer.closeMenu = true;
 						}
 					}
-					if (fluftrodonPlayer.jumpCharge < 40) {
-						fluftrodonPlayer.jumpCharge++;
+					if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Airborne>()))
+					{
+						if (fluftrodonPlayer.jumpCharge == 0) {
+							SoundEngine.PlaySound(SoundID.Item105, player.Center);
+							for (int i = 0; i < 10; i++) {
+								int dust = Dust.NewDust(player.position, player.width, player.height, 264);
+								Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
+								Main.dust[dust].noGravity = true;
+								Main.dust[dust].velocity *= 2f;
+								dust = Dust.NewDust(player.position, player.width, player.height, 264);
+								Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
+								Main.dust[dust].noGravity = true;
+								Main.dust[dust].velocity *= 1f;
+							}
+						}
+						if (fluftrodonPlayer.jumpCharge < 40) {
+							fluftrodonPlayer.jumpCharge++;
+						}
 					}
-				}
-				if (MrPlagueRaces.RaceAbilityKeybind2.JustReleased)
-				{
-					if (fluftrodonPlayer.jumpCharge > 0) {
+					if (MrPlagueRaces.RaceAbilityKeybind2.JustReleased)
+					{
+						if (fluftrodonPlayer.jumpCharge > 0) {
+							SoundEngine.PlaySound(SoundID.Item152, player.Center);
+							SoundEngine.PlaySound(SoundID.Item39, player.Center);
+							for (int i = 0; i < 20; i++) {
+								int dust = Dust.NewDust(player.position, player.width, player.height, 264);
+								Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
+								Main.dust[dust].noGravity = true;
+								Main.dust[dust].velocity *= 5f;
+								dust = Dust.NewDust(player.position, player.width, player.height, 264);
+								Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
+								Main.dust[dust].noGravity = true;
+								Main.dust[dust].velocity *= 4f;
+							}
+							Vector2 velocity = (Vector2.Normalize(Main.MouseWorld - player.Center) * (fluftrodonPlayer.jumpCharge / 2)) * (0.5f + ((float)player.statLifeMax2 * 0.001f));
+							player.velocity = velocity;
+							player.fallStart = (int)(player.position.Y / 16f);
+							player.AddBuff(BuffType<Airborne>(), 6000);
+							fluftrodonPlayer.jumpCharge = 0;
+						}
+					}
+					if (player.controlJump && (player.controlLeft || player.controlRight) && player.velocity.X == 0 && player.velocity.Y != 0 && fluftrodonPlayer.canWallJump) {
 						SoundEngine.PlaySound(SoundID.Item152, player.Center);
 						SoundEngine.PlaySound(SoundID.Item39, player.Center);
-						for (int i = 0; i < 20; i++) {
+						for (int i = 0; i < 5; i++) {
 							int dust = Dust.NewDust(player.position, player.width, player.height, 264);
 							Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
 							Main.dust[dust].noGravity = true;
@@ -112,31 +136,12 @@ namespace MrPlagueRaces.Common.Races.Fluftrodon
 							Main.dust[dust].noGravity = true;
 							Main.dust[dust].velocity *= 4f;
 						}
-						Vector2 velocity = (Vector2.Normalize(Main.MouseWorld - player.Center) * (fluftrodonPlayer.jumpCharge / 2)) * (0.5f + ((float)player.statLifeMax2 * 0.001f));
-						player.velocity = velocity;
-						player.fallStart = (int)(player.position.Y / 16f);
-						player.AddBuff(BuffType<Airborne>(), 6000);
-						fluftrodonPlayer.jumpCharge = 0;
+						player.velocity.Y = -10f + player.statLifeMax2 / -100;
+						fluftrodonPlayer.canWallJump = false;
 					}
-				}
-				if (player.controlJump && (player.controlLeft || player.controlRight) && player.velocity.X == 0 && player.velocity.Y != 0 && fluftrodonPlayer.canWallJump) {
-					SoundEngine.PlaySound(SoundID.Item152, player.Center);
-					SoundEngine.PlaySound(SoundID.Item39, player.Center);
-					for (int i = 0; i < 5; i++) {
-						int dust = Dust.NewDust(player.position, player.width, player.height, 264);
-						Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
-						Main.dust[dust].noGravity = true;
-						Main.dust[dust].velocity *= 5f;
-						dust = Dust.NewDust(player.position, player.width, player.height, 264);
-						Main.dust[dust].color = fluftrodonPlayer.paintColor[fluftrodonPlayer.selectedPaint];
-						Main.dust[dust].noGravity = true;
-						Main.dust[dust].velocity *= 4f;
+					if (!player.controlJump) {
+						fluftrodonPlayer.canWallJump = true;
 					}
-					player.velocity.Y = -10f + player.statLifeMax2 / -100;
-					fluftrodonPlayer.canWallJump = false;
-				}
-				if (!player.controlJump) {
-					fluftrodonPlayer.canWallJump = true;
 				}
 			}
 		}

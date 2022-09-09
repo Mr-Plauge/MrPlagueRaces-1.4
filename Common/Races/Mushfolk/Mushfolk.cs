@@ -30,10 +30,13 @@ namespace MrPlagueRaces.Common.Races.Mushfolk
 
 		public override void ResetEffects(Player player)
 		{
-			player.statLifeMax2 += (player.statLifeMax2 / 10);
-			player.moveSpeed += 0.05f;
-			player.GetDamage(DamageClass.Generic).Base -= 1f;
-			player.endurance -= 0.25f;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.statLifeMax2 += (player.statLifeMax2 / 10);
+				player.moveSpeed += 0.05f;
+				player.GetDamage(DamageClass.Generic).Base -= 1f;
+				player.endurance -= 0.25f;
+			}
 		}
 
 		public override void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
@@ -47,25 +50,27 @@ namespace MrPlagueRaces.Common.Races.Mushfolk
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var mushfolkPlayer = player.GetModPlayer<MushfolkPlayer>();
-			if (!player.dead)
-			{
-				if (!player.HasBuff(BuffType<Sporeless>())) {
-					if (MrPlagueRaces.RaceAbilityKeybind1.Current)
-					{
-						mushfolkPlayer.growingMushrooms = true;
-						if (mushfolkPlayer.sporeless < 180) {
-							mushfolkPlayer.sporeless++;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead)
+				{
+					if (!player.HasBuff(BuffType<Sporeless>())) {
+						if (MrPlagueRaces.RaceAbilityKeybind1.Current)
+						{
+							mushfolkPlayer.growingMushrooms = true;
+							if (mushfolkPlayer.sporeless < 180) {
+								mushfolkPlayer.sporeless++;
+							}
+							player.eyeHelper.BlinkBecausePlayerGotHurt();
 						}
-						player.eyeHelper.BlinkBecausePlayerGotHurt();
-					}
-					else
-					{
-						mushfolkPlayer.growingMushrooms = false;
-					}
-					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
-					{
-						Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X, Main.MouseWorld.Y, 0f, 0f, ProjectileType<Nymphshroom>(), 1 + player.statLifeMax2 / 10, 0, player.whoAmI);
-						mushfolkPlayer.sporeless += 30;
+						else
+						{
+							mushfolkPlayer.growingMushrooms = false;
+						}
+						if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+						{
+							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X, Main.MouseWorld.Y, 0f, 0f, ProjectileType<Nymphshroom>(), 1 + player.statLifeMax2 / 10, 0, player.whoAmI);
+							mushfolkPlayer.sporeless += 30;
+						}
 					}
 				}
 			}
@@ -73,27 +78,30 @@ namespace MrPlagueRaces.Common.Races.Mushfolk
 		
 		public override void PreUpdate(Player player)
 		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var mushfolkPlayer = player.GetModPlayer<MushfolkPlayer>();
-			if (!player.dead) {
-				for (int i = 0; i < mushfolkPlayer.sporeless; i++) {
-					if (Main.rand.Next(80) == 1) {
-						Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<BurstSpores>(), 0, 0, player.whoAmI);
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead) {
+					for (int i = 0; i < mushfolkPlayer.sporeless; i++) {
+						if (Main.rand.Next(80) == 1) {
+							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<BurstSpores>(), 0, 0, player.whoAmI);
+						}
 					}
-				}
-				if (!mushfolkPlayer.growingMushrooms && mushfolkPlayer.sporeless > 0) {
-					mushfolkPlayer.sporeless--;
-				}
-				if (mushfolkPlayer.sporeless >= 180) {
-					if (!player.HasBuff(BuffType<Sporeless>())) {
-						SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, player.Center);
+					if (!mushfolkPlayer.growingMushrooms && mushfolkPlayer.sporeless > 0) {
+						mushfolkPlayer.sporeless--;
 					}
-					player.AddBuff(BuffType<Sporeless>(), 120);
-					mushfolkPlayer.growingMushrooms = false;
-				}
-				if (mushfolkPlayer.growingMushrooms) {
-					for (int i = 0; i < 3; i++) {
-						if (Main.rand.Next(18) == 1) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X + Main.rand.Next(60) - Main.rand.Next(60), Main.MouseWorld.Y + Main.rand.Next(60) - Main.rand.Next(60), 0f, 0f, ProjectileType<Trapshroom>(), 1 + player.statLifeMax2 / 10, 0, player.whoAmI);
+					if (mushfolkPlayer.sporeless >= 180) {
+						if (!player.HasBuff(BuffType<Sporeless>())) {
+							SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, player.Center);
+						}
+						player.AddBuff(BuffType<Sporeless>(), 120);
+						mushfolkPlayer.growingMushrooms = false;
+					}
+					if (mushfolkPlayer.growingMushrooms) {
+						for (int i = 0; i < 3; i++) {
+							if (Main.rand.Next(18) == 1) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X + Main.rand.Next(60) - Main.rand.Next(60), Main.MouseWorld.Y + Main.rand.Next(60) - Main.rand.Next(60), 0f, 0f, ProjectileType<Trapshroom>(), 1 + player.statLifeMax2 / 10, 0, player.whoAmI);
+							}
 						}
 					}
 				}

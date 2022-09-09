@@ -30,10 +30,13 @@ namespace MrPlagueRaces.Common.Races.Derpkin
 
 		public override void ResetEffects(Player player)
 		{
-			player.moveSpeed += 0.2f;
-			player.jumpSpeedBoost += 0.3f;
-			player.statLifeMax2 -= (player.statLifeMax2 / 5);
-			player.endurance -= 0.2f;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.moveSpeed += 0.2f;
+				player.jumpSpeedBoost += 0.3f;
+				player.statLifeMax2 -= (player.statLifeMax2 / 5);
+				player.endurance -= 0.2f;
+			}
 		}
 
 		public override void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
@@ -48,36 +51,38 @@ namespace MrPlagueRaces.Common.Races.Derpkin
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
-			if (!player.dead)
-			{
-				if (!player.HasBuff(BuffType<Outstretched>())) 
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead)
 				{
-					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+					if (!player.HasBuff(BuffType<Outstretched>())) 
 					{
-						SoundEngine.PlaySound(SoundID.Item39, player.Center);
-						for (int i = 0; i < 18; i++) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+						if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+						{
+							SoundEngine.PlaySound(SoundID.Item39, player.Center);
+							for (int i = 0; i < 18; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+							}
+							player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+							Vector2 offset = Main.MouseWorld - player.Center;
+							derpkinPlayer.targetHeadRotation = (offset * player.direction).ToRotation() * 0.55f;
+							Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (15 + (player.statLifeMax2 / 80));
+							player.velocity = velocity;
+							player.fallStart = (int)(player.position.Y / 16f);
+							player.AddBuff(BuffType<Outstretched>(), 180 - (player.statLifeMax2 / 10));
 						}
-						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-						Vector2 offset = Main.MouseWorld - player.Center;
-						derpkinPlayer.targetHeadRotation = (offset * player.direction).ToRotation() * 0.55f;
-						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (15 + (player.statLifeMax2 / 80));
-						player.velocity = velocity;
-						player.fallStart = (int)(player.position.Y / 16f);
-						player.AddBuff(BuffType<Outstretched>(), 180 - (player.statLifeMax2 / 10));
 					}
-				}
-				if (!player.HasBuff(BuffType<Unravelled>()))
-				{
-					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+					if (!player.HasBuff(BuffType<Unravelled>()))
 					{
-						for (int i = 0; i < 9; i++) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+						if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+						{
+							for (int i = 0; i < 9; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+							}
+							derpkinPlayer.counterSpin = 30;
+							player.velocity.Y -= 10 + (player.statLifeMax2 / 80);
+							player.fallStart = (int)(player.position.Y / 16f);
+							player.AddBuff(BuffType<Unravelled>(), 180 - (player.statLifeMax2 / 10));
 						}
-						derpkinPlayer.counterSpin = 30;
-						player.velocity.Y -= 10 + (player.statLifeMax2 / 80);
-						player.fallStart = (int)(player.position.Y / 16f);
-						player.AddBuff(BuffType<Unravelled>(), 180 - (player.statLifeMax2 / 10));
 					}
 				}
 			}
@@ -85,41 +90,53 @@ namespace MrPlagueRaces.Common.Races.Derpkin
 
 		public override void ModifyDrawInfo(Player player, ref PlayerDrawSet drawInfo)
 		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
-			if (!player.dead && !player.sleeping.isSleeping) {
-				derpkinPlayer.headRotation = MathHelper.Lerp(derpkinPlayer.headRotation, derpkinPlayer.targetHeadRotation, 16f / 60);
-				player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
-				player.fullRotation = -derpkinPlayer.headRotation / 2;
-				player.headRotation = derpkinPlayer.headRotation;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead && !player.sleeping.isSleeping) {
+					derpkinPlayer.headRotation = MathHelper.Lerp(derpkinPlayer.headRotation, derpkinPlayer.targetHeadRotation, 16f / 60);
+					player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
+					player.fullRotation = -derpkinPlayer.headRotation / 2;
+					player.headRotation = derpkinPlayer.headRotation;
+				}
 			}
 		}
 
 		public override void PreUpdate(Player player)
 		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
-			if (!player.dead) {
-				if (player.velocity.Y == 0) 
-				{
-					derpkinPlayer.targetHeadRotation = 0;
-				}
-				if (derpkinPlayer.counterSpin > 0) 
-				{
-					if (derpkinPlayer.counterSpin % 5 == 0) 
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead) {
+					if (player.velocity.Y == 0) 
 					{
-						SoundEngine.PlaySound(SoundID.Item1, player.Center);
-						player.direction = player.direction == 1 ? -1 : 1;
-						for (int i = 0; i < 2; i++) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
-						}
+						derpkinPlayer.targetHeadRotation = 0;
 					}
-					derpkinPlayer.counterSpin--;
+					if (derpkinPlayer.counterSpin > 0) 
+					{
+						if (derpkinPlayer.counterSpin % 5 == 0) 
+						{
+							SoundEngine.PlaySound(SoundID.Item1, player.Center);
+							player.direction = player.direction == 1 ? -1 : 1;
+							for (int i = 0; i < 2; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+							}
+						}
+						derpkinPlayer.counterSpin--;
+					}
 				}
 			}
 		}
 
 		public override bool PreHurt(Player player, bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter) {
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
-			return derpkinPlayer.counterSpin > 0 ? false : true;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				return derpkinPlayer.counterSpin > 0 ? false : true;
+			}
+			else {
+				return true;
+			}
 		}
 	}
 

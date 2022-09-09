@@ -38,12 +38,15 @@ namespace MrPlagueRaces.Common.Races.Tabaxi
 
 		public override void ResetEffects(Player player)
 		{
-			player.moveSpeed += 0.15f;
-			player.jumpSpeedBoost += 0.1f;
-			player.pickSpeed -= 0.15f;
-			player.GetCritChance(DamageClass.Generic) -= 15;
-			player.endurance -= 0.1f;
-			player.noFallDmg = true;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.moveSpeed += 0.15f;
+				player.jumpSpeedBoost += 0.1f;
+				player.pickSpeed -= 0.15f;
+				player.GetCritChance(DamageClass.Generic) -= 15;
+				player.endurance -= 0.1f;
+				player.noFallDmg = true;
+			}
 		}
 
 		public override void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
@@ -58,74 +61,76 @@ namespace MrPlagueRaces.Common.Races.Tabaxi
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var tabaxiPlayer = player.GetModPlayer<TabaxiPlayer>();
-			if (!player.dead)
-			{
-				if (MrPlagueRaces.RaceAbilityKeybind1.Current && !player.HasBuff(BuffType<ParticleDeacceleration>()))
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead)
 				{
-					tabaxiPlayer.phased = true;
-					if (tabaxiPlayer.phaseChargeCounter == 0) {
-						SoundEngine.PlaySound(SoundID.Item162, player.Center);
-					}
-					if (tabaxiPlayer.phaseChargeCounter < 100) {
-						tabaxiPlayer.phaseChargeCounter++;
-					}
-				}
-				else {
-					tabaxiPlayer.phased = false;
-				}
-				if (MrPlagueRaces.RaceAbilityKeybind1.JustReleased && !player.HasBuff(BuffType<ParticleDeacceleration>())) {
-					player.AddBuff(BuffType<ParticleDeacceleration>(), tabaxiPlayer.phaseChargeCounter * 2);
-					SoundEngine.PlaySound(SoundID.Item163, player.Center);
-				}
-				if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
-				{
-					if (player.position != tabaxiPlayer.TabaxiSpawn)
+					if (MrPlagueRaces.RaceAbilityKeybind1.Current && !player.HasBuff(BuffType<ParticleDeacceleration>()))
 					{
-						Main.NewText("Rewind point set!", 143, 255, 255);
-						for (int i = 0; i < 25; i++)
-						{
-							int dust = Dust.NewDust(player.position, player.width, player.height, 180);
-							Main.dust[dust].noGravity = true;
-							Dust obj6 = Main.dust[dust];
-							obj6.velocity *= 0.75f;
+						tabaxiPlayer.phased = true;
+						if (tabaxiPlayer.phaseChargeCounter == 0) {
+							SoundEngine.PlaySound(SoundID.Item162, player.Center);
 						}
-						tabaxiPlayer.TabaxiSpawn = player.position;
-						SoundEngine.PlaySound(SoundID.Item105, player.Center);
+						if (tabaxiPlayer.phaseChargeCounter < 100) {
+							tabaxiPlayer.phaseChargeCounter++;
+						}
 					}
-					else
+					else {
+						tabaxiPlayer.phased = false;
+					}
+					if (MrPlagueRaces.RaceAbilityKeybind1.JustReleased && !player.HasBuff(BuffType<ParticleDeacceleration>())) {
+						player.AddBuff(BuffType<ParticleDeacceleration>(), tabaxiPlayer.phaseChargeCounter * 2);
+						SoundEngine.PlaySound(SoundID.Item163, player.Center);
+					}
+					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
 					{
-						Main.NewText("Rewind point removed!", 143, 255, 255);
-						tabaxiPlayer.TabaxiSpawn = new Vector2(-1, -1);
+						if (player.position != tabaxiPlayer.TabaxiSpawn)
+						{
+							Main.NewText("Rewind point set!", 143, 255, 255);
+							for (int i = 0; i < 25; i++)
+							{
+								int dust = Dust.NewDust(player.position, player.width, player.height, 180);
+								Main.dust[dust].noGravity = true;
+								Dust obj6 = Main.dust[dust];
+								obj6.velocity *= 0.75f;
+							}
+							tabaxiPlayer.TabaxiSpawn = player.position;
+							SoundEngine.PlaySound(SoundID.Item105, player.Center);
+						}
+						else
+						{
+							Main.NewText("Rewind point removed!", 143, 255, 255);
+							tabaxiPlayer.TabaxiSpawn = new Vector2(-1, -1);
+						}
 					}
-				}
-				if (MrPlagueRaces.RaceAbilityKeybind3.JustPressed)
-				{
-					if (tabaxiPlayer.TabaxiSpawn != new Vector2(-1, -1) && !player.HasBuff(BuffType<Rematerializing>()))
+					if (MrPlagueRaces.RaceAbilityKeybind3.JustPressed)
 					{
-						player.Teleport(tabaxiPlayer.TabaxiSpawn, 3);
-						player.AddBuff(BuffType<Rematerializing>(), 180);
-						SoundEngine.PlaySound(SoundID.Item165, player.Center);
+						if (tabaxiPlayer.TabaxiSpawn != new Vector2(-1, -1) && !player.HasBuff(BuffType<Rematerializing>()))
+						{
+							player.Teleport(tabaxiPlayer.TabaxiSpawn, 3);
+							player.AddBuff(BuffType<Rematerializing>(), 180);
+							SoundEngine.PlaySound(SoundID.Item165, player.Center);
+						}
+						else if (!player.HasBuff(BuffType<Rematerializing>()))
+						{
+							Main.NewText("No rewind point found!", 143, 255, 255);
+						}
 					}
-					else if (!player.HasBuff(BuffType<Rematerializing>()))
-					{
-						Main.NewText("No rewind point found!", 143, 255, 255);
-					}
-				}
-				if (tabaxiPlayer.phaseActiveCounter > 0) {
-					if (player.controlUp) {
-						player.controlUp = false;
-					}
-					if (player.controlDown) {
-						player.controlDown = false;
-					}
-					if (player.controlJump) {
-						player.controlJump = false;
-					}
-					if (player.controlLeft) {
-						player.controlLeft = false;
-					}
-					if (player.controlRight) {
-						player.controlRight = false;
+					if (tabaxiPlayer.phaseActiveCounter > 0) {
+						if (player.controlUp) {
+							player.controlUp = false;
+						}
+						if (player.controlDown) {
+							player.controlDown = false;
+						}
+						if (player.controlJump) {
+							player.controlJump = false;
+						}
+						if (player.controlLeft) {
+							player.controlLeft = false;
+						}
+						if (player.controlRight) {
+							player.controlRight = false;
+						}
 					}
 				}
 			}
@@ -133,42 +138,45 @@ namespace MrPlagueRaces.Common.Races.Tabaxi
 
 		public override void PreUpdate(Player player)
 		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var tabaxiPlayer = player.GetModPlayer<TabaxiPlayer>();
-			if (!player.dead) {
-				if (!tabaxiPlayer.phased && tabaxiPlayer.phaseChargeCounter > 0) {
-					player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-					Vector2 offset = Main.MouseWorld - player.Center;
-					Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (tabaxiPlayer.phaseChargeCounter);
-					player.velocity = velocity;
-					player.fallStart = (int)(player.position.Y / 16f);
-					tabaxiPlayer.phaseActiveCounter = 30;
-					tabaxiPlayer.phaseChargeCounter = 0;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead) {
+					if (!tabaxiPlayer.phased && tabaxiPlayer.phaseChargeCounter > 0) {
+						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+						Vector2 offset = Main.MouseWorld - player.Center;
+						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (tabaxiPlayer.phaseChargeCounter);
+						player.velocity = velocity;
+						player.fallStart = (int)(player.position.Y / 16f);
+						tabaxiPlayer.phaseActiveCounter = 30;
+						tabaxiPlayer.phaseChargeCounter = 0;
+					}
+					if (tabaxiPlayer.phaseActiveCounter > 0) {
+						player.ghost = true;
+						tabaxiPlayer.phaseActiveCounter--;
+					}
+					else {
+						player.ghost = false;
+					}
 				}
 				if (tabaxiPlayer.phaseActiveCounter > 0) {
-					player.ghost = true;
-					tabaxiPlayer.phaseActiveCounter--;
-				}
-				else {
-					player.ghost = false;
-				}
-			}
-			if (tabaxiPlayer.phaseActiveCounter > 0) {
-				for (int i = 0; i < 25; i++)
-				{
-					int dust = Dust.NewDust(new Vector2(player.position.X + Main.rand.Next(10) - Main.rand.Next(10), player.position.Y + Main.rand.Next(10) - Main.rand.Next(10)), player.width + Main.rand.Next(10) - Main.rand.Next(10), player.width + Main.rand.Next(10) - Main.rand.Next(10), 180);
-					Main.dust[dust].noGravity = true;
-					Dust obj6 = Main.dust[dust];
-					obj6.velocity *= 0.75f;
-				}
-			}
-			if (tabaxiPlayer.phased) {
-				for (int i = 0; i < tabaxiPlayer.phaseChargeCounter / 2; i++)
-				{
-					if (Main.rand.Next(40) == 1) {
-						int dust = Dust.NewDust(player.position, player.width, player.height, 180);
+					for (int i = 0; i < 25; i++)
+					{
+						int dust = Dust.NewDust(new Vector2(player.position.X + Main.rand.Next(10) - Main.rand.Next(10), player.position.Y + Main.rand.Next(10) - Main.rand.Next(10)), player.width + Main.rand.Next(10) - Main.rand.Next(10), player.width + Main.rand.Next(10) - Main.rand.Next(10), 180);
 						Main.dust[dust].noGravity = true;
 						Dust obj6 = Main.dust[dust];
 						obj6.velocity *= 0.75f;
+					}
+				}
+				if (tabaxiPlayer.phased) {
+					for (int i = 0; i < tabaxiPlayer.phaseChargeCounter / 2; i++)
+					{
+						if (Main.rand.Next(40) == 1) {
+							int dust = Dust.NewDust(player.position, player.width, player.height, 180);
+							Main.dust[dust].noGravity = true;
+							Dust obj6 = Main.dust[dust];
+							obj6.velocity *= 0.75f;
+						}
 					}
 				}
 			}

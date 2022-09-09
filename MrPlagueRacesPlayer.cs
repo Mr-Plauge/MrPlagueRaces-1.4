@@ -21,6 +21,7 @@ using MrPlagueRaces.Common.UI;
 using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Human;
 using MrPlagueRaces.Common.UI.States;
+using MrPlagueRaces.Content.Items;
 
 namespace MrPlagueRaces
 {
@@ -32,6 +33,8 @@ namespace MrPlagueRaces
 		public Color colorEyes = new Color(255, 255, 255);
 		public Color colorSkin = new Color(255, 255, 255);
 		public Color colorHair = new Color(255, 255, 255);
+		public bool statsEnabled = true;
+		public bool gotStatToggler = false;
 
 		public override void SaveData(TagCompound tag)
         {
@@ -41,6 +44,8 @@ namespace MrPlagueRaces
 				tag["detailColorR"] = detailColor.R;
 				tag["detailColorG"] = detailColor.G;
 				tag["detailColorB"] = detailColor.B;
+				tag["statsEnabled"] = statsEnabled;
+				tag["gotStatToggler"] = gotStatToggler;
 			}
         }
 
@@ -65,6 +70,14 @@ namespace MrPlagueRaces
 			if (tag.ContainsKey("detailColorB"))
 			{
 				detailColor.B = (byte)tag["detailColorB"];
+			}
+			if (tag.ContainsKey("statsEnabled"))
+			{
+				statsEnabled = tag.GetBool("statsEnabled");
+			}
+			if (tag.ContainsKey("gotStatToggler"))
+			{
+				gotStatToggler = tag.GetBool("gotStatToggler");
 			}
 
 			if ((Player.hair + 1) > GetRaceHairCount(Player) && GetRaceHairCount(Player) != 0)
@@ -96,9 +109,20 @@ namespace MrPlagueRaces
 				packet.Write(colorHair.R);
 				packet.Write(colorHair.G);
 				packet.Write(colorHair.B);
+				packet.Write((bool)statsEnabled);
+				packet.Write((bool)gotStatToggler);
 
 				packet.Send(toWho, fromWho);
 			}
+		}
+
+		public override void PostItemCheck()
+		{
+			if (!gotStatToggler)
+            {
+                gotStatToggler = true;
+                Player.QuickSpawnItem(Wiring.GetProjectileSource(0, 0), ModContent.ItemType<Stat_Toggler>());
+            }
 		}
 
 		public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
@@ -119,6 +143,13 @@ namespace MrPlagueRaces
 						race = RaceLoader.Races[i];
 					}
 				}
+			}
+		}
+
+		public override void PreUpdate()
+		{
+			if (Player.dead && Player.ghost && Player.difficulty != 2) {
+				Player.ghost = false;
 			}
 		}
 

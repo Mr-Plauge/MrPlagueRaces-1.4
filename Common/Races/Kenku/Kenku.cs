@@ -34,15 +34,17 @@ namespace MrPlagueRaces.Common.Races.Kenku
 
 		public override void ResetEffects(Player player)
 		{
-			var kenkuPlayer = player.GetModPlayer<KenkuPlayer>();
-			player.moveSpeed += 0.2f;
-			player.jumpSpeedBoost += 0.15f;
-			player.statLifeMax2 -= (player.statLifeMax2 / 3);
-			player.endurance -= 0.3f;
-			player.rocketTime = 0;
-			player.rocketTimeMax = 0;
-			if (player.statLifeMax2 > 160) {
-				player.noFallDmg = true;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.moveSpeed += 0.2f;
+				player.jumpSpeedBoost += 0.15f;
+				player.statLifeMax2 -= (player.statLifeMax2 / 3);
+				player.endurance -= 0.3f;
+				player.rocketTime = 0;
+				player.rocketTimeMax = 0;
+				if (player.statLifeMax2 > 160) {
+					player.noFallDmg = true;
+				}
 			}
 		}
 
@@ -50,130 +52,132 @@ namespace MrPlagueRaces.Common.Races.Kenku
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var kenkuPlayer = player.GetModPlayer<KenkuPlayer>();
-			float anchor = player.statLifeMax2;
-			if (player.statLifeMax2 > 120) {
-				anchor = 120;
-			}
-			if (!player.dead && player.active)
-			{
-				if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed && player.velocity.Y != 0 && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Dashed>()))
-				{
-					player.velocity.X = 16 * player.direction;
-					SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, player.Center);
-					kenkuPlayer.wingFrame = 2;
-					kenkuPlayer.wingFrameCounter = 0;
-					kenkuPlayer.dashTime = 32;
-					player.AddBuff(BuffType<Dashed>(), 220);
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				float anchor = player.statLifeMax2;
+				if (player.statLifeMax2 > 120) {
+					anchor = 120;
 				}
-				if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Fatigued>()))
+				if (!player.dead && player.active)
 				{
-					Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-					player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-					player.fallStart = (int)(player.position.Y / 16f);
-					player.velocity.X = 6 * -player.direction;
-					SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, player.Center);
-					kenkuPlayer.wingFrame = 2;
-					kenkuPlayer.wingFrameCounter = 0;
-					kenkuPlayer.dashTime = 32;
-					for (int i = 0; i < 12; i++) {
-						int projectile = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (float)(player.width / 2) / 16, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<KenkuFeather>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
-						Main.projectile[projectile].velocity *= 3f;
-					}
-					player.AddBuff(BuffType<Fatigued>(), 320);
-				}
-				int maxVelocity = (6 + (player.statLifeMax2 / 100));
-				if (player.wings == 0) {
-					if (player.controlJump) {
-						kenkuPlayer.dashTime = 0;
-						player.fallStart = (int)(player.position.Y / 16f);
-						if (player.velocity.Y != 0) {
-							kenkuPlayer.flying = true;
-						}
-						if (kenkuPlayer.wingTime > 0) {
-							kenkuPlayer.wingFrameCounter++;
-							if (kenkuPlayer.wingFrameCounter > 4)
-							{
-								kenkuPlayer.wingFrame++;
-								kenkuPlayer.wingFrameCounter = 0;
-								if (kenkuPlayer.wingFrame >= 4)
-								{
-									kenkuPlayer.wingFrame = 0;
-									SoundEngine.PlaySound(SoundID.Item32, player.Center);
-								}
-							}
-							float ascentWhenFalling = (float)(anchor / 100);
-							float ascentWhenRising = (float)(anchor / 420);
-							float maxCanAscendMultiplier = (float)(anchor / 100);
-							float maxAscentMultiplier = (float)(anchor / 25);
-							float constantAscend = (float)(anchor / 500);
-
-							player.velocity.Y -= ascentWhenFalling * player.gravDir;
-
-							if (player.gravDir == 1f)
-							{
-								if (player.velocity.Y > 0f)
-								{
-									player.velocity.Y -= ascentWhenRising;
-								}
-								else if (player.velocity.Y > (0f - 5) * maxAscentMultiplier)
-								{
-									player.velocity.Y -= constantAscend;
-								}
-								if (player.velocity.Y < (0f - 5) * maxCanAscendMultiplier)
-								{
-									player.velocity.Y = (0f - 5) * maxCanAscendMultiplier;
-								}
-							}
-							else
-							{
-								if (player.velocity.Y < 0f)
-								{
-									player.velocity.Y += ascentWhenRising;
-								}
-								else if (player.velocity.Y < 5 * maxAscentMultiplier)
-								{
-									player.velocity.Y += constantAscend;
-								}
-								if (player.velocity.Y > 5 * maxCanAscendMultiplier)
-								{
-									player.velocity.Y = 5 * maxCanAscendMultiplier;
-								}
-							}
-							kenkuPlayer.wingTime -= 1f;
-						}
-						else {
-							if (player.velocity.Y > 3f) {
-								player.velocity.Y = 3f;
-							}
-							if (player.velocity.Y > 1) {
-								kenkuPlayer.wingFrameCounter = 0;
-								kenkuPlayer.wingFrame = 2;
-							}
-						}
-						if (player.controlLeft && player.velocity.X > ((player.maxRunSpeed * 2) * -1))
-						{
-							player.velocity.X += -0.1f;
-						}
-						if (player.controlRight && player.velocity.X < (player.maxRunSpeed * 2))
-						{
-							player.velocity.X += 0.1f;
-						}
-					}
-					else if (kenkuPlayer.dashTime == 0) {
-						kenkuPlayer.wingFrameCounter = 0;
-						kenkuPlayer.wingFrame = 0;
-					}
-					if (player.empressBrooch && kenkuPlayer.wingTime != 0f)
+					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed && player.velocity.Y != 0 && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Dashed>()))
 					{
+						player.velocity.X = 16 * player.direction;
+						SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, player.Center);
+						kenkuPlayer.wingFrame = 2;
+						kenkuPlayer.wingFrameCounter = 0;
+						kenkuPlayer.dashTime = 32;
+						player.AddBuff(BuffType<Dashed>(), 220);
+					}
+					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Fatigued>()))
+					{
+						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
+						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+						player.fallStart = (int)(player.position.Y / 16f);
+						player.velocity.X = 6 * -player.direction;
+						SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, player.Center);
+						kenkuPlayer.wingFrame = 2;
+						kenkuPlayer.wingFrameCounter = 0;
+						kenkuPlayer.dashTime = 32;
+						for (int i = 0; i < 12; i++) {
+							int projectile = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (float)(player.width / 2) / 16, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<KenkuFeather>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
+							Main.projectile[projectile].velocity *= 3f;
+						}
+						player.AddBuff(BuffType<Fatigued>(), 320);
+					}
+					int maxVelocity = (6 + (player.statLifeMax2 / 100));
+					if (player.wings == 0) {
+						if (player.controlJump) {
+							kenkuPlayer.dashTime = 0;
+							player.fallStart = (int)(player.position.Y / 16f);
+							if (player.velocity.Y != 0) {
+								kenkuPlayer.flying = true;
+							}
+							if (kenkuPlayer.wingTime > 0) {
+								kenkuPlayer.wingFrameCounter++;
+								if (kenkuPlayer.wingFrameCounter > 4)
+								{
+									kenkuPlayer.wingFrame++;
+									kenkuPlayer.wingFrameCounter = 0;
+									if (kenkuPlayer.wingFrame >= 4)
+									{
+										kenkuPlayer.wingFrame = 0;
+										SoundEngine.PlaySound(SoundID.Item32, player.Center);
+									}
+								}
+								float ascentWhenFalling = (float)(anchor / 100);
+								float ascentWhenRising = (float)(anchor / 420);
+								float maxCanAscendMultiplier = (float)(anchor / 100);
+								float maxAscentMultiplier = (float)(anchor / 25);
+								float constantAscend = (float)(anchor / 500);
+
+								player.velocity.Y -= ascentWhenFalling * player.gravDir;
+
+								if (player.gravDir == 1f)
+								{
+									if (player.velocity.Y > 0f)
+									{
+										player.velocity.Y -= ascentWhenRising;
+									}
+									else if (player.velocity.Y > (0f - 5) * maxAscentMultiplier)
+									{
+										player.velocity.Y -= constantAscend;
+									}
+									if (player.velocity.Y < (0f - 5) * maxCanAscendMultiplier)
+									{
+										player.velocity.Y = (0f - 5) * maxCanAscendMultiplier;
+									}
+								}
+								else
+								{
+									if (player.velocity.Y < 0f)
+									{
+										player.velocity.Y += ascentWhenRising;
+									}
+									else if (player.velocity.Y < 5 * maxAscentMultiplier)
+									{
+										player.velocity.Y += constantAscend;
+									}
+									if (player.velocity.Y > 5 * maxCanAscendMultiplier)
+									{
+										player.velocity.Y = 5 * maxCanAscendMultiplier;
+									}
+								}
+								kenkuPlayer.wingTime -= 1f;
+							}
+							else {
+								if (player.velocity.Y > 3f) {
+									player.velocity.Y = 3f;
+								}
+								if (player.velocity.Y > 1) {
+									kenkuPlayer.wingFrameCounter = 0;
+									kenkuPlayer.wingFrame = 2;
+								}
+							}
+							if (player.controlLeft && player.velocity.X > ((player.maxRunSpeed * 2) * -1))
+							{
+								player.velocity.X += -0.1f;
+							}
+							if (player.controlRight && player.velocity.X < (player.maxRunSpeed * 2))
+							{
+								player.velocity.X += 0.1f;
+							}
+						}
+						else if (kenkuPlayer.dashTime == 0) {
+							kenkuPlayer.wingFrameCounter = 0;
+							kenkuPlayer.wingFrame = 0;
+						}
+						if (player.empressBrooch && kenkuPlayer.wingTime != 0f)
+						{
+							kenkuPlayer.wingTime = player.statLifeMax2;
+						}
+					}
+					if (player.velocity.Y == 0) {
 						kenkuPlayer.wingTime = player.statLifeMax2;
 					}
 				}
-				if (player.velocity.Y == 0) {
-					kenkuPlayer.wingTime = player.statLifeMax2;
+				if (!player.controlJump || player.velocity.Y == 0) {
+					kenkuPlayer.flying = false;
 				}
-			}
-			if (!player.controlJump || player.velocity.Y == 0) {
-				kenkuPlayer.flying = false;
 			}
 		}
 		
@@ -181,23 +185,25 @@ namespace MrPlagueRaces.Common.Races.Kenku
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var kenkuPlayer = player.GetModPlayer<KenkuPlayer>();
-			if (kenkuPlayer.flying && !player.controlUseItem) {
-				player.bodyFrame.Y = player.bodyFrame.Height * 6;
-			}
-			if (player.velocity.Y != 0) {
-				player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
-				player.fullRotation = player.velocity.X * 0.1f;
-				if ((double)player.fullRotation < -0.2)
-				{
-					player.fullRotation = -0.2f;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (kenkuPlayer.flying && !player.controlUseItem) {
+					player.bodyFrame.Y = player.bodyFrame.Height * 6;
 				}
-				if ((double)player.fullRotation > 0.2)
-				{
-					player.fullRotation = 0.2f;
+				if (player.velocity.Y != 0) {
+					player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
+					player.fullRotation = player.velocity.X * 0.1f;
+					if ((double)player.fullRotation < -0.2)
+					{
+						player.fullRotation = -0.2f;
+					}
+					if ((double)player.fullRotation > 0.2)
+					{
+						player.fullRotation = 0.2f;
+					}
 				}
-			}
-			else if (!player.sleeping.isSleeping) {
-				player.fullRotation = 0f;
+				else if (!player.sleeping.isSleeping) {
+					player.fullRotation = 0f;
+				}
 			}
 		}
 
@@ -205,25 +211,27 @@ namespace MrPlagueRaces.Common.Races.Kenku
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var kenkuPlayer = player.GetModPlayer<KenkuPlayer>();
-			if (player.velocity.Y == 0) {
-				kenkuPlayer.wingFrameCounter = 0;
-				kenkuPlayer.wingFrame = 0;
-			}
-			else if (player.velocity.Y != 0 && !player.controlJump && kenkuPlayer.dashTime == 0) {
-				kenkuPlayer.wingFrameCounter = 0;
-				kenkuPlayer.wingFrame = 1;
-			}
-			if (kenkuPlayer.dashTime > 0) {
-				kenkuPlayer.dashTime--;
-				kenkuPlayer.wingFrameCounter++;
-				if (kenkuPlayer.wingFrameCounter > 6)
-				{
-					kenkuPlayer.wingFrame++;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (player.velocity.Y == 0) {
 					kenkuPlayer.wingFrameCounter = 0;
-					if (kenkuPlayer.wingFrame >= 3)
+					kenkuPlayer.wingFrame = 0;
+				}
+				else if (player.velocity.Y != 0 && !player.controlJump && kenkuPlayer.dashTime == 0) {
+					kenkuPlayer.wingFrameCounter = 0;
+					kenkuPlayer.wingFrame = 1;
+				}
+				if (kenkuPlayer.dashTime > 0) {
+					kenkuPlayer.dashTime--;
+					kenkuPlayer.wingFrameCounter++;
+					if (kenkuPlayer.wingFrameCounter > 6)
 					{
-						kenkuPlayer.wingFrame = 0;
-						SoundEngine.PlaySound(SoundID.Item32, player.Center);
+						kenkuPlayer.wingFrame++;
+						kenkuPlayer.wingFrameCounter = 0;
+						if (kenkuPlayer.wingFrame >= 3)
+						{
+							kenkuPlayer.wingFrame = 0;
+							SoundEngine.PlaySound(SoundID.Item32, player.Center);
+						}
 					}
 				}
 			}

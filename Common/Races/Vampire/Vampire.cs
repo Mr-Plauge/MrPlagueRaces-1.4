@@ -31,75 +31,89 @@ namespace MrPlagueRaces.Common.Races.Vampire
 
 		public override void ResetEffects(Player player)
 		{
-			player.moveSpeed += 0.1f;
-			if (player.mount.Type == MountType<StealthBat>()) {
-				player.endurance -= 0.5f;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.moveSpeed += 0.1f;
+				if (player.mount.Type == MountType<StealthBat>()) {
+					player.endurance -= 0.5f;
+				}
+				else {
+					player.endurance -= 0.15f;
+				}
+				player.statLifeMax2 -= (player.statLifeMax2 / 4);
 			}
-			else {
-				player.endurance -= 0.15f;
-			}
-			player.statLifeMax2 -= (player.statLifeMax2 / 4);
 		}
 
 		public override void ProcessTriggers(Player player, TriggersSet triggersSet)
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var vampirePlayer = player.GetModPlayer<VampirePlayer>();
-			if (!player.dead)
-			{
-				if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead)
 				{
-					if (player.mount.Type != MountType<StealthBat>()) {
-						player.mount.SetMount(MountType<StealthBat>(), player, false);
-						SoundEngine.PlaySound(SoundID.AbigailUpgrade, player.Center);
-						int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
-						Main.gore[num].velocity *= 0.3f;
-						num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
-						Main.gore[num].velocity *= 0.3f;
-						num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
-						Main.gore[num].velocity *= 0.3f;
+					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+					{
+						if (player.mount.Type != MountType<StealthBat>()) {
+							player.mount.SetMount(MountType<StealthBat>(), player, false);
+							SoundEngine.PlaySound(SoundID.AbigailUpgrade, player.Center);
+							int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
+							Main.gore[num].velocity *= 0.3f;
+							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
+							Main.gore[num].velocity *= 0.3f;
+							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
+							Main.gore[num].velocity *= 0.3f;
+						}
+						else {
+							player.mount.Dismount(player);
+							SoundEngine.PlaySound(SoundID.AbigailAttack, player.Center);
+							int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
+							Main.gore[num].velocity *= 0.3f;
+							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
+							Main.gore[num].velocity *= 0.3f;
+							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
+							Main.gore[num].velocity *= 0.3f;
+						}
 					}
-					else {
-						player.mount.Dismount(player);
-						SoundEngine.PlaySound(SoundID.AbigailAttack, player.Center);
-						int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
-						Main.gore[num].velocity *= 0.3f;
-						num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
-						Main.gore[num].velocity *= 0.3f;
-						num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
-						Main.gore[num].velocity *= 0.3f;
+					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && player.mount.Type == MountType<StealthBat>())
+					{
+						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
+						if (player.ownedProjectileCounts[ProjectileType<LeechTongue>()] == 0) {
+							SoundEngine.PlaySound(SoundID.Item111, player.Center);
+							SoundEngine.PlaySound(SoundID.Item171, player.Center);
+							vampirePlayer.LeechTongue = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X, velocity.Y, ProjectileType<LeechTongue>(), 1, 0, player.whoAmI);
+						}
+						else {
+							Main.projectile[vampirePlayer.LeechTongue].ai[0] = 60;
+						}
 					}
-				}
-				if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && player.mount.Type == MountType<StealthBat>())
-				{
-					Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-					if (player.ownedProjectileCounts[ProjectileType<LeechTongue>()] == 0) {
-						SoundEngine.PlaySound(SoundID.Item111, player.Center);
-						SoundEngine.PlaySound(SoundID.Item171, player.Center);
-						vampirePlayer.LeechTongue = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X, velocity.Y, ProjectileType<LeechTongue>(), 1, 0, player.whoAmI);
-					}
-					else {
-						Main.projectile[vampirePlayer.LeechTongue].ai[0] = 60;
-					}
-				}
-				if (player.mount.Type == MountType<StealthBat>()) {
-					if (player.controlUseItem) {
-						player.controlUseItem = false;
+					if (player.mount.Type == MountType<StealthBat>()) {
+						if (player.controlUseItem) {
+							player.controlUseItem = false;
+						}
 					}
 				}
 			}
 		}
 
 		public override void UpdateBadLifeRegen(Player player) {
-			if (player.lifeRegen > 0)
-				player.lifeRegen = 0;
-			player.lifeRegenTime = 0;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (player.lifeRegen > 0)
+					player.lifeRegen = 0;
+				player.lifeRegenTime = 0;
+			}
 		}
 
 		public override bool CanUseItem(Player player, Item item)
 		{
-			if (item.healLife > 0) {
-				return false;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (item.healLife > 0) {
+					return false;
+				}
+				else {
+					return true;
+				}
 			}
 			else {
 				return true;
@@ -120,25 +134,28 @@ namespace MrPlagueRaces.Common.Races.Vampire
 		}
 
 		public override void PreUpdate(Player player) {
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var vampirePlayer = player.GetModPlayer<VampirePlayer>();
-			if (!player.dead)
-			{
-				if (player.mount.Type == MountType<StealthBat>() && !vampirePlayer.Leeching) {
-					if (vampirePlayer.stealthTimer < 420) {
-						vampirePlayer.stealthTimer++;
-					}
-					if (vampirePlayer.stealthTimer == 420) {
-						if (!player.HasBuff(BuffType<Unseen>())) {
-							SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, player.Center);
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead)
+				{
+					if (player.mount.Type == MountType<StealthBat>() && !vampirePlayer.Leeching) {
+						if (vampirePlayer.stealthTimer < 420) {
+							vampirePlayer.stealthTimer++;
 						}
-						player.AddBuff(BuffType<Unseen>(), 120);
+						if (vampirePlayer.stealthTimer == 420) {
+							if (!player.HasBuff(BuffType<Unseen>())) {
+								SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, player.Center);
+							}
+							player.AddBuff(BuffType<Unseen>(), 120);
+						}
 					}
-				}
-				else {
-					vampirePlayer.stealthTimer = 0;
-				}
-				if (vampirePlayer.ExposedToSun()) {
-					player.AddBuff(BuffType<Photosensitive>(), 2);
+					else {
+						vampirePlayer.stealthTimer = 0;
+					}
+					if (vampirePlayer.ExposedToSun()) {
+						player.AddBuff(BuffType<Photosensitive>(), 2);
+					}
 				}
 			}
 		}

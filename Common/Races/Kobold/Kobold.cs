@@ -34,10 +34,13 @@ namespace MrPlagueRaces.Common.Races.Kobold
 
 		public override void ResetEffects(Player player)
 		{
-			player.pickSpeed -= 0.75f;
-			player.moveSpeed += 0.05f;
-			player.statLifeMax2 -= (player.statLifeMax2 / 10);
-			player.endurance -= 0.05f;
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				player.pickSpeed -= 0.75f;
+				player.moveSpeed += 0.05f;
+				player.statLifeMax2 -= (player.statLifeMax2 / 10);
+				player.endurance -= 0.05f;
+			}
 		}
 
 		public override void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
@@ -52,75 +55,83 @@ namespace MrPlagueRaces.Common.Races.Kobold
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var koboldPlayer = player.GetModPlayer<KoboldPlayer>();
-			if (!player.dead)
-			{
-				if (!player.HasBuff(BuffType<Refueling>())) {
-					Tile targetedTile = Main.tile[(int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16];
-					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
-					{
-						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-						for (int i = 0; i < 3; i++) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<Breathmine>(), 0, 0, player.whoAmI);
-						}
-						for (int i = 0; i < 6; i++) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, Main.rand.Next(3) - Main.rand.Next(3), Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<Breathmine>(), 0, 0, player.whoAmI);
-						}
-						Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X, Main.MouseWorld.Y, 0f, 0f, ProjectileType<Sparkmine>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
-						SoundEngine.PlaySound(SoundID.DD2_DrakinShot, player.Center);
-						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-						koboldPlayer.firingMine = 20;
-						player.AddBuff(BuffType<Refueling>(), 120 - (player.statLifeMax2 / 20));
-					}
-					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
-					{
-						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-						SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, player.Center);
-						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-						for (int i = 0; i < 3; i++) {
-							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (float)(player.width / 2) / 16, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<Clustermine>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
-						}
-						koboldPlayer.firingMine = 20;
-						player.AddBuff(BuffType<Refueling>(), 120 - (player.statLifeMax2 / 20));
-					}
-				}
-				if (MrPlagueRaces.RaceAbilityKeybind3.JustPressed)
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead)
 				{
-					koboldPlayer.triggeringMine = 1;
+					if (!player.HasBuff(BuffType<Refueling>())) {
+						Tile targetedTile = Main.tile[(int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16];
+						if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+						{
+							Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
+							for (int i = 0; i < 3; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<Breathmine>(), 0, 0, player.whoAmI);
+							}
+							for (int i = 0; i < 6; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, Main.rand.Next(3) - Main.rand.Next(3), Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<Breathmine>(), 0, 0, player.whoAmI);
+							}
+							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Main.MouseWorld.X, Main.MouseWorld.Y, 0f, 0f, ProjectileType<Sparkmine>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
+							SoundEngine.PlaySound(SoundID.DD2_DrakinShot, player.Center);
+							player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+							koboldPlayer.firingMine = 20;
+							player.AddBuff(BuffType<Refueling>(), 120 - (player.statLifeMax2 / 20));
+						}
+						if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+						{
+							player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+							SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, player.Center);
+							Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
+							for (int i = 0; i < 3; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (float)(player.width / 2) / 16, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<Clustermine>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
+							}
+							koboldPlayer.firingMine = 20;
+							player.AddBuff(BuffType<Refueling>(), 120 - (player.statLifeMax2 / 20));
+						}
+					}
+					if (MrPlagueRaces.RaceAbilityKeybind3.JustPressed)
+					{
+						koboldPlayer.triggeringMine = 1;
+					}
 				}
 			}
 		}
 
 		public override void ModifyDrawInfo(Player player, ref PlayerDrawSet drawInfo)
 		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var koboldPlayer = player.GetModPlayer<KoboldPlayer>();
-			if (!player.dead) {
-				if (koboldPlayer.firingMine > 0) {
-					player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-					Vector2 offset = Main.MouseWorld - player.Center;
-					koboldPlayer.targetHeadRotation = (offset * player.direction).ToRotation() * 0.55f;
-				} 
-				else 
-				{
-					koboldPlayer.targetHeadRotation = 0;
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead) {
+					if (koboldPlayer.firingMine > 0) {
+						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+						Vector2 offset = Main.MouseWorld - player.Center;
+						koboldPlayer.targetHeadRotation = (offset * player.direction).ToRotation() * 0.55f;
+					} 
+					else 
+					{
+						koboldPlayer.targetHeadRotation = 0;
+					}
+					koboldPlayer.headRotation = MathHelper.Lerp(koboldPlayer.headRotation, koboldPlayer.targetHeadRotation, 16f / 60);
+					player.headRotation = koboldPlayer.headRotation;
 				}
-				koboldPlayer.headRotation = MathHelper.Lerp(koboldPlayer.headRotation, koboldPlayer.targetHeadRotation, 16f / 60);
-				player.headRotation = koboldPlayer.headRotation;
 			}
 		}
 
 		public override void PreUpdate(Player player)
 		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var koboldPlayer = player.GetModPlayer<KoboldPlayer>();
-			if (!player.dead) {
-				if (koboldPlayer.firingMine > 0) {
-					koboldPlayer.firingMine--;
-				}
-				if (koboldPlayer.firingMine < 0) {
-					koboldPlayer.firingMine = 0;
-				}
-				Lighting.AddLight(player.Center, player.eyeColor.ToVector3());
-				if (koboldPlayer.ExposedToSun()) {
-					player.AddBuff(BuffType<Troglodyte>(), 2);
+			if (mrPlagueRacesPlayer.statsEnabled) {
+				if (!player.dead) {
+					if (koboldPlayer.firingMine > 0) {
+						koboldPlayer.firingMine--;
+					}
+					if (koboldPlayer.firingMine < 0) {
+						koboldPlayer.firingMine = 0;
+					}
+					Lighting.AddLight(player.Center, player.eyeColor.ToVector3());
+					if (koboldPlayer.ExposedToSun()) {
+						player.AddBuff(BuffType<Troglodyte>(), 2);
+					}
 				}
 			}
 		}
