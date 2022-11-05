@@ -40,7 +40,7 @@ namespace MrPlagueRaces.Common.Races.Skeleton
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (mrPlagueRacesPlayer.statsEnabled) {
 				player.moveSpeed += 0.15f;
-				player.GetDamage(DamageClass.Generic).Base += 10f;
+				player.GetDamage(DamageClass.Generic) += 0.1f;
 				player.endurance -= 0.5f;
 				player.gills = true;
 			}

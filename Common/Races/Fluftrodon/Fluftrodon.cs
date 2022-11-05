@@ -38,7 +38,7 @@ namespace MrPlagueRaces.Common.Races.Fluftrodon
 				player.tileSpeed += 0.5f;
 				player.blockRange += 10;
 				player.pickSpeed -= 0.25f;
-				player.GetDamage(DamageClass.Generic).Base -= 15f;
+				player.GetDamage(DamageClass.Generic) -= 0.15f;
 			}
 		}
 

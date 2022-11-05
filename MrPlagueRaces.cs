@@ -73,6 +73,7 @@ namespace MrPlagueRaces
 					MrPlagueRacesPlayer.colorDetail.R = reader.ReadByte();
 					MrPlagueRacesPlayer.colorDetail.G = reader.ReadByte();
 					MrPlagueRacesPlayer.colorDetail.B = reader.ReadByte();
+					MrPlagueRacesPlayer.colorDetail.A = reader.ReadByte();
 					MrPlagueRacesPlayer.colorEyes.R = reader.ReadByte();
 					MrPlagueRacesPlayer.colorEyes.G = reader.ReadByte();
 					MrPlagueRacesPlayer.colorEyes.B = reader.ReadByte();

@@ -42,7 +42,7 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 			if (mrPlagueRacesPlayer.statsEnabled) {
 				player.tileSpeed += 0.1f;
 				player.pickSpeed -= 0.3f;
-				player.GetDamage(DamageClass.Generic).Base -= 5f;
+				player.GetDamage(DamageClass.Generic) -= 0.5f;
 				if (player.mount.Type == MountType<Crawl>()) {
 					player.noKnockback = true;
 				}

@@ -34,7 +34,7 @@ namespace MrPlagueRaces.Common.Races.Mushfolk
 			if (mrPlagueRacesPlayer.statsEnabled) {
 				player.statLifeMax2 += (player.statLifeMax2 / 10);
 				player.moveSpeed += 0.05f;
-				player.GetDamage(DamageClass.Generic).Base -= 1f;
+				player.GetDamage(DamageClass.Generic) -= 0.1f;
 				player.endurance -= 0.25f;
 			}
 		}

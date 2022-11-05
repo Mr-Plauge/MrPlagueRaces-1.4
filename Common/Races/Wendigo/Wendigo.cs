@@ -33,7 +33,7 @@ namespace MrPlagueRaces.Common.Races.Wendigo
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (mrPlagueRacesPlayer.statsEnabled) {
 				player.moveSpeed += 0.25f;
-				player.GetDamage(DamageClass.Generic).Base += 10f;
+				player.GetDamage(DamageClass.Generic) += 0.15f;
 				player.endurance -= 0.1f;
 			}
 		}

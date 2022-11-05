@@ -35,7 +35,7 @@ namespace MrPlagueRaces.Common.Races.Lycan
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (mrPlagueRacesPlayer.statsEnabled) {
-				player.GetDamage(DamageClass.Generic).Base += 15f;
+				player.GetDamage(DamageClass.Generic) += 0.15f;
 				player.endurance += 0.1f;
 				player.moveSpeed += 0.15f;
 				player.jumpSpeedBoost += 0.05f;

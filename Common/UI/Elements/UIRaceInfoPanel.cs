@@ -100,16 +100,16 @@ namespace MrPlagueRaces.Common.UI.States
 			enduranceComparison = _player.endurance;
 			thornsComparison = _player.thorns;
 			lavaMaxComparison = _player.lavaMax;
-			meleeDamageComparison = _player.GetDamage(DamageClass.Melee).Base;
+			meleeDamageComparison = ((_player.GetDamage(DamageClass.Melee).Additive - 1) * 100);
 			meleeSpeedComparison = _player.GetAttackSpeed(DamageClass.Melee);
-			rangedDamageComparison = _player.GetDamage(DamageClass.Ranged).Base;
-			magicDamageComparison = _player.GetDamage(DamageClass.Magic).Base;
+			rangedDamageComparison = ((_player.GetDamage(DamageClass.Ranged).Additive - 1) * 100);
+			magicDamageComparison = ((_player.GetDamage(DamageClass.Magic).Additive - 1) * 100);
 			manaCostComparison = _player.manaCost;
-			minionDamageComparison = _player.GetDamage(DamageClass.Summon).Base;
+			minionDamageComparison = ((_player.GetDamage(DamageClass.Summon).Additive - 1) * 100);
 			maxMinionsComparison = _player.maxMinions;
 			minionKBComparison = _player.GetKnockback(DamageClass.Summon).Base;
 			maxTurretsComparison = _player.maxTurrets;
-			allDamageComparison = _player.GetDamage(DamageClass.Generic).Base;
+			allDamageComparison = ((_player.GetDamage(DamageClass.Generic).Additive - 1) * 100);
 			meleeCritComparison = _player.GetCritChance(DamageClass.Melee);
 			rangedCritComparison = _player.GetCritChance(DamageClass.Ranged);
 			magicCritComparison = _player.GetCritChance(DamageClass.Magic);
@@ -141,16 +141,16 @@ namespace MrPlagueRaces.Common.UI.States
 			endurancePercentage = _player.endurance;
 			thornsPercentage = _player.thorns;
 			lavaMaxPercentage = _player.lavaMax;
-			meleeDamagePercentage = _player.GetDamage(DamageClass.Melee).Base;
+			meleeDamagePercentage = ((_player.GetDamage(DamageClass.Melee).Additive - 1) * 100);
 			meleeSpeedPercentage = _player.GetAttackSpeed(DamageClass.Melee);
-			rangedDamagePercentage = _player.GetDamage(DamageClass.Ranged).Base;
-			magicDamagePercentage = _player.GetDamage(DamageClass.Magic).Base;
+			rangedDamagePercentage = ((_player.GetDamage(DamageClass.Ranged).Additive - 1) * 100);
+			magicDamagePercentage = ((_player.GetDamage(DamageClass.Magic).Additive - 1) * 100);
 			manaCostPercentage = _player.manaCost;
-			minionDamagePercentage = _player.GetDamage(DamageClass.Summon).Base;
+			minionDamagePercentage = ((_player.GetDamage(DamageClass.Summon).Additive - 1) * 100);
 			maxMinionsPercentage = _player.maxMinions;
 			minionKBPercentage = _player.GetKnockback(DamageClass.Summon).Base;
 			maxTurretsPercentage = _player.maxTurrets;
-			allDamagePercentage = _player.GetDamage(DamageClass.Generic).Base;
+			allDamagePercentage = ((_player.GetDamage(DamageClass.Generic).Additive - 1) * 100);
 			meleeCritPercentage = _player.GetCritChance(DamageClass.Melee);
 			rangedCritPercentage = _player.GetCritChance(DamageClass.Ranged);
 			magicCritPercentage = _player.GetCritChance(DamageClass.Magic);
@@ -230,15 +230,15 @@ namespace MrPlagueRaces.Common.UI.States
 				StatCalculationSystem.GetFloatDifference(0f, _player.endurance),
 				StatCalculationSystem.GetFloatDifference(0f, _player.thorns),
 				StatCalculationSystem.GetIntDifference(0, _player.lavaMax, lavaMaxComparison, lavaMaxPercentage),
-				StatCalculationSystem.GetFloatDifference(0f, _player.GetDamage(DamageClass.Melee).Base, true, false, true),
+				StatCalculationSystem.GetFloatDifference(0f, ((_player.GetDamage(DamageClass.Melee).Additive - 1) * 100), true, false, true),
 				StatCalculationSystem.GetFloatDifference(1f, _player.GetAttackSpeed(DamageClass.Melee)),
-				StatCalculationSystem.GetFloatDifference(0f, _player.GetDamage(DamageClass.Ranged).Base, true, false, true),
-				StatCalculationSystem.GetFloatDifference(0f, _player.GetDamage(DamageClass.Magic).Base, true, false, true),
-				StatCalculationSystem.GetFloatDifference(0f, _player.GetDamage(DamageClass.Summon).Base, true, false, true),
+				StatCalculationSystem.GetFloatDifference(0f, ((_player.GetDamage(DamageClass.Ranged).Additive - 1) * 100), true, false, true),
+				StatCalculationSystem.GetFloatDifference(0f, ((_player.GetDamage(DamageClass.Magic).Additive - 1) * 100), true, false, true),
+				StatCalculationSystem.GetFloatDifference(0f, ((_player.GetDamage(DamageClass.Summon).Additive - 1) * 100), true, false, true),
 				StatCalculationSystem.GetIntDifference(1, _player.maxMinions, maxMinionsComparison, maxMinionsPercentage),
 				StatCalculationSystem.GetFloatDifference(0f, _player.GetKnockback(DamageClass.Summon).Base, true, false, true),
 				StatCalculationSystem.GetIntDifference(1, _player.maxTurrets, maxTurretsComparison, maxTurretsPercentage),
-				StatCalculationSystem.GetFloatDifference(0f, _player.GetDamage(DamageClass.Generic).Base, true, false, true),
+				StatCalculationSystem.GetFloatDifference(0f, ((_player.GetDamage(DamageClass.Generic).Additive - 1) * 100), true, false, true),
 				StatCalculationSystem.GetFloatDifference(0f, _player.GetCritChance(DamageClass.Melee), true, false, true),
 				StatCalculationSystem.GetFloatDifference(0f, _player.GetCritChance(DamageClass.Ranged), true, false, true),
 				StatCalculationSystem.GetFloatDifference(0f, _player.GetCritChance(DamageClass.Magic), true, false, true),

@@ -100,6 +100,7 @@ namespace MrPlagueRaces
 				packet.Write(colorDetail.R);
 				packet.Write(colorDetail.G);
 				packet.Write(colorDetail.B);
+				packet.Write(colorDetail.A);
 				packet.Write(colorEyes.R);
 				packet.Write(colorEyes.G);
 				packet.Write(colorEyes.B);

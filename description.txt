@@ -14,3 +14,4 @@ Each race alters the player's appearance and provides custom abilities.
 - Totodex#1653 (kobold suggester)
 - Mirsario#0228 (cleaned up the codebase earlier in development. Sorry, I made it all messy again -mrplague)
 - SnowMelon#1726 (helped with audio volume)
+- Tianic#4354 (provided the mathematics for fixing a stat calculation error)
