@@ -105,8 +105,6 @@ namespace MrPlagueRaces
                 packet.Write(colorHair.G);
                 packet.Write(colorHair.B);
                 packet.Write((bool)statsEnabled);
-                packet.Write((bool)gotStatToggler);
-
                 packet.Send(toWho, fromWho);
             }
         }

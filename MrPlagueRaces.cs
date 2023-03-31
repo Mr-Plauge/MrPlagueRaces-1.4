@@ -84,7 +84,6 @@ namespace MrPlagueRaces
 					MrPlagueRacesPlayer.colorHair.G = reader.ReadByte();
 					MrPlagueRacesPlayer.colorHair.B = reader.ReadByte();
 					MrPlagueRacesPlayer.statsEnabled = reader.ReadBoolean();
-					MrPlagueRacesPlayer.gotStatToggler = reader.ReadBoolean();
 					break;
 				case MrPlagueRacesMessageType.DerpkinSyncPlayer:
 					playernumber = reader.ReadByte();
