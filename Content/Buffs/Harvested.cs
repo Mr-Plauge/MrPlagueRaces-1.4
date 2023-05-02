@@ -23,23 +23,23 @@ namespace MrPlagueRaces.Content.Buffs
 
 		public override void Update(Player player, ref int buffIndex) {
 			player.GetModPlayer<HarvestedPlayer>().harvested = true;
-		}
+            player.statDefense /= 4;
+        }
 
 		public override void Update(NPC npc, ref int buffIndex) {
 			npc.GetGlobalNPC<HarvestedNPC>().harvested = true;
-		}
+        }
 	}
 
 	public class HarvestedPlayer : ModPlayer
 	{
 		public bool harvested;
 
-		public override void ResetEffects() {
-			harvested = false;
-			Player.statDefense /= 4;
-		}
+        public override void ResetEffects() {
+            harvested = false;
+        }
 
-		public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
+        public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
 			if (harvested && Main.rand.Next(5) < 4 && !Player.dead) {
 				Dust dust19 = Dust.NewDustDirect(new Vector2(Player.position.X - 2f, Player.position.Y - 2f), Player.width + 4, Player.height + 4, 27, Player.velocity.X * 0.4f, Player.velocity.Y * 0.4f, 180, default(Color), 1.95f);
 				dust19.noGravity = true;
@@ -62,8 +62,9 @@ namespace MrPlagueRaces.Content.Buffs
 		public bool harvested;
 
 		public override void ResetEffects(NPC npc) {
+
 			harvested = false;
-			npc.defense /= 4;
+			
 		}
 
 		public override void DrawEffects(NPC npc, ref Color drawColor) {

@@ -27,7 +27,7 @@ namespace MrPlagueRaces.Content.Buffs
 
 		public override void Update(NPC npc, ref int buffIndex) {
 			npc.GetGlobalNPC<TargetedNPC>().targeted = true;
-		}
+        }
 	}
 
 	public class TargetedPlayer : ModPlayer
@@ -72,7 +72,6 @@ namespace MrPlagueRaces.Content.Buffs
 
 		public override void ResetEffects(NPC npc) {
 			targeted = false;
-			npc.defense /= 2;
 		}
 
 		public override void UpdateLifeRegen(NPC npc, ref int damage) {
