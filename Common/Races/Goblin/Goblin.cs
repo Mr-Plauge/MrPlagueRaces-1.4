@@ -184,7 +184,7 @@ namespace MrPlagueRaces.Common.Races.Goblin
 	public class GoblinPlayer : ModPlayer
 	{
 		public int[] AccessoryPrefixes = { PrefixType<Combustible>(), PrefixType<Constructive>(), PrefixType<Flawless>(), PrefixType<Impactful>(), PrefixType<Hexed>(), PrefixType<Luminescent>(), PrefixType<Regenerative>(), PrefixType<Reinforced>(), PrefixType<Resilient>(), PrefixType<Streamlined>(), PrefixType<Undying>(), PrefixType<Volatile>() };
-		public int[] AnyWeaponPrefixes = { PrefixType<Accelerative>(), PrefixType<Bewitched>(), PrefixType<Bombarding>(), PrefixType<Explosive>(), PrefixType<Immolating>(), PrefixType<Revitalizing>(), PrefixType<Targeting>(), PrefixType<Warping>() };
+		public int[] AnyWeaponPrefixes = { PrefixType<Accelerative>(), PrefixType<Bewitched>(), PrefixType<Bombarding>(), PrefixType<Explosive>(), PrefixType<Immolating>(), PrefixType<Revitalizing>(), PrefixType<Warping>() };
 		public int[] ToolPrefixes = { PrefixType<Fortunate>(), PrefixType<Recreational>(), PrefixType<Trailblazing>(), PrefixType<Tranquilizing>() };
 
 		public int harvesterCounter;

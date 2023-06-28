@@ -75,7 +75,6 @@ namespace MrPlagueRaces.Content.Projectiles
 		{
 			Player player = Main.player[Projectile.owner];
 			target.AddBuff(BuffType<DarkInferno>(), 20);
-			target.AddBuff(BuffType<Harvested>(), 600);
 			player.AddBuff(BuffType<SoulfireImbuement>(), 120);
 		}
 		
