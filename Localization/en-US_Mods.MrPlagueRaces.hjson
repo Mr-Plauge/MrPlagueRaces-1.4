@@ -1,0 +1,44 @@
+Keybinds: {
+	"Primary Racial Ability.DisplayName": Primary  Racial  Ability
+	"Secondary Racial Ability.DisplayName": Secondary  Racial  Ability
+	"Tertiary Racial Ability.DisplayName": Tertiary  Racial  Ability
+	"Quaternary Racial Ability.DisplayName": Quaternary  Racial  Ability
+}
+
+Items: {
+	InvisibleMask: {
+		DisplayName: Invisible Mask
+		Tooltip: ""
+	}
+
+	InvisibleShirt: {
+		DisplayName: Invisible Shirt
+		Tooltip: ""
+	}
+
+	InvisibleTrousers: {
+		DisplayName: Invisible Trousers
+		Tooltip: ""
+	}
+}
+
+Configs: {
+	MrPlagueRacesConfig: {
+		DisplayName: Mr Plague Races Config
+
+		raceStats: {
+			Label: Toggle Race Stats
+			Tooltip: Toggle race stats
+		}
+
+		raceStatsImpact: {
+			Label: Racial Stat impact
+			Tooltip: Racial Stat impact
+		}
+
+		experimentalContent: {
+			Label: Toggle Experimental Content
+			Tooltip: Toggle experimental content
+		}
+	}
+}
