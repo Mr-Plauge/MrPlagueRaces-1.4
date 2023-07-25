@@ -1,0 +1,300 @@
+
+Mods: {
+	MrPlagueRaces: {
+		Buffs: {
+			AccelerativeBuff: {
+				DisplayName: Accelerative
+				Description: You accelerate to unbearable degrees
+			}
+
+			Airborne: {
+				DisplayName: Airborne
+				Description: Unable to charge-jump
+			}
+
+			Bodyswapped: {
+				DisplayName: Bodyswapped
+				Description: Unable to switch bodies
+			}
+
+			Bombarded: {
+				DisplayName: Bombarded
+				Description: Bombarding is on cooldown
+			}
+
+			BurnedOut: {
+				DisplayName: Burned Out
+				Description: Unable to breathe smoke
+			}
+
+			DarkInferno: {
+				DisplayName: Dark Inferno
+				Description: You are on fire
+			}
+
+			Dashed: {
+				DisplayName: Dashed
+				Description: Unable to swoop
+			}
+
+			Fathoming: {
+				DisplayName: Fathoming
+				Description: Unable to summon Shadowflame Harvesters
+			}
+
+			Fatigued: {
+				DisplayName: Fatigued
+				Description: Unable to launch feather volleys
+			}
+
+			FlawlessBuff: {
+				DisplayName: Flawless
+				Description: Critical strike chance and damage are greatly increased
+			}
+
+			FluidGrace: {
+				DisplayName: Fluid Grace
+				Description: Attack damage and movement speed are increased
+			}
+
+			Harvested: {
+				DisplayName: Harvested
+				Description: Defense is quartered
+			}
+
+			Invoked: {
+				DisplayName: Invoked
+				Description: Bewitched is on cooldown
+			}
+
+			MolecularRecoil: {
+				DisplayName: Molecular Recoil
+				Description: Unable to rend
+			}
+
+			Mycobuffer: {
+				DisplayName: Mycobuffer
+				Description: Mycelium is regenerating your bodily tissue
+			}
+
+			Mycobulwark: {
+				DisplayName: Mycobulwark
+				Description: Mycelium is holding you together
+			}
+
+			Outstretched: {
+				DisplayName: Outstretched
+				Description: Unable to leap
+			}
+
+			ParticleDeacceleration: {
+				DisplayName: Particle Deacceleration
+				Description: Unable to phase dash
+			}
+
+			Photosensitive: {
+				DisplayName: Photosensitive
+				Description: You are set on fire when attacked
+			}
+
+			Reanimated: {
+				DisplayName: Reanimated
+				Description: Unable to become a spirit
+			}
+
+			Rebounded: {
+				DisplayName: Rebounded
+				Description: Unable to replay timelines
+			}
+
+			Refueling: {
+				DisplayName: Refueling
+				Description: Unable to fire Sparkmines and Clustermines
+			}
+
+			Reincarnated: {
+				DisplayName: Reincarnated
+				Description: Undying is on cooldown
+			}
+
+			Rematerializing: {
+				DisplayName: Rematerializing
+				Description: Unable to rewind
+			}
+
+			ResilientBuff: {
+				DisplayName: Resilient
+				Description: Regeneration and defense are increased
+			}
+
+			RevitalizingBuff: {
+				DisplayName: Revitalizing
+				Description: Regeneration is increased
+			}
+
+			Shielded: {
+				DisplayName: Shielded
+				Description: Reinforced is on cooldown
+			}
+
+			Sluggish: {
+				DisplayName: Sluggish
+				Description: Staying out of the sunlight lowers your regeneration and defense
+			}
+
+			SoulfireImbuement: {
+				DisplayName: Soulfire Imbuement
+				Description: Mana regeneration is greatly increased
+			}
+
+			SoulFracture: {
+				DisplayName: Soul Fracture
+				Description:
+					'''
+					A wound so deep it cuts through the spirit
+					Defense is reduced to 1%
+					'''
+			}
+
+			Sporeless: {
+				DisplayName: Sporeless
+				Description: Unable to generate Trapshrooms or Nymphshrooms
+			}
+
+			Targeted: {
+				DisplayName: Targeted
+				Description: Defense is halved and you are set on fire
+			}
+
+			TemporalRecoil: {
+				DisplayName: Temporal Recoil
+				Description: Unable to rewind time
+			}
+
+			Tethered: {
+				DisplayName: Tethered
+				Description: You are stuck
+			}
+
+			Tranquilized: {
+				DisplayName: Tranquilized
+				Description: You are on fire
+			}
+
+			Troglodyte: {
+				DisplayName: Troglodyte
+				Description: The sun lowers your endurance and makes you slower
+			}
+
+			Unravelled: {
+				DisplayName: Unravelled
+				Description: Unable to spin
+			}
+
+			Unseen: {
+				DisplayName: Unseen
+				Description:
+					'''
+					Out of sight, out of mind
+					Ignored by most enemies
+					Dealt damage is greatly increased
+					'''
+			}
+		}
+
+		Items: {
+			InvisibleMask: {
+				DisplayName: Invisible Mask
+				Tooltip: Hides your headwear
+			}
+
+			InvisibleShirt: {
+				DisplayName: Invisible Shirt
+				Tooltip: Hides your torsowear
+			}
+
+			InvisibleTrousers: {
+				DisplayName: Invisible Trousers
+				Tooltip: Hides your legwear
+			}
+
+			Stat_Toggler: {
+				DisplayName: Racial Stat Nullifier
+				Tooltip: Toggles racial stats and abilities on and off for the current character when used
+			}
+		}
+
+		Prefixes: {
+			Accelerative.DisplayName: Accelerative
+			Bewitched.DisplayName: Bewitched
+			Bombarding.DisplayName: Bombarding
+			Combustible.DisplayName: Combustible
+			Constructive.DisplayName: Constructive
+			Explosive.DisplayName: Explosive
+			Flawless.DisplayName: Flawless
+			Fortunate.DisplayName: Fortunate
+			Hexed.DisplayName: Hexed
+			Immolating.DisplayName: Immolating
+			Impactful.DisplayName: Impactful
+			Luminescent.DisplayName: Luminescent
+			Recreational.DisplayName: Recreational
+			Regenerative.DisplayName: Regenerative
+			Reinforced.DisplayName: Reinforced
+			Resilient.DisplayName: Resilient
+			Revitalizing.DisplayName: Revitalizing
+			Streamlined.DisplayName: Streamlined
+			Targeting.DisplayName: Targeting
+			Trailblazing.DisplayName: Trailblazing
+			Tranquilizing.DisplayName: Tranquilizing
+			Undying.DisplayName: Undying
+			Volatile.DisplayName: Volatile
+			Warping.DisplayName: Warping
+		}
+
+		Projectiles: {
+			Barrier.DisplayName: Barrier
+			BarrierGolem.DisplayName: BarrierGolem
+			BombardingFlame.DisplayName: Bombarding Flame
+			Boulder.DisplayName: Boulder
+			BoulderGolem.DisplayName: BoulderGolem
+			BouncyBoulder.DisplayName: BouncyBoulder
+			Breathmine.DisplayName: Breathmine
+			BreathSmoke.DisplayName: Breath Smoke
+			BurningSmoke.DisplayName: Burning Smoke
+			BurstSpores.DisplayName: Burst Spores
+			Clustermine.DisplayName: Clustermine
+			GolemCeilingGripper.DisplayName: GolemCeilingGripper
+			GolemSelect.DisplayName: Golem Select
+			GolemWallGripper.DisplayName: GolemWallGripper
+			HealingClot.DisplayName: Healing Clot
+			HealingSpores.DisplayName: Healing Spores
+			ImpactExplosion.DisplayName: Impact Explosion
+			KenkuFeather.DisplayName: Kenku Feather
+			Laser.DisplayName: Laser
+			LaserGolem.DisplayName: LaserGolem
+			LeechTongue.DisplayName: Leech Tongue
+			LifeBomb.DisplayName: LifeBomb
+			LifeGolem.DisplayName: LifeGolem
+			MolotovFireball.DisplayName: Molotov Fireball
+			MolotovFlame.DisplayName: Molotov Flame
+			Nymphshroom.DisplayName: Nymphshroom
+			PaintMenu.DisplayName: Paint Menu
+			PuffDust.DisplayName: Puff Dust
+			RendClaw.DisplayName: Rend Claw
+			ShadowflameHarvester.DisplayName: Shadowflame Harvester
+			ShadowflameSeeker.DisplayName: Shadowflame Seeker
+			Skeleton_One.DisplayName: Skeleton
+			Skeleton_Three.DisplayName: Skeleton
+			Skeleton_Two.DisplayName: Skeleton
+			SoulClaw.DisplayName: Soul Claw
+			Sparkmine.DisplayName: Sparkmine
+			SpiderBullet.DisplayName: Spider Bullet
+			SpiderGolem.DisplayName: SpiderGolem
+			Spirit.DisplayName: Spirit
+			Tether.DisplayName: Tether
+			TetherGolem.DisplayName: TetherGolem
+			Trapshroom.DisplayName: Trapshroom
+			VolatileExplosion.DisplayName: Volatile Explosion
+		}
+	}
+}

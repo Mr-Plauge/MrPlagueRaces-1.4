@@ -13,10 +13,10 @@ namespace MrPlagueRaces.Common.Systems
 	public class UIRedirectionSystem : ModSystem
 	{
 
-		public override void Load() => On.Terraria.Main.Draw += InterceptCharacterCreationMenu;
-		public override void Unload() => On.Terraria.Main.Draw -= InterceptCharacterCreationMenu;
+		public override void Load() => Terraria.On_Main.Draw += InterceptCharacterCreationMenu;
+		public override void Unload() => Terraria.On_Main.Draw -= InterceptCharacterCreationMenu;
 
-		private void InterceptCharacterCreationMenu(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
+		private void InterceptCharacterCreationMenu(Terraria.On_Main.orig_Draw orig, Main self, GameTime gameTime)
 		{
 			UserInterface userInterface = Main.gameMenu ? Main.MenuUI : Main.InGameUI;
 			if(userInterface.CurrentState is UICharacterCreation) {

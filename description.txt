@@ -1,14 +1,14 @@
-[c/4DBF60:Description:]
+[c/ed7873:Description:]
 MrPlague's Authentic Races adds playable races to the game, which are selectable in the player creation menu.
 Each race alters the player's appearance and provides custom abilities.
 
-[c/4DBF60:Developed By:]
-- MrPlague#0079 (main developer)
+[c/ed7873:Developed By:]
+- _mrplague (MrPlague#0079) (main developer)
 - CrocWithShades#1798 (game balance)
 - ShaggyOverlord#6344 (game balance)
 - Havata#9178 (betatester)
 
-[c/4DBF60:Special Credits:]
+[c/ed7873:Special Credits:]
 - Pinsel the Fluftrodon#0115 (fluftrodon suggester)
 - Elle the Fluftrodon#9766 (fluftrodon suggester)
 - Totodex#1653 (kobold suggester)

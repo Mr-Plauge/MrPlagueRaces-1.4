@@ -12,8 +12,8 @@ namespace MrPlagueRaces.Content.Items
 	{
 		public override void SetStaticDefaults() 
 		{
-			DisplayName.SetDefault("Invisible Shirt");
-			Tooltip.SetDefault("Hides your torsowear");
+			// DisplayName.SetDefault("Invisible Shirt");
+			// Tooltip.SetDefault("Hides your torsowear");
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 

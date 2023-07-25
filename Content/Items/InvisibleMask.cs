@@ -13,8 +13,8 @@ namespace MrPlagueRaces.Content.Items
 	{
 		public override void SetStaticDefaults() 
 		{
-			DisplayName.SetDefault("Invisible Mask");
-			Tooltip.SetDefault("Hides your headwear");
+			// DisplayName.SetDefault("Invisible Mask");
+			// Tooltip.SetDefault("Hides your headwear");
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ArmorIDs.Head.Sets.DrawFullHair[Item.headSlot] = true;
 		}

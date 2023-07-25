@@ -327,7 +327,7 @@ namespace MrPlagueRaces.Common.UI.States
 					Left = StyleDimension.FromPixels((float)j * 46f + (float)num2 + 50f),
 					Top = StyleDimension.FromPixels(num)
 				};
-				uIClothStyleButton.OnMouseDown += Click_CharClothStyle;
+				uIClothStyleButton.OnLeftMouseDown += Click_CharClothStyle;
 				uIClothStyleButton.SetSnapPoint("Middle", j);
 				i.Append(uIClothStyleButton);
 			}
@@ -354,12 +354,12 @@ namespace MrPlagueRaces.Common.UI.States
 				i.Append(uIColoredImageButton);
 				if (k == 0)
 				{
-					uIColoredImageButton.OnMouseDown += Click_CharGenderMale;
+					uIColoredImageButton.OnLeftMouseDown += Click_CharGenderMale;
 					_genderMale = uIColoredImageButton;
 				}
 				else
 				{
-					uIColoredImageButton.OnMouseDown += Click_CharGenderFemale;
+					uIColoredImageButton.OnLeftMouseDown += Click_CharGenderFemale;
 					_genderFemale = uIColoredImageButton;
 				}
 				uIColoredImageButton.SetSnapPoint("Low", k * 4);
@@ -378,7 +378,7 @@ namespace MrPlagueRaces.Common.UI.States
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(0f, 0f)
 			};
-			uIColoredImageButton2.OnMouseDown += Click_CopyPlayerTemplate;
+			uIColoredImageButton2.OnLeftMouseDown += Click_CopyPlayerTemplate;
 			uIElement.Append(uIColoredImageButton2);
 			_copyTemplateButton = uIColoredImageButton2;
 			UIColoredImageButton uIColoredImageButton3 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Paste", (AssetRequestMode)1), isSmall: true)
@@ -386,7 +386,7 @@ namespace MrPlagueRaces.Common.UI.States
 				VAlign = 0.5f,
 				HAlign = 0.5f
 			};
-			uIColoredImageButton3.OnMouseDown += Click_PastePlayerTemplate;
+			uIColoredImageButton3.OnLeftMouseDown += Click_PastePlayerTemplate;
 			uIElement.Append(uIColoredImageButton3);
 			_pasteTemplateButton = uIColoredImageButton3;
 			UIColoredImageButton uIColoredImageButton4 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Randomize", (AssetRequestMode)1), isSmall: true)
@@ -394,7 +394,7 @@ namespace MrPlagueRaces.Common.UI.States
 				VAlign = 0.5f,
 				HAlign = 1f
 			};
-			uIColoredImageButton4.OnMouseDown += Click_RandomizePlayer;
+			uIColoredImageButton4.OnLeftMouseDown += Click_RandomizePlayer;
 			uIElement.Append(uIColoredImageButton4);
 			_randomizePlayerButton = uIColoredImageButton4;
 			uIColoredImageButton2.SetSnapPoint("Low", 1);
@@ -461,7 +461,7 @@ namespace MrPlagueRaces.Common.UI.States
 			UIElement selectContainer = new UIElement
 			{
 				Width = StyleDimension.FromPixelsAndPercent(0f, 1f),
-				Height = StyleDimension.FromPixelsAndPercent((82 * (raceCount / 5 + ((raceCount % 5 != 0) ? 1 : 0))) + 8, 0f)
+				Height = StyleDimension.FromPixelsAndPercent((82 * (raceCount / 5 + ((raceCount % 5 != 0) ? 1 : 0))) + (8 + 52 - 8), 0f)
 			};
 			raceSelectList.Add(selectContainer);
 			selectContainer.SetPadding(0f);
@@ -472,9 +472,21 @@ namespace MrPlagueRaces.Common.UI.States
 					Left = StyleDimension.FromPixels((float)(raceId % 5) * 48f),
 					Top = StyleDimension.FromPixels((float)(raceId / 5) * 84f)
 				};
-				uIRaceButton.OnMouseDown += Click_SelectRace;
+				uIRaceButton.OnLeftMouseDown += Click_SelectRace;
 				uIRaceButton.SetSnapPoint("Middle", raceId);
 				selectContainer.Append(uIRaceButton);
+				if (raceId == raceCount - 1) {
+					UIRaceSkeletonButton uIRaceSkeletonButton = new UIRaceSkeletonButton(_player)
+					{
+						Width = StyleDimension.FromPixelsAndPercent(0f, 0.6f),
+						HAlign = 0.5f,
+						Left = StyleDimension.FromPixels(-6f),
+						Top = StyleDimension.FromPixels((float)(raceId / 5) * 84f + 92f - 8)
+					};
+					uIRaceSkeletonButton.SetSnapPoint("Middle", raceCount);
+					uIRaceSkeletonButton.OnLeftMouseDown += Click_NamingSkeleton;
+					selectContainer.Append(uIRaceSkeletonButton);
+				}
 			}
 			UIElement raceStatPanel = new UIElement
 			{
@@ -517,6 +529,11 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			statContainer.Append(uIRaceInfoPanel);
 			uIRaceInfoPanel.UpdateStats();
+			/*UIRaceNameButton uIRaceSkeletonButton = new UIRaceNameButton(_player);
+			uIRaceSkeletonButton.Width = StyleDimension.FromPixelsAndPercent(0f, 0.25f);
+			uIRaceSkeletonButton.HAlign = 0.7f;
+			uIRaceSkeletonButton.Left = StyleDimension.FromPixels(-136);
+			i.Append(uIRaceSkeletonButton);*/
 			statContainer.Height = StyleDimension.FromPixelsAndPercent(uIRaceInfoPanel.totalHeight + 8, 0f);
 			_raceSelectContainer = i;
 		}
@@ -536,20 +553,20 @@ namespace MrPlagueRaces.Common.UI.States
 			categoryContainer.Append(CreateColorPicker(CategoryId.Shoes, "MrPlagueRaces/Assets/Textures/UI/ColorShoes", i, text));
 			_colorPickers[5].SetMiddleTexture(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/ColorEyeBack", (AssetRequestMode)1));
 			_clothingStylesCategoryButton = CreatePickerWithoutClick(CategoryId.Clothing, "MrPlagueRaces/Assets/Textures/UI/ClothStyleMale", i, text);
-			_clothingStylesCategoryButton.OnMouseDown += Click_ClothStyles;
+			_clothingStylesCategoryButton.OnLeftMouseDown += Click_ClothStyles;
 			_clothingStylesCategoryButton.SetSnapPoint("Top", 2);
 			categoryContainer.Append(_clothingStylesCategoryButton);
 			_hairStylesCategoryButton = CreatePickerWithoutClick(CategoryId.HairStyle, "MrPlagueRaces/Assets/Textures/UI/Style_Hair", i, text);
-			_hairStylesCategoryButton.OnMouseDown += Click_HairStyles;
+			_hairStylesCategoryButton.OnLeftMouseDown += Click_HairStyles;
 			_hairStylesCategoryButton.SetMiddleTexture(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Style_Arrow", (AssetRequestMode)1));
 			_hairStylesCategoryButton.SetSnapPoint("Top", 3);
 			categoryContainer.Append(_hairStylesCategoryButton);
 			_charInfoCategoryButton = CreatePickerWithoutClick(CategoryId.CharInfo, "MrPlagueRaces/Assets/Textures/UI/CharInfo", i, text);
-			_charInfoCategoryButton.OnMouseDown += Click_CharInfo;
+			_charInfoCategoryButton.OnLeftMouseDown += Click_CharInfo;
 			_charInfoCategoryButton.SetSnapPoint("Top", 0);
 			categoryContainer.Append(_charInfoCategoryButton);
 			_raceSelectCategoryButton = CreatePickerWithoutClick(CategoryId.RaceSelect, "MrPlagueRaces/Assets/Textures/UI/RaceSelect", i, text);
-			_raceSelectCategoryButton.OnMouseDown += Click_RaceSelect;
+			_raceSelectCategoryButton.OnLeftMouseDown += Click_RaceSelect;
 			_raceSelectCategoryButton.SetSnapPoint("Top", 1);
 			categoryContainer.Append(_raceSelectCategoryButton);
 			UpdateColorPickers();
@@ -603,7 +620,7 @@ namespace MrPlagueRaces.Common.UI.States
 			uIColoredImageButton.VAlign = 0f;
 			uIColoredImageButton.HAlign = 0f;
 			uIColoredImageButton.Left.Set(xPositionStart + (float)id * xPositionPerId, 0.5f);
-			uIColoredImageButton.OnMouseDown += Click_ColorPicker;
+			uIColoredImageButton.OnLeftMouseDown += Click_ColorPicker;
 			uIColoredImageButton.SetSnapPoint("Top", (int)id);
 			return uIColoredImageButton;
 		}
@@ -635,7 +652,7 @@ namespace MrPlagueRaces.Common.UI.States
 			uICharacterNameButton.HAlign = 0.5f;
 			i.Append(uICharacterNameButton);
 			_charName = uICharacterNameButton;
-			uICharacterNameButton.OnMouseDown += Click_Naming;
+			uICharacterNameButton.OnLeftMouseDown += Click_Naming;
 			uICharacterNameButton.SetSnapPoint("Middle", 0);
 			float num = 4f;
 			float num2 = 0f;
@@ -707,10 +724,10 @@ namespace MrPlagueRaces.Common.UI.States
 			uIElement.Append(uIDifficultyButton3);
 			_infoContainer = i;
 			_difficultyDescriptionText = uIText;
-			uIDifficultyButton4.OnMouseDown += UpdateDifficultyDescription;
-			uIDifficultyButton.OnMouseDown += UpdateDifficultyDescription;
-			uIDifficultyButton2.OnMouseDown += UpdateDifficultyDescription;
-			uIDifficultyButton3.OnMouseDown += UpdateDifficultyDescription;
+			uIDifficultyButton4.OnLeftMouseDown += UpdateDifficultyDescription;
+			uIDifficultyButton.OnLeftMouseDown += UpdateDifficultyDescription;
+			uIDifficultyButton2.OnLeftMouseDown += UpdateDifficultyDescription;
+			uIDifficultyButton3.OnLeftMouseDown += UpdateDifficultyDescription;
 			UpdateDifficultyDescription(null, null);
 			uIDifficultyButton4.SetSnapPoint("Middle", 1);
 			uIDifficultyButton.SetSnapPoint("Middle", 2);
@@ -784,7 +801,7 @@ namespace MrPlagueRaces.Common.UI.States
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(0f, 0f)
 			};
-			uIColoredImageButton.OnMouseDown += Click_CopyHex;
+			uIColoredImageButton.OnLeftMouseDown += Click_CopyHex;
 			uIElement.Append(uIColoredImageButton);
 			_copyHexButton = uIColoredImageButton;
 			UIColoredImageButton uIColoredImageButton2 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Paste", (AssetRequestMode)1), isSmall: true)
@@ -793,7 +810,7 @@ namespace MrPlagueRaces.Common.UI.States
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(40f, 0f)
 			};
-			uIColoredImageButton2.OnMouseDown += Click_PasteHex;
+			uIColoredImageButton2.OnLeftMouseDown += Click_PasteHex;
 			uIElement.Append(uIColoredImageButton2);
 			_pasteHexButton = uIColoredImageButton2;
 			UIColoredImageButton uIColoredImageButton3 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Randomize", (AssetRequestMode)1), isSmall: true)
@@ -802,7 +819,7 @@ namespace MrPlagueRaces.Common.UI.States
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(80f, 0f)
 			};
-			uIColoredImageButton3.OnMouseDown += Click_RandomizeSingleColor;
+			uIColoredImageButton3.OnLeftMouseDown += Click_RandomizeSingleColor;
 			uIElement.Append(uIColoredImageButton3);
 			_randomColorButton = uIColoredImageButton3;
 			_hslContainer = uIElement;
@@ -819,7 +836,7 @@ namespace MrPlagueRaces.Common.UI.States
 			uIColoredSlider.HAlign = 0f;
 			uIColoredSlider.Width = StyleDimension.FromPixelsAndPercent(-10f, 1f);
 			uIColoredSlider.Top.Set(30 * (int)id, 0f);
-			uIColoredSlider.OnMouseDown += Click_ColorPicker;
+			uIColoredSlider.OnLeftMouseDown += Click_ColorPicker;
 			uIColoredSlider.SetSnapPoint("Middle", (int)id, null, new Vector2(0f, 20f));
 			return uIColoredSlider;
 		}
@@ -972,7 +989,7 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			uITextPanel.OnMouseOver += FadedMouseOver;
 			uITextPanel.OnMouseOut += FadedMouseOut;
-			uITextPanel.OnMouseDown += Click_GoBack;
+			uITextPanel.OnLeftMouseDown += Click_GoBack;
 			uITextPanel.SetSnapPoint("Back", 0);
 			outerContainer.Append(uITextPanel);
 			UITextPanel<LocalizedText> uITextPanel2 = new UITextPanel<LocalizedText>(Language.GetText("UI.Create"), 0.7f, large: true)
@@ -985,7 +1002,7 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			uITextPanel2.OnMouseOver += FadedMouseOver;
 			uITextPanel2.OnMouseOut += FadedMouseOut;
-			uITextPanel2.OnMouseDown += Click_NamingAndCreating;
+			uITextPanel2.OnLeftMouseDown += Click_NamingAndCreating;
 			uITextPanel2.SetSnapPoint("Create", 0);
 			outerContainer.Append(uITextPanel2);
 		}
@@ -1326,6 +1343,16 @@ namespace MrPlagueRaces.Common.UI.States
 			Main.MenuUI.SetState(uIVirtualKeyboard);
 		}
 
+		private void Click_NamingSkeleton(UIMouseEvent evt, UIElement listeningElement)
+		{
+			SoundEngine.PlaySound(SoundID.MenuOpen);
+			_player.name = "";
+			Main.clrInput();
+			UICreateRace uIVirtualKeyboard = new UICreateRace();
+			//uIVirtualKeyboard.SetMaxInputLength(20);
+			Main.MenuUI.SetState(uIVirtualKeyboard);
+		}
+
 		private void Click_NamingAndCreating(UIMouseEvent evt, UIElement listeningElement)
 		{
 			SoundEngine.PlaySound(SoundID.MenuOpen);
@@ -1413,10 +1440,6 @@ namespace MrPlagueRaces.Common.UI.States
 			}
 			_player.savedPerPlayerFieldsThatArentInThePlayerClass = new Player.SavedPlayerDataWithAnnoyingRules();
 			CreativePowerManager.Instance.ResetDataForNewPlayer(_player);
-			PlayerLoader.SetStartInventory(_player, PlayerLoader.GetStartingItems(_player, from item in _player.inventory
-                                                                                           where !item.IsAir
-                                                                                           select item into x
-                                                                                           select x.Clone()));
 		}
 
 		private bool GetHexColor(string hexString, out Vector3 hsl)

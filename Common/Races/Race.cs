@@ -45,47 +45,5 @@ namespace MrPlagueRaces.Common.Races
 			ContentInstance.Register(this);
 			SetStaticDefaults();
 		}
-
-		public virtual void ResetEffects(Player player) { }
-		public virtual void UpdateDead(Player player) { }
-		public virtual void UpdateBadLifeRegen(Player player) { }
-		public virtual void UpdateLifeRegen(Player player) { }
-		public virtual void NaturalLifeRegen(Player player, ref float regen) { }
-		public virtual void PreUpdate(Player player) { }
-		public virtual void ProcessTriggers(Player player, TriggersSet triggersSet) { }
-		public virtual bool PreHurt(Player player, bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter) => true;
-		public virtual void Hurt(Player player, bool pvp, bool quiet, double damage, int hitDirection, bool crit, int cooldownCounter) { }
-		public virtual void PostHurt(Player player, bool pvp, bool quiet, double damage, int hitDirection, bool crit, int cooldownCounter) { }
-		public virtual bool PreKill(Player player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) => true;
-		public virtual void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) { }
-		public virtual void OnHitAnything(Player player, float x, float y, Entity victim) { }
-		public virtual bool? CanHitNPC(Player player, Item item, NPC target) => null;
-		public virtual void ModifyHitNPC(Player player, Item item, NPC target, ref int damage, ref float knockback, ref bool crit) { }
-		public virtual void OnHitNPC(Player player, Item item, NPC target, int damage, float knockback, bool crit) { }
-		public virtual bool? CanHitNPCWithProj(Player player, Projectile proj, NPC target) => null;
-		public virtual void ModifyHitNPCWithProj(Player player, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) { }
-		public virtual void OnHitNPCWithProj(Player player, Projectile proj, NPC target, int damage, float knockback, bool crit) { }
-		public virtual bool CanHitPvp(Player player, Item item, Player target) => true;
-		public virtual void ModifyHitPvp(Player player, Item item, Player target, ref int damage, ref bool crit) { }
-		public virtual void OnHitPvp(Player player, Item item, Player target, int damage, bool crit) { }
-		public virtual bool CanHitPvpWithProj(Player player, Projectile proj, Player target) => true;
-		public virtual void ModifyHitPvpWithProj(Player player, Projectile proj, Player target, ref int damage, ref bool crit) { }
-		public virtual void OnHitPvpWithProj(Player player, Projectile proj, Player target, int damage, bool crit) { }
-		public virtual bool CanBeHitByNPC(Player player, NPC npc, ref int cooldownSlot) => true;
-		public virtual void ModifyHitByNPC(Player player, NPC npc, ref int damage, ref bool crit) { }
-		public virtual void OnHitByNPC(Player player, NPC npc, int damage, bool crit) { }
-		public virtual bool CanBeHitByProjectile(Player player, Projectile proj) => true;
-		public virtual void ModifyHitByProjectile(Player player, Projectile proj, ref int damage, ref bool crit) { }
-		public virtual void OnHitByProjectile(Player player, Projectile proj, int damage, bool crit) { }
-		public virtual void ModifyDrawInfo(Player player, ref PlayerDrawSet drawInfo) { }
-		public virtual void ModifyDrawLayerOrdering(Player player, IDictionary<PlayerDrawLayer, PlayerDrawLayer.Position> positions) { }
-		public virtual void HideDrawLayers(Player player, PlayerDrawSet drawInfo) { }
-		public virtual void ModifyScreenPosition(Player player) { }
-		public virtual void ModifyZoom(Player player, ref float zoom) { }
-		public virtual void OnEnterWorld(Player player) { }
-		public virtual void OnRespawn(Player player) { }
-		public virtual bool CanUseItem(Player player, Item item) => true;
-		public virtual IEnumerable<Item> AddStartingItems(Player player, bool mediumCoreDeath) => Enumerable.Empty<Item>();
-		public virtual void ModifyStartingInventory(Player player, IReadOnlyDictionary<string, List<Item>> itemsByMod, bool mediumCoreDeath) { }
 	}
 }

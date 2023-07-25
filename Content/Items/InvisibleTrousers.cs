@@ -13,8 +13,8 @@ namespace MrPlagueRaces.Content.Items
 	{
 		public override void SetStaticDefaults() 
 		{
-			DisplayName.SetDefault("Invisible Trousers");
-			Tooltip.SetDefault("Hides your legwear");
+			// DisplayName.SetDefault("Invisible Trousers");
+			// Tooltip.SetDefault("Hides your legwear");
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
