@@ -15,7 +15,6 @@ namespace MrPlagueRaces.Common.Races.Human
 		public override void Load()
         {
 			Description = "Surprisingly durable and resilient, Humans can adapt to any situation.";
-			AbilitiesDescription = $"placeholder description. Contact _mrplague on discord if you see this.";
 			StarterShirt = true;
 			StarterPants = true;
 			HairColor = new Color(215, 90, 55);

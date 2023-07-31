@@ -139,6 +139,12 @@ namespace MrPlagueRaces
 			}
 		}
 
+		public override void ModifyHurt(ref Player.HurtModifiers modifiers) {
+			if (race != null) {
+				modifiers.DisableSound();
+			}
+		}
+
 		public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
 		{
 			if (race != null)
