@@ -1,4 +1,4 @@
 displayName = [c/ed7873:MrPlague's Authentic Races]
 author = MrPlague
-version = 0.2.11
+version = 0.2.12
 homepage = https://discord.gg/F5mTFJP
