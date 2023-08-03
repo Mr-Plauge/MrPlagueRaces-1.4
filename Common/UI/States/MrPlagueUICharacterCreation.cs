@@ -1440,6 +1440,10 @@ namespace MrPlagueRaces.Common.UI.States
 			}
 			_player.savedPerPlayerFieldsThatArentInThePlayerClass = new Player.SavedPlayerDataWithAnnoyingRules();
 			CreativePowerManager.Instance.ResetDataForNewPlayer(_player);
+			PlayerLoader.SetStartInventory(_player, PlayerLoader.GetStartingItems(_player, from item in _player.inventory
+                                                                                           where !item.IsAir
+                                                                                           select item into x
+                                                                                           select x.Clone()));
 		}
 
 		private bool GetHexColor(string hexString, out Vector3 hsl)
