@@ -58,10 +58,8 @@ namespace MrPlagueRaces.Common.Races
 		public virtual bool PreKill(Player player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) => true;
 		public virtual void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) { }
 		public virtual void OnHitAnything(Player player, float x, float y, Entity victim) { }
-		public virtual bool CanHitNPC(Player player, NPC target) => true;
 		public virtual void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers) { }
 		public virtual void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone) { }
-		public virtual bool CanHitNPCWithProj(Player player, Projectile proj, NPC target) => true;
 		public virtual void ModifyHitNPCWithProj(Player player, Projectile proj, NPC target, ref NPC.HitModifiers modifiers) { }
 		public virtual void OnHitNPCWithProj(Player player, Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) { }
 		public virtual bool CanHitPvp(Player player, Item item, Player target) => true;

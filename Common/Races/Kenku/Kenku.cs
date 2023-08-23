@@ -29,5 +29,21 @@ namespace MrPlagueRaces.Common.Races.Kenku
 			ShirtColor = new Color(201, 180, 177);
 			UnderShirtColor = new Color(199, 122, 156);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.2f;
+				player.jumpSpeedBoost += 0.15f;
+				player.statLifeMax2 -= (player.statLifeMax2 / 3);
+				player.endurance -= 0.3f;
+				player.rocketTime = 0;
+				player.rocketTimeMax = 0;
+				/*if (player.statLifeMax2 > 160) {
+					player.noFallDmg = true;
+				}*/
+			}
+		}
 	}
 }

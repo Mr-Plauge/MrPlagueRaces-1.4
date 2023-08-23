@@ -25,5 +25,16 @@ namespace MrPlagueRaces.Common.Races.Mushfolk
 			DetailColor = new Color(239, 222, 202);
 			EyeColor = new Color(138, 159, 255);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.statLifeMax2 += (player.statLifeMax2 / 10);
+				player.moveSpeed += 0.05f;
+				player.GetDamage(DamageClass.Generic) -= 0.1f;
+				player.endurance -= 0.25f;
+			}
+		}
 	}
 }

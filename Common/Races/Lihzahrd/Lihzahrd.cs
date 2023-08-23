@@ -32,5 +32,18 @@ namespace MrPlagueRaces.Common.Races.Lihzahrd
 			ShirtColor = new Color(201, 110, 75);
 			UnderShirtColor = new Color(137, 161, 214);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.tileSpeed += 0.1f;
+				player.pickSpeed -= 0.3f;
+				player.GetDamage(DamageClass.Generic) -= 0.5f;
+				/*if (player.mount.Type == MountType<Crawl>()) {
+					player.noKnockback = true;
+				}*/
+			}
+		}
 	}
 }

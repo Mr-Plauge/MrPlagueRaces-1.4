@@ -25,5 +25,15 @@ namespace MrPlagueRaces.Common.Races.Wendigo
 			DetailColor = new Color(57, 59, 70);
 			EyeColor = new Color(118, 194, 255);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.25f;
+				player.GetDamage(DamageClass.Generic) += 0.15f;
+				player.endurance -= 0.1f;
+			}
+		}
 	}
 }

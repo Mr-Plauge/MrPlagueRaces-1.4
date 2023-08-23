@@ -27,5 +27,16 @@ namespace MrPlagueRaces.Common.Races.Fluftrodon
 			DetailColor = new Color(91, 115, 177);
 			EyeColor = new Color(81, 135, 255);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.tileSpeed += 0.5f;
+				player.blockRange += 10;
+				player.pickSpeed -= 0.25f;
+				player.GetDamage(DamageClass.Generic) -= 0.15f;
+			}
+		}
 	}
 }

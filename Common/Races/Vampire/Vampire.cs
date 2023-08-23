@@ -25,5 +25,20 @@ namespace MrPlagueRaces.Common.Races.Vampire
 			DetailColor = new Color(175, 165, 140);
 			EyeColor = new Color(255, 81, 81);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.1f;
+				/*if (player.mount.Type == MountType<StealthBat>()) {
+					player.endurance -= 0.5f;
+				}
+				else {
+					player.endurance -= 0.15f;
+				}*/
+				player.statLifeMax2 -= (player.statLifeMax2 / 4);
+			}
+		}
 	}
 }

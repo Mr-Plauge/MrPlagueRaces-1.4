@@ -33,5 +33,18 @@ namespace MrPlagueRaces.Common.Races.Tabaxi
 			PantsColor = new Color(245, 213, 193);
 			ShoeColor = new Color(180, 112, 101);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.15f;
+				player.jumpSpeedBoost += 0.1f;
+				player.pickSpeed -= 0.15f;
+				player.GetCritChance(DamageClass.Generic) -= 15;
+				player.endurance -= 0.1f;
+				player.noFallDmg = true;
+			}
+		}
 	}
 }

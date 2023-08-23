@@ -32,5 +32,17 @@ namespace MrPlagueRaces.Common.Races.Goblin
 			PantsColor = new Color(175, 227, 255);
 			ShoeColor = new Color(160, 105, 60);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.1f;
+				player.maxMinions += 1;
+				player.maxTurrets += 1;
+				player.statLifeMax2 -= (player.statLifeMax2 / 5);
+				player.statManaMax2 += 40;
+			}
+		}
 	}
 }

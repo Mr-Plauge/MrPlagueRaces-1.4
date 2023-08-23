@@ -31,5 +31,15 @@ namespace MrPlagueRaces.Common.Races.Dragonkin
 			ShirtColor = new Color(119, 115, 157);
 			UnderShirtColor = new Color(216, 156, 95);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.endurance += 0.2f;
+				player.jumpSpeedBoost -= 0.1f;
+				player.moveSpeed -= 0.2f;
+			}
+		}
 	}
 }

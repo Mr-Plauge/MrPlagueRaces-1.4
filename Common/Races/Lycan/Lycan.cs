@@ -28,5 +28,18 @@ namespace MrPlagueRaces.Common.Races.Lycan
 			ShirtColor = new Color(198, 173, 158);
 			UnderShirtColor = new Color(244, 109, 109);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.GetDamage(DamageClass.Generic) += 0.15f;
+				player.endurance += 0.1f;
+				player.moveSpeed += 0.15f;
+				player.jumpSpeedBoost += 0.05f;
+				player.tileSpeed -= 0.1f;
+				player.wallSpeed -= 0.1f;
+			}
+		}
 	}
 }

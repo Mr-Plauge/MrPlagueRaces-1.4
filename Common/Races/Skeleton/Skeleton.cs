@@ -32,5 +32,16 @@ namespace MrPlagueRaces.Common.Races.Skeleton
 			UnderShirtColor = new Color(210, 111, 111);
 			ShoeColor = new Color(146, 119, 97);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.15f;
+				player.GetDamage(DamageClass.Generic) += 0.1f;
+				player.endurance -= 0.5f;
+				player.gills = true;
+			}
+		}
 	}
 }

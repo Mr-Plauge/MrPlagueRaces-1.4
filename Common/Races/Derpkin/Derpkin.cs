@@ -25,5 +25,16 @@ namespace MrPlagueRaces.Common.Races.Derpkin
 			DetailColor = new Color(48, 76, 128);
 			EyeColor = new Color(99, 122, 207);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.moveSpeed += 0.2f;
+				player.jumpSpeedBoost += 0.3f;
+				player.statLifeMax2 -= (player.statLifeMax2 / 5);
+				player.endurance -= 0.2f;
+			}
+		}
 	}
 }

@@ -128,19 +128,6 @@ namespace MrPlagueRaces.Common.Players
 			}
 		}
 
-		public override bool CanHitNPC(NPC target)
-		{
-			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
-			if (mrPlagueRacesPlayer.race != null)
-			{
-				return mrPlagueRacesPlayer.race.CanHitNPC(Player, target);
-			}
-			else
-			{
-				return true;
-			}
-		}
-
 		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 		{
 			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
@@ -156,19 +143,6 @@ namespace MrPlagueRaces.Common.Players
 			if (mrPlagueRacesPlayer.race != null)
 			{
 				mrPlagueRacesPlayer.race.OnHitNPC(Player, target, hit, damageDone);
-			}
-		}
-
-		public override bool? CanHitNPCWithProj(Projectile proj, NPC target)
-		{
-			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
-			if (mrPlagueRacesPlayer.race != null)
-			{
-				return mrPlagueRacesPlayer.race.CanHitNPCWithProj(Player, proj, target);
-			}
-			else
-			{
-				return true;
 			}
 		}
 
@@ -196,19 +170,6 @@ namespace MrPlagueRaces.Common.Players
 			if (mrPlagueRacesPlayer.race != null)
 			{
 				return mrPlagueRacesPlayer.race.CanHitPvp(Player, item, target);
-			}
-			else
-			{
-				return true;
-			}
-		}
-
-		public override bool CanHitPvpWithProj(Projectile proj, Player target)
-		{
-			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
-			if (mrPlagueRacesPlayer.race != null)
-			{
-				return mrPlagueRacesPlayer.race.CanHitPvpWithProj(Player, proj, target);
 			}
 			else
 			{

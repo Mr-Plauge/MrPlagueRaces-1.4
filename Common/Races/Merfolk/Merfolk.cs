@@ -25,5 +25,18 @@ namespace MrPlagueRaces.Common.Races.Merfolk
 			DetailColor = new Color(108, 255, 61);
 			EyeColor = new Color(255, 81, 81);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.pickSpeed -= 0.1f;
+				player.tileSpeed += 0.1f;
+				player.ignoreWater = true;
+				player.merman = false;
+				player.gills = false;
+				player.accFlipper = true;
+			}
+		}
 	}
 }

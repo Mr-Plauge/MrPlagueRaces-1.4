@@ -29,5 +29,16 @@ namespace MrPlagueRaces.Common.Races.Kobold
 			ShirtColor = new Color(216, 156, 95);
 			UnderShirtColor = new Color(119, 115, 157);
 		}
+
+		public override void ResetEffects(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				player.pickSpeed -= 0.75f;
+				player.moveSpeed += 0.05f;
+				player.statLifeMax2 -= (player.statLifeMax2 / 10);
+				player.endurance -= 0.05f;
+			}
+		}
 	}
 }
