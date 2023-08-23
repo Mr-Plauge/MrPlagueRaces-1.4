@@ -1,4 +1,4 @@
-/*using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.Collections.Generic;
@@ -63,7 +63,8 @@ namespace MrPlagueRaces.Common.Players
 				Player.statManaMax2 = 100; 
 				Player.manaRegenBonus = 100;
 				Player.manaCost = 100;
-				Player.statDefense = 100;
+				Player.statDefense = new Player.DefenseStat();
+				Player.statDefense += 100;
 				Player.endurance = 100;
 				Player.thorns = 100;
 				Player.lavaMax = 100;
@@ -88,4 +89,4 @@ namespace MrPlagueRaces.Common.Players
 			}
 		}
 	}
-}*/
+}

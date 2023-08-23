@@ -10,7 +10,7 @@ using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
-//using MrPlagueRaces.Common.Players;
+using MrPlagueRaces.Common.Players;
 using MrPlagueRaces.Common.Systems;
 
 namespace MrPlagueRaces.Common.UI.States
@@ -21,7 +21,7 @@ namespace MrPlagueRaces.Common.UI.States
 
 		public int totalHeight;
 
-		/*private int statLifeMax2Comparison = 100;
+		private int statLifeMax2Comparison = 100;
 		private int lifeRegenComparison = 0;
 		private int statManaMax2Comparison = 20;
 		private int manaRegenBonusComparison = 0;
@@ -167,7 +167,7 @@ namespace MrPlagueRaces.Common.UI.States
 			aggroPercentage = _player.aggro;
 			comparisonPlayer.isPercentage = false;
 			_player.ResetEffects();
-		}*/
+		}
 		
 		public UISlicedImage descriptionBackground;
 		public UIText descriptionText;
@@ -182,7 +182,7 @@ namespace MrPlagueRaces.Common.UI.States
 		public void UpdateStats()
 		{
 			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-			/*ComparisonPlayerSetup();
+			ComparisonPlayerSetup();
 			PercentagePlayerSetup();
 			Asset<Texture2D>[] statImage = 
 			{
@@ -288,7 +288,7 @@ namespace MrPlagueRaces.Common.UI.States
 				"Fall Damage Resistance",
 				"Fishing Skill",
 				"Aggro"
-			};*/
+			};
 			Clear();
 
 			if (mrPlagueRacesPlayer.race.Description != null)
@@ -348,7 +348,7 @@ namespace MrPlagueRaces.Common.UI.States
 			}
 
 			
-			/*UIElement statContainer = new UIElement
+			UIElement statContainer = new UIElement
 			{
 				Width = StyleDimension.FromPixelsAndPercent(0f, 1f),
 				Height = StyleDimension.FromPixelsAndPercent(0f, 1f)
@@ -370,9 +370,9 @@ namespace MrPlagueRaces.Common.UI.States
 					statContainer.Append(statPanel);
 					buttonCount += 1;
 				}
-			}*/
-			//totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0) + (buttonCount / 2 + ((buttonCount % 2 != 0) ? 1 : 0)) * 35);
-			totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0));
+			}
+			totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0) + (buttonCount / 2 + ((buttonCount % 2 != 0) ? 1 : 0)) * 35);
+			//totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0));
 			//totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0));
 			//totalHeight = 35;
 		}
