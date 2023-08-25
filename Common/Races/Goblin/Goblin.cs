@@ -9,6 +9,9 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Content.Projectiles;
+using MrPlagueRaces.Content.Prefixes;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Common.Races.Goblin
@@ -43,6 +46,179 @@ namespace MrPlagueRaces.Common.Races.Goblin
 				player.statLifeMax2 -= (player.statLifeMax2 / 5);
 				player.statManaMax2 += 40;
 			}
+		}
+
+		public override void ProcessTriggers(Player player, TriggersSet triggersSet)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var goblinPlayer = player.GetModPlayer<GoblinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				if (!player.dead)
+				{
+					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed && goblinPlayer.IsEquipment(player.HeldItem) && player.HeldItem.stack == 1 && player.statMana >= 60)
+					{
+						//{
+							/*var favorited = item.favorited;
+							var stack = item.stack;
+
+							var obj = new Item();
+							obj.netDefaults(item.netID);
+							var obj2 = item.Clone();
+
+							if (goblinPlayer.IsAccessory(player.HeldItem)) {
+								obj2.Prefix(goblinPlayer.AccessoryPrefixes[Main.rand.Next(goblinPlayer.AccessoryPrefixes.Length)]);
+								while (obj2.prefix == item.prefix) {
+									obj.prefix = obj2.prefix;
+									obj2 = item.Clone();
+									obj2.Prefix(goblinPlayer.AccessoryPrefixes[Main.rand.Next(goblinPlayer.AccessoryPrefixes.Length)]);
+								}
+							}
+							
+							if ((goblinPlayer.IsWeapon(player.HeldItem) && !goblinPlayer.IsTool(player.HeldItem)) || ItemID.Sets.IsDrill[player.HeldItem.type] || ItemID.Sets.IsChainsaw[player.HeldItem.type]) {
+								obj2.Prefix(goblinPlayer.AnyWeaponPrefixes[Main.rand.Next(goblinPlayer.AnyWeaponPrefixes.Length)]);
+								while (obj2.prefix == item.prefix) {
+									obj.prefix = obj2.prefix;
+									obj2 = item.Clone();
+									obj2.Prefix(goblinPlayer.AnyWeaponPrefixes[Main.rand.Next(goblinPlayer.AnyWeaponPrefixes.Length)]);
+								}
+							}
+
+							if (goblinPlayer.IsTool(player.HeldItem) && (!ItemID.Sets.IsDrill[player.HeldItem.type] && !ItemID.Sets.IsChainsaw[player.HeldItem.type])) {
+								obj2.Prefix(goblinPlayer.ToolPrefixes[Main.rand.Next(goblinPlayer.ToolPrefixes.Length)]);
+								while (obj2.prefix == item.prefix) {
+									obj.prefix = obj2.prefix;
+									obj2 = item.Clone();
+									obj2.Prefix(goblinPlayer.ToolPrefixes[Main.rand.Next(goblinPlayer.ToolPrefixes.Length)]);
+								}
+							}
+
+							item = obj2.Clone();
+							item.position.X = Main.player[Main.myPlayer].position.X + (float)(Main.player[Main.myPlayer].width / 2) - (float)(item.width / 2);
+							item.position.Y = Main.player[Main.myPlayer].position.Y + (float)(Main.player[Main.myPlayer].height / 2) - (float)(item.height / 2);
+							item.favorited = favorited;
+							item.stack = stack;
+							player.inventory[player.selectedItem] = item;
+
+							ItemLoader.PostReforge(item);*/
+
+							Item reforgeItem = player.inventory[player.selectedItem];
+							ItemLoader.PreReforge(reforgeItem);
+							reforgeItem.ResetPrefix();
+							reforgeItem.Prefix(goblinPlayer.AccessoryPrefixes[Main.rand.Next(goblinPlayer.AccessoryPrefixes.Length)]);
+							reforgeItem.position.X = player.position.X + (float)(player.width / 2) - (float)(reforgeItem.width / 2);
+							reforgeItem.position.Y = player.position.Y + (float)(player.height / 2) - (float)(reforgeItem.height / 2);
+							ItemLoader.PostReforge(reforgeItem);
+							PopupText.NewText(PopupTextContext.ItemReforge, reforgeItem, reforgeItem.stack, noStack: true);
+							SoundEngine.PlaySound(SoundID.Item37);
+							SoundEngine.PlaySound(SoundID.DD2_BookStaffCast);
+							for (int i = 0; i < 140; i++) {
+								if (Main.rand.Next(50) == 1) {
+									Dust dust19 = Dust.NewDustDirect(new Vector2(player.position.X - 2f, player.position.Y - 2f), player.width + 4, player.height + 4, 27, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, 180, default(Color), 1.95f);
+									dust19.noGravity = true;
+									dust19.velocity *= 0.75f;
+									dust19.velocity.X *= 0.75f;
+									dust19.velocity.Y -= 1f;
+									if (Main.rand.Next(4) == 0)
+									{
+										dust19.noGravity = false;
+										dust19.scale *= 0.5f;
+									}
+								}
+							}
+							player.statMana -= 60;
+						//}
+					}
+					if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Fathoming>()) && goblinPlayer.harvesterCounter == 0)
+					{
+						goblinPlayer.harvesterCounter = 30;
+						SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFuryCircle, player.Center);
+					}
+					if (goblinPlayer.harvesterCounter > 0) {
+						player.controlUseItem = false;
+					}
+				}
+			}
+		}
+
+		public override void PreUpdate(Player player) {
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var goblinPlayer = player.GetModPlayer<GoblinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				if (goblinPlayer.harvesterCounter > 0) {
+					goblinPlayer.harvesterCounter--;
+					for (int i = 0; i < 30; i++) {
+						Dust dust19 = Dust.NewDustDirect(new Vector2(player.Center.X + (player.direction == 1 ? 0 : -10), player.Center.Y - 30), 0, 0, 27, 0f, player.velocity.Y * 0.4f, 180, default(Color), 1.95f);
+						dust19.noGravity = true;
+						dust19.velocity *= 0.75f;
+						dust19.velocity.X *= 0.75f;
+						dust19.velocity.Y -= 1f;
+						if (Main.rand.Next(4) == 0)
+						{
+							dust19.noGravity = false;
+							dust19.scale *= 0.5f;
+						}
+					}
+				}
+				if (goblinPlayer.harvesterCounter == 1) {
+					Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
+					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (player.direction == 1 ? 0 : -10), player.Center.Y - 30, velocity.X, velocity.Y, ProjectileType<ShadowflameHarvester>(), 5, 5, player.whoAmI);
+					SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, player.Center);
+					player.AddBuff(BuffType<Fathoming>(), 240);
+					for (int i = 0; i < 30; i++) {
+						int dust = Dust.NewDust(new Vector2(player.Center.X + (player.direction == 1 ? 0 : -10), player.Center.Y - 30), 0, 0, 27);
+						Main.dust[dust].noGravity = true;
+						Main.dust[dust].velocity *= 3f;
+						dust = Dust.NewDust(new Vector2(player.Center.X + (player.direction == 1 ? 0 : -10), player.Center.Y - 30), 0, 0, 27);
+						Main.dust[dust].noGravity = true;
+						Main.dust[dust].velocity *= 2f;
+					}
+				}
+			}
+		}
+
+		public override void ModifyDrawInfo(Player player, ref PlayerDrawSet drawInfo) {
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var goblinPlayer = player.GetModPlayer<GoblinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				if (goblinPlayer.harvesterCounter > 0) {
+					player.bodyFrame.Y = player.bodyFrame.Height * 5;
+				}
+			}
+		}
+	}
+
+	public class GoblinPlayer : ModPlayer
+	{
+		public int[] AccessoryPrefixes = { PrefixType<Combustible>(), PrefixType<Constructive>(), PrefixType<Flawless>(), PrefixType<Impactful>(), PrefixType<Hexed>(), PrefixType<Luminescent>(), PrefixType<Regenerative>(), PrefixType<Reinforced>(), PrefixType<Resilient>(), PrefixType<Streamlined>(), PrefixType<Undying>(), PrefixType<Volatile>() };
+		public int[] AnyWeaponPrefixes = { PrefixType<Accelerative>(), PrefixType<Bewitched>(), PrefixType<Bombarding>(), PrefixType<Explosive>(), PrefixType<Immolating>(), PrefixType<Revitalizing>(), PrefixType<Warping>() };
+		public int[] ToolPrefixes = { PrefixType<Fortunate>(), PrefixType<Recreational>(), PrefixType<Trailblazing>(), PrefixType<Tranquilizing>() };
+
+		public int harvesterCounter;
+
+		public bool IsAccessory(Item Item)
+		{
+			return (Item.accessory == true);
+		}
+		public bool IsTool(Item Item)
+		{
+			return (Item.pick > 0 || Item.axe > 0 || Item.hammer > 0);
+		}
+
+		public bool IsWeapon(Item Item)
+		{
+			return (Item.damage > 0);
+		}
+		public bool IsEquipment(Item Item)
+		{
+			return ((IsAccessory(Item) || IsTool(Item) || IsWeapon(Item)));
+		}
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) 
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MrPlagueRacesMessageType.GoblinSyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write(harvesterCounter);
 		}
 	}
 }

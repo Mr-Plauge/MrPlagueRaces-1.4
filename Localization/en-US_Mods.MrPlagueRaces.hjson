@@ -1,3 +1,5 @@
+Conditions.LowHealth: When the player is below half HP
+
 Keybinds: {
 	"Primary Racial Ability.DisplayName": Primary  Racial  Ability
 	"Secondary Racial Ability.DisplayName": Secondary  Racial  Ability
@@ -41,4 +43,258 @@ Configs: {
 			Tooltip: Toggle experimental content
 		}
 	}
+}
+
+Buffs: {
+	AccelerativeBuff: {
+		DisplayName: Accelerative Buff
+		Description: Mods.MrPlagueRaces.Buffs.AccelerativeBuff.Description
+	}
+
+	Airborne: {
+		DisplayName: Airborne
+		Description: Mods.MrPlagueRaces.Buffs.Airborne.Description
+	}
+
+	Bodyswapped: {
+		DisplayName: Bodyswapped
+		Description: Mods.MrPlagueRaces.Buffs.Bodyswapped.Description
+	}
+
+	Bombarded: {
+		DisplayName: Bombarded
+		Description: Mods.MrPlagueRaces.Buffs.Bombarded.Description
+	}
+
+	BurnedOut: {
+		DisplayName: Burned Out
+		Description: Mods.MrPlagueRaces.Buffs.BurnedOut.Description
+	}
+
+	DarkInferno: {
+		DisplayName: Dark Inferno
+		Description: Mods.MrPlagueRaces.Buffs.DarkInferno.Description
+	}
+
+	Dashed: {
+		DisplayName: Dashed
+		Description: Mods.MrPlagueRaces.Buffs.Dashed.Description
+	}
+
+	Fathoming: {
+		DisplayName: Fathoming
+		Description: Mods.MrPlagueRaces.Buffs.Fathoming.Description
+	}
+
+	Fatigued: {
+		DisplayName: Fatigued
+		Description: Mods.MrPlagueRaces.Buffs.Fatigued.Description
+	}
+
+	FlawlessBuff: {
+		DisplayName: Flawless Buff
+		Description: Mods.MrPlagueRaces.Buffs.FlawlessBuff.Description
+	}
+
+	FluidGrace: {
+		DisplayName: Fluid Grace
+		Description: Mods.MrPlagueRaces.Buffs.FluidGrace.Description
+	}
+
+	Invoked: {
+		DisplayName: Invoked
+		Description: Mods.MrPlagueRaces.Buffs.Invoked.Description
+	}
+
+	MolecularRecoil: {
+		DisplayName: Molecular Recoil
+		Description: Mods.MrPlagueRaces.Buffs.MolecularRecoil.Description
+	}
+
+	Mycobuffer: {
+		DisplayName: Mycobuffer
+		Description: Mods.MrPlagueRaces.Buffs.Mycobuffer.Description
+	}
+
+	Mycobulwark: {
+		DisplayName: Mycobulwark
+		Description: Mods.MrPlagueRaces.Buffs.Mycobulwark.Description
+	}
+
+	Outstretched: {
+		DisplayName: Outstretched
+		Description: Mods.MrPlagueRaces.Buffs.Outstretched.Description
+	}
+
+	ParticleDeacceleration: {
+		DisplayName: Particle Deacceleration
+		Description: Mods.MrPlagueRaces.Buffs.ParticleDeacceleration.Description
+	}
+
+	Photosensitive: {
+		DisplayName: Photosensitive
+		Description: Mods.MrPlagueRaces.Buffs.Photosensitive.Description
+	}
+
+	Reanimated: {
+		DisplayName: Reanimated
+		Description: Mods.MrPlagueRaces.Buffs.Reanimated.Description
+	}
+
+	Rebounded: {
+		DisplayName: Rebounded
+		Description: Mods.MrPlagueRaces.Buffs.Rebounded.Description
+	}
+
+	Refueling: {
+		DisplayName: Refueling
+		Description: Mods.MrPlagueRaces.Buffs.Refueling.Description
+	}
+
+	Reincarnated: {
+		DisplayName: Reincarnated
+		Description: Mods.MrPlagueRaces.Buffs.Reincarnated.Description
+	}
+
+	Rematerializing: {
+		DisplayName: Rematerializing
+		Description: Mods.MrPlagueRaces.Buffs.Rematerializing.Description
+	}
+
+	ResilientBuff: {
+		DisplayName: Resilient Buff
+		Description: Mods.MrPlagueRaces.Buffs.ResilientBuff.Description
+	}
+
+	RevitalizingBuff: {
+		DisplayName: Revitalizing Buff
+		Description: Mods.MrPlagueRaces.Buffs.RevitalizingBuff.Description
+	}
+
+	Shielded: {
+		DisplayName: Shielded
+		Description: Mods.MrPlagueRaces.Buffs.Shielded.Description
+	}
+
+	Sluggish: {
+		DisplayName: Sluggish
+		Description: Mods.MrPlagueRaces.Buffs.Sluggish.Description
+	}
+
+	SoulfireImbuement: {
+		DisplayName: Soulfire Imbuement
+		Description: Mods.MrPlagueRaces.Buffs.SoulfireImbuement.Description
+	}
+
+	SoulFracture: {
+		DisplayName: Soul Fracture
+		Description: Mods.MrPlagueRaces.Buffs.SoulFracture.Description
+	}
+
+	Sporeless: {
+		DisplayName: Sporeless
+		Description: Mods.MrPlagueRaces.Buffs.Sporeless.Description
+	}
+
+	TemporalRecoil: {
+		DisplayName: Temporal Recoil
+		Description: Mods.MrPlagueRaces.Buffs.TemporalRecoil.Description
+	}
+
+	Tethered: {
+		DisplayName: Tethered
+		Description: Mods.MrPlagueRaces.Buffs.Tethered.Description
+	}
+
+	Tranquilized: {
+		DisplayName: Tranquilized
+		Description: Mods.MrPlagueRaces.Buffs.Tranquilized.Description
+	}
+
+	Troglodyte: {
+		DisplayName: Troglodyte
+		Description: Mods.MrPlagueRaces.Buffs.Troglodyte.Description
+	}
+
+	Unravelled: {
+		DisplayName: Unravelled
+		Description: Mods.MrPlagueRaces.Buffs.Unravelled.Description
+	}
+
+	Unseen: {
+		DisplayName: Unseen
+		Description: Mods.MrPlagueRaces.Buffs.Unseen.Description
+	}
+}
+
+Prefixes: {
+	Accelerative.DisplayName: Accelerative
+	Bewitched.DisplayName: Bewitched
+	Bombarding.DisplayName: Bombarding
+	Combustible.DisplayName: Combustible
+	Constructive.DisplayName: Constructive
+	Explosive.DisplayName: Explosive
+	Flawless.DisplayName: Flawless
+	Fortunate.DisplayName: Fortunate
+	Hexed.DisplayName: Hexed
+	Immolating.DisplayName: Immolating
+	Impactful.DisplayName: Impactful
+	Luminescent.DisplayName: Luminescent
+	Recreational.DisplayName: Recreational
+	Regenerative.DisplayName: Regenerative
+	Reinforced.DisplayName: Reinforced
+	Resilient.DisplayName: Resilient
+	Revitalizing.DisplayName: Revitalizing
+	Streamlined.DisplayName: Streamlined
+	Trailblazing.DisplayName: Trailblazing
+	Tranquilizing.DisplayName: Tranquilizing
+	Undying.DisplayName: Undying
+	Volatile.DisplayName: Volatile
+	Warping.DisplayName: Warping
+}
+
+Projectiles: {
+	Barrier.DisplayName: Barrier
+	BarrierGolem.DisplayName: Barrier Golem
+	BombardingFlame.DisplayName: Bombarding Flame
+	Boulder.DisplayName: Boulder
+	BoulderGolem.DisplayName: Boulder Golem
+	BouncyBoulder.DisplayName: Bouncy Boulder
+	Breathmine.DisplayName: Breathmine
+	BreathSmoke.DisplayName: Breath Smoke
+	BurningSmoke.DisplayName: Burning Smoke
+	BurstSpores.DisplayName: Burst Spores
+	Clustermine.DisplayName: Clustermine
+	GolemCeilingGripper.DisplayName: Golem Ceiling Gripper
+	GolemSelect.DisplayName: Golem Select
+	GolemWallGripper.DisplayName: Golem Wall Gripper
+	HealingClot.DisplayName: Healing Clot
+	HealingSpores.DisplayName: Healing Spores
+	ImpactExplosion.DisplayName: Impact Explosion
+	KenkuFeather.DisplayName: Kenku Feather
+	Laser.DisplayName: Laser
+	LaserGolem.DisplayName: Laser Golem
+	LeechTongue.DisplayName: Leech Tongue
+	LifeBomb.DisplayName: Life Bomb
+	LifeGolem.DisplayName: Life Golem
+	MolotovFireball.DisplayName: Molotov Fireball
+	MolotovFlame.DisplayName: Molotov Flame
+	Nymphshroom.DisplayName: Nymphshroom
+	PaintMenu.DisplayName: Paint Menu
+	PuffDust.DisplayName: Puff Dust
+	RendClaw.DisplayName: Rend Claw
+	ShadowflameHarvester.DisplayName: Shadowflame Harvester
+	ShadowflameSeeker.DisplayName: Shadowflame Seeker
+	Skeleton_One.DisplayName: Skeleton_ One
+	Skeleton_Three.DisplayName: Skeleton_ Three
+	Skeleton_Two.DisplayName: Skeleton_ Two
+	SoulClaw.DisplayName: Soul Claw
+	Sparkmine.DisplayName: Sparkmine
+	SpiderBullet.DisplayName: Spider Bullet
+	SpiderGolem.DisplayName: Spider Golem
+	Spirit.DisplayName: Spirit
+	Tether.DisplayName: Tether
+	TetherGolem.DisplayName: Tether Golem
+	Trapshroom.DisplayName: Trapshroom
+	VolatileExplosion.DisplayName: Volatile Explosion
 }

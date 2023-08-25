@@ -9,6 +9,8 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Content.Projectiles;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Common.Races.Derpkin
@@ -36,5 +38,112 @@ namespace MrPlagueRaces.Common.Races.Derpkin
 				player.endurance -= 0.2f;
 			}
 		}
+		
+		public override void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+		{
+			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
+			derpkinPlayer.headRotation = 0;
+			derpkinPlayer.targetHeadRotation = 0;
+			derpkinPlayer.counterSpin = 0;
+		}
+
+		public override void ProcessTriggers(Player player, TriggersSet triggersSet)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				if (!player.dead)
+				{
+					if (!player.HasBuff(BuffType<Outstretched>())) 
+					{
+						if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+						{
+							SoundEngine.PlaySound(SoundID.Item39, player.Center);
+							for (int i = 0; i < 18; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+							}
+							player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+							Vector2 offset = Main.MouseWorld - player.Center;
+							derpkinPlayer.targetHeadRotation = (offset * player.direction).ToRotation() * 0.55f;
+							Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (15 + (player.statLifeMax2 / 80));
+							player.velocity = velocity;
+							player.fallStart = (int)(player.position.Y / 16f);
+							player.AddBuff(BuffType<Outstretched>(), 180 - (player.statLifeMax2 / 10));
+						}
+					}
+					if (!player.HasBuff(BuffType<Unravelled>()))
+					{
+						if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed)
+						{
+							for (int i = 0; i < 9; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+							}
+							derpkinPlayer.counterSpin = 30;
+							player.velocity.Y -= 10 + (player.statLifeMax2 / 80);
+							player.fallStart = (int)(player.position.Y / 16f);
+							player.AddBuff(BuffType<Unravelled>(), 180 - (player.statLifeMax2 / 10));
+						}
+					}
+				}
+			}
+		}
+
+		public override void ModifyDrawInfo(Player player, ref PlayerDrawSet drawInfo)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				if (!player.dead && !player.sleeping.isSleeping) {
+					derpkinPlayer.headRotation = MathHelper.Lerp(derpkinPlayer.headRotation, derpkinPlayer.targetHeadRotation, 16f / 60);
+					player.fullRotationOrigin = new Vector2((player.width / 2), (player.height / 2));
+					player.fullRotation = -derpkinPlayer.headRotation / 2;
+					player.headRotation = derpkinPlayer.headRotation;
+				}
+			}
+		}
+
+		public override void PreUpdate(Player player)
+		{
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				if (!player.dead) {
+					if (player.velocity.Y == 0) 
+					{
+						derpkinPlayer.targetHeadRotation = 0;
+					}
+					if (derpkinPlayer.counterSpin > 0) 
+					{
+						if (derpkinPlayer.counterSpin % 5 == 0) 
+						{
+							SoundEngine.PlaySound(SoundID.Item1, player.Center);
+							player.direction = player.direction == 1 ? -1 : 1;
+							for (int i = 0; i < 2; i++) {
+								Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<PuffDust>(), 0, 0, player.whoAmI);
+							}
+						}
+						derpkinPlayer.counterSpin--;
+					}
+				}
+			}
+		}
+
+		/*public override void ModifyHurt(Player player, ref Player.HurtModifiers modifiers) {
+			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var derpkinPlayer = player.GetModPlayer<DerpkinPlayer>();
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+				return derpkinPlayer.counterSpin > 0 ? false : true;
+			}
+			else {
+				return true;
+			}
+		}*/
+	}
+
+	public class DerpkinPlayer : ModPlayer
+	{
+		public float headRotation;
+		public float targetHeadRotation;
+		public int counterSpin;
 	}
 }

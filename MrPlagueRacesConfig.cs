@@ -14,8 +14,8 @@ namespace MrPlagueRaces
         public static MrPlagueRacesConfig Instance;
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
-        [Label("Toggle Race Stats")]
-        [Tooltip("Toggle race stats")]
+        //[Label("Toggle Race Stats")]
+        //[Tooltip("Toggle race stats")]
         [DefaultValue(true)]
         public bool raceStats
         {
@@ -23,8 +23,8 @@ namespace MrPlagueRaces
             set;
         }
 
-        [Label("Toggle Experimental Content")]
-        [Tooltip("Toggle experimental content")]
+        //[Label("Toggle Experimental Content")]
+        //[Tooltip("Toggle experimental content")]
         [DefaultValue(true)]
         public bool experimentalContent
         {

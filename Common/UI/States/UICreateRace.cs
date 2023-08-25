@@ -373,7 +373,7 @@ namespace MrPlagueRaces.Common.UI.States
 			catch (Exception e)
 			{
 				//Logging.tML.Error((object)e);
-				_messagePanel.SetText("There was an issue. Check client.log");
+				_messagePanel.SetText("There was an issue. Check client.log" + e);
 			}
 		}
 
