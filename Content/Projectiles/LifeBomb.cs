@@ -33,7 +33,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			return true;
 		}
 
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			Player player = Main.player[Projectile.owner];
 			for (int i = 0; i < 20; i++) {
 				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);

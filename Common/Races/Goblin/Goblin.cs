@@ -102,12 +102,18 @@ namespace MrPlagueRaces.Common.Races.Goblin
 							ItemLoader.PostReforge(item);*/
 
 							Item reforgeItem = player.inventory[player.selectedItem];
-							ItemLoader.PreReforge(reforgeItem);
 							reforgeItem.ResetPrefix();
-							reforgeItem.Prefix(goblinPlayer.AccessoryPrefixes[Main.rand.Next(goblinPlayer.AccessoryPrefixes.Length)]);
+							if (goblinPlayer.IsAccessory(player.HeldItem)) {
+								reforgeItem.Prefix(goblinPlayer.AccessoryPrefixes[Main.rand.Next(goblinPlayer.AccessoryPrefixes.Length)]);
+							}
+							if (goblinPlayer.IsWeapon(player.HeldItem)) {
+								reforgeItem.Prefix(goblinPlayer.AnyWeaponPrefixes[Main.rand.Next(goblinPlayer.AnyWeaponPrefixes.Length)]);
+							}
+							if (goblinPlayer.IsTool(player.HeldItem)) {
+								reforgeItem.Prefix(goblinPlayer.ToolPrefixes[Main.rand.Next(goblinPlayer.ToolPrefixes.Length)]);
+							}
 							reforgeItem.position.X = player.position.X + (float)(player.width / 2) - (float)(reforgeItem.width / 2);
 							reforgeItem.position.Y = player.position.Y + (float)(player.height / 2) - (float)(reforgeItem.height / 2);
-							ItemLoader.PostReforge(reforgeItem);
 							PopupText.NewText(PopupTextContext.ItemReforge, reforgeItem, reforgeItem.stack, noStack: true);
 							SoundEngine.PlaySound(SoundID.Item37);
 							SoundEngine.PlaySound(SoundID.DD2_BookStaffCast);

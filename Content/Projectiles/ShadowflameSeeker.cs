@@ -77,7 +77,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			target.AddBuff(BuffType<DarkInferno>(), 10);
 		}
 
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			for (int i = 0; i < 6; i++) {
 				Dust dust19 = Dust.NewDustDirect(new Vector2(Projectile.position.X - 2f, Projectile.position.Y - 2f), Projectile.width + 4, Projectile.height + 4, 27, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 180, default(Color), 1.95f);
 				dust19.noGravity = true;

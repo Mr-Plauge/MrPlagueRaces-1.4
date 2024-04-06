@@ -67,7 +67,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.Kill();
 		}
 
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			for (int i = 0; i < 6; i++) {
 				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y,  Main.rand.Next(3) - Main.rand.Next(3),  Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<BurstSpores>(), 0, 0, Projectile.owner);
 			}

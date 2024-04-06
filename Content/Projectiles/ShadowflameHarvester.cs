@@ -104,7 +104,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			return new Color(Color.White.ToVector4() * Projectile.Opacity);
 		}
 
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			for (int i = 0; i < 12; i++) {
 				Dust dust19 = Dust.NewDustDirect(new Vector2(Projectile.position.X - 2f, Projectile.position.Y - 2f), Projectile.width + 4, Projectile.height + 4, 27, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 180, default(Color), 1.95f);
 				dust19.noGravity = true;

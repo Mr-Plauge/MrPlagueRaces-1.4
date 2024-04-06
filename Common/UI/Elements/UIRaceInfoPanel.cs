@@ -314,8 +314,8 @@ namespace MrPlagueRaces.Common.UI.States
 				descriptionBackground.Append(descriptionText);
 				string test = "Race abilities WIP!";
 				string coloredString = $"[c/3BC9EF:{test}]";
-				//descriptionText.SetText(mrPlagueRacesPlayer.race.Description);
-				descriptionText.SetText(coloredString);
+				descriptionText.SetText(mrPlagueRacesPlayer.race.Description);
+				//descriptionText.SetText(coloredString);
 				descriptionBackground.Height = new StyleDimension(descriptionText.MinHeight.Pixels, 0f);
 			}
 
@@ -342,8 +342,8 @@ namespace MrPlagueRaces.Common.UI.States
 				abilitiesText.PaddingRight = 4f;
 				abilitiesBackground.Append(abilitiesText);
 				string test = "Visit the mod's homepage for more info.";
-				//abilitiesText.SetText(mrPlagueRacesPlayer.race.AbilitiesDescription);
-				abilitiesText.SetText(test);
+				abilitiesText.SetText(mrPlagueRacesPlayer.race.AbilitiesDescription);
+				//abilitiesText.SetText(test);
 				abilitiesBackground.Height = new StyleDimension(abilitiesText.MinHeight.Pixels, 0f);
 			}
 

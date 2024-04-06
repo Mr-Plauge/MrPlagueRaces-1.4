@@ -55,7 +55,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			return false;
 		}
 
-		public override void Kill(int timeLeft) {
+		public override void OnKill(int timeLeft) {
 			int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
 			Main.gore[goreIndex].scale = 0.6f;
 			Main.gore[goreIndex].alpha = 100;

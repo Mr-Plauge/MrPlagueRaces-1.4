@@ -54,7 +54,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			return new Color(255, 255, 255, 0);
 		}
 
-		public override void Kill(int timeLeft)
+		public override void OnKill(int timeLeft)
 		{
 			Player player = Main.player[Projectile.owner];
 			SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, Projectile.Center);

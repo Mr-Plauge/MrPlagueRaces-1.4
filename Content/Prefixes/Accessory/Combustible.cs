@@ -21,7 +21,12 @@ namespace MrPlagueRaces.Content.Prefixes
 		public override PrefixCategory Category => PrefixCategory.Accessory;
 
 		public override bool CanRoll(Item item) {
-			return false;
+			return true;
+		}
+		
+		public override float RollChance(Item item)
+		{
+			return 0f;
 		}
 
 		public override void ModifyValue(ref float valueMult) {

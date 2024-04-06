@@ -316,24 +316,29 @@ namespace MrPlagueRaces.Common.UI.States
 
 					string commonPath = Path.Combine(sourceFolder, "Common/Races/" + raceNameTrimmed);
 					string assetPath = Path.Combine(sourceFolder, "Assets/Textures/Players/Races/" + raceNameTrimmed);
-					string malePath = Path.Combine(assetPath, "Male");
-					string femalePath = Path.Combine(assetPath, "Female");
+					string soundPath = Path.Combine(sourceFolder, "Assets/Sounds/Players/Races/" + raceNameTrimmed);
+					string maleAssetPath = Path.Combine(assetPath, "Male");
+					string femaleAssetPath = Path.Combine(assetPath, "Female");
+					string maleSoundPath = Path.Combine(soundPath, "Male");
+					string femaleSoundPath = Path.Combine(soundPath, "Female");
 
 					Directory.CreateDirectory(commonPath);
-					Directory.CreateDirectory(malePath);
-					Directory.CreateDirectory(femalePath);
+					Directory.CreateDirectory(maleAssetPath);
+					Directory.CreateDirectory(femaleAssetPath);
+					Directory.CreateDirectory(maleSoundPath);
+					Directory.CreateDirectory(femaleSoundPath);
 
-					string colorDetail_male = Path.Combine(malePath, "ColorDetail");
+					string colorDetail_male = Path.Combine(maleAssetPath, "ColorDetail");
 					Directory.CreateDirectory(colorDetail_male);
-					string colorEyes_male = Path.Combine(malePath, "ColorEyes");
+					string colorEyes_male = Path.Combine(maleAssetPath, "ColorEyes");
 					Directory.CreateDirectory(colorEyes_male);
-					string colorHair_male = Path.Combine(malePath, "ColorHair/Hairstyles");
+					string colorHair_male = Path.Combine(maleAssetPath, "ColorHair/Hairstyles");
 					Directory.CreateDirectory(colorHair_male);
-					string colorSkin_male = Path.Combine(malePath, "ColorSkin");
+					string colorSkin_male = Path.Combine(maleAssetPath, "ColorSkin");
 					Directory.CreateDirectory(colorSkin_male);
-					string colorless_male = Path.Combine(malePath, "Colorless");
+					string colorless_male = Path.Combine(maleAssetPath, "Colorless");
 					Directory.CreateDirectory(colorless_male);
-					string colorSkin_female = Path.Combine(femalePath, "ColorSkin");
+					string colorSkin_female = Path.Combine(femaleAssetPath, "ColorSkin");
 					Directory.CreateDirectory(colorSkin_female);
 
 					
@@ -343,7 +348,7 @@ namespace MrPlagueRaces.Common.UI.States
 					for (int i = 0; i < 11; i++)
 					{
 						sheetIndex[i] = ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Players/Races/Human/Male/" + sheetNames[i], AssetRequestMode.ImmediateLoad).Value;
-						using (stream = File.OpenWrite(Path.Combine(malePath, sheetNames[i] + ".png"))) {
+						using (stream = File.OpenWrite(Path.Combine(maleAssetPath, sheetNames[i] + ".png"))) {
 							sheetIndex[i].SaveAsPng(stream, sheetIndex[i].Width, sheetIndex[i].Height);
 						}
 					}
@@ -352,10 +357,13 @@ namespace MrPlagueRaces.Common.UI.States
 						icon_blank.SaveAsPng(stream, icon_blank.Width, icon_blank.Height);
 					}
 					Texture2D legs_female = ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Players/Races/Human/Female/ColorSkin/Legs", AssetRequestMode.ImmediateLoad).Value;
-					using (stream = File.OpenWrite(Path.Combine(femalePath, "ColorSkin/Legs.png"))) {
+					using (stream = File.OpenWrite(Path.Combine(femaleAssetPath, "ColorSkin/Legs.png"))) {
 						legs_female.SaveAsPng(stream, legs_female.Width, legs_female.Height);
 					}
-
+					
+					File.WriteAllBytes(Path.Combine(maleSoundPath, "Hurt.wav"), ModContent.GetFileBytes("MrPlagueRaces/Assets/Sounds/Players/Races/Tabaxi/Male/Hurt.wav"));
+					File.WriteAllBytes(Path.Combine(maleSoundPath, "Killed.wav"), ModContent.GetFileBytes("MrPlagueRaces/Assets/Sounds/Players/Races/Derpkin/Male/Killed.wav"));
+					File.WriteAllBytes(Path.Combine(femaleSoundPath, "Hurt.wav"), ModContent.GetFileBytes("MrPlagueRaces/Assets/Sounds/Players/Races/Tabaxi/Female/Hurt.wav"));
 					File.WriteAllText(Path.Combine(sourceFolder, modNameTrimmed + ".cs"), GetModClass(modNameTrimmed));
 					File.WriteAllText(Path.Combine(sourceFolder, modNameTrimmed + ".csproj"), GetModCsproj(modNameTrimmed));
 					string text = Path.Combine(sourceFolder, "Properties");
@@ -416,7 +424,7 @@ namespace MrPlagueRaces.Common.UI.States
 			}
 			defaultInterpolatedStringHandler.AppendLiteral("Description = \"This is the default description of the ");
 			defaultInterpolatedStringHandler.AppendFormatted(!string.IsNullOrEmpty(_raceDisplayName.CurrentString) ? _raceDisplayName.CurrentString : raceNameTrimmed);
-			defaultInterpolatedStringHandler.AppendLiteral(" race.\";\r\n\t\t\tAbilitiesDescription = \"Describe unique racial abilities here.\";\r\n\t\t\tStarterShirt = true;\r\n\t\t\tStarterPants = true;\r\n\t\t\tHairColor = new Color(255, 255, 255);\r\n\t\t\tSkinColor = new Color(255, 255, 255);\r\n\t\t\tDetailColor = new Color(255, 255, 255);\r\n\t\t\tEyeColor = new Color(255, 255, 255);\r\n\t\t\tShirtColor = new Color(255, 255, 255);\r\n\t\t\tUnderShirtColor = new Color(255, 255, 255);\r\n\t\t\tPantsColor = new Color(255, 255, 255);\r\n\t\t\tShoeColor = new Color(255, 255, 255);\r\n\t\t}\r\n\t}\r\n}");
+			defaultInterpolatedStringHandler.AppendLiteral(" race.\";\r\n\t\t\tAbilitiesDescription = \"Describe unique racial abilities here.\";\r\n\t\t\tStarterShirt = true;\r\n\t\t\tStarterPants = true;\r\n\t\t\tHairColor = new Color(255, 255, 255);\r\n\t\t\tSkinColor = new Color(255, 255, 255);\r\n\t\t\tDetailColor = new Color(255, 255, 255);\r\n\t\t\tEyeColor = new Color(255, 255, 255);\r\n\t\t\tShirtColor = new Color(255, 255, 255);\r\n\t\t\tUnderShirtColor = new Color(255, 255, 255);\r\n\t\t\tPantsColor = new Color(255, 255, 255);\r\n\t\t\tShoeColor = new Color(255, 255, 255);\r\n\t\t}\r\n\r\n\t\tpublic override void ResetEffects(Player player)\r\n\t\t{\r\n\t\t\tvar mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRaces.MrPlagueRacesPlayer>();\r\n\t\t\tif (ModContent.GetInstance<MrPlagueRaces.MrPlagueRacesConfig>().raceStats) {\r\n\t\t\t\t//put racial stat changes here. Defense, Health, etc.\r\n\t\t\t\tplayer.moveSpeed += 0.15f;\r\n\t\t\t\tplayer.statLifeMax2 -= (player.statLifeMax2 / 3);\r\n\t\t\t\tplayer.endurance += 0.3f;\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}");
 			return defaultInterpolatedStringHandler.ToStringAndClear();
 		}
 

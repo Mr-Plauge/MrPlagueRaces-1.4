@@ -228,30 +228,96 @@ namespace MrPlagueRaces
 				{
 					if (ModContent.HasAsset($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}"))
 					{
-						SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}"), player.Center);
+						if (Main.rand.Next(3) == 1)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}") with {Pitch = -0.1f, Volume = 1f}, player.Center);
+						}
+						else if (Main.rand.Next(3) == 2)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}") with {Pitch = 0f, Volume = 1f}, player.Center);
+						}
+						else
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}") with {Pitch = 0.1f, Volume = 1f}, player.Center);
+						}
 					}
 					else
 					{
-						SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}"), player.Center);
+						if (Main.rand.Next(3) == 1)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}") with {Pitch = -0.1f, Volume = 1f}, player.Center);
+						}
+						else if (Main.rand.Next(3) == 2)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}") with {Pitch = 0f, Volume = 1f}, player.Center);
+						}
+						else
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}") with {Pitch = 0.1f, Volume = 1f}, player.Center);
+						}
 					}
 				}
 				else
 				{
 					if (ModContent.HasAsset($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Female/{soundPath}"))
 					{
-						SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Female/{soundPath}"), player.Center);
+						if (Main.rand.Next(3) == 1)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Female/{soundPath}") with {Pitch = -0.1f, Volume = 1f}, player.Center);
+						}
+						else if (Main.rand.Next(3) == 2)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Female/{soundPath}") with {Pitch = 0f, Volume = 1f}, player.Center);
+						}
+						else
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Female/{soundPath}") with {Pitch = 0.1f, Volume = 1f}, player.Center);
+						}
 					}
 					else if (ModContent.HasAsset($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}"))
 					{
-						SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}"), player.Center);
+						if (Main.rand.Next(3) == 1)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}") with {Pitch = -0.1f, Volume = 1f}, player.Center);
+						}
+						else if (Main.rand.Next(3) == 2)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}") with {Pitch = 0f, Volume = 1f}, player.Center);
+						}
+						else
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{race.Mod.Name}/{race.SoundLocation}/{race.Name}/Male/{soundPath}") with {Pitch = 0.1f, Volume = 1f}, player.Center);
+						}
 					}
 					else if (ModContent.HasAsset($"{race.Mod.Name}/Assets/Sounds/Players/Races/Human/Female/{soundPath}"))
 					{
-						SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Female/{soundPath}"), player.Center);
+						if (Main.rand.Next(3) == 1)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Female/{soundPath}") with {Pitch = -0.1f, Volume = 1f}, player.Center);
+						}
+						else if (Main.rand.Next(3) == 2)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Female/{soundPath}") with {Pitch = 0f, Volume = 1f}, player.Center);
+						}
+						else
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Female/{soundPath}") with {Pitch = 0.1f, Volume = 1f}, player.Center);
+						}
 					}
 					else
 					{
-						SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}"), player.Center);
+						if (Main.rand.Next(3) == 1)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}") with {Pitch = -0.1f, Volume = 1f}, player.Center);
+						}
+						else if (Main.rand.Next(3) == 2)
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}") with {Pitch = 0f, Volume = 1f}, player.Center);
+						}
+						else
+						{
+							SoundEngine.PlaySound(new SoundStyle($"{Mod.Name}/Assets/Sounds/Players/Races/Human/Male/{soundPath}") with {Pitch = 0.1f, Volume = 1f}, player.Center);
+						}
 					}
 				}
 			}

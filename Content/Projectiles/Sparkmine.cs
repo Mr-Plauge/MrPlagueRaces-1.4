@@ -60,7 +60,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			Lighting.AddLight(Projectile.Center, player.eyeColor.ToVector3());
 		}
 
-		public override void Kill(int timeLeft) 
+		public override void OnKill(int timeLeft) 
 		{
 			Player player = Main.player[Projectile.owner];
 			for (int i = 0; i < 6; i++) {
