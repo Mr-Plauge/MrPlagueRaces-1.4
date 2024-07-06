@@ -122,6 +122,10 @@ namespace MrPlagueRaces
 					}
 				}
 			}
+
+			if (ModLoader.TryGetMod("CalamityMod", out Mod calamityMod)) {
+				drawInfo.armorHidesArms = false; 
+			}
 		}
 
 		public override void PreUpdate()

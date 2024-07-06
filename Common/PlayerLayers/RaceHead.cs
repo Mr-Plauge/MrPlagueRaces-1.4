@@ -72,7 +72,7 @@ namespace MrPlagueRaces.Common
 
 				Vector2 eyelidOffset = Main.OffsetsPlayerHeadgear[drawPlayer.bodyFrame.Y / drawPlayer.bodyFrame.Height];
 				eyelidOffset.Y -= 2f;
-				Rectangle eyelidFrame = EyeLids_Texture[0].Frame(1, 3, 0, drawPlayer.eyeHelper.EyeFrameToShow);
+				Rectangle eyelidFrame = EyeLids_Texture[0].Frame(1, 3, 0, (int)drawPlayer.eyeHelper.CurrentEyeFrame);
 				MakeColoredDrawDatas(ref drawInfo, Head_Texture, null, headPosition, drawPlayer.bodyFrame, drawPlayer.headRotation, drawInfo.headVect, 1f, drawInfo.playerEffect, 0);
 				MakeColoredDrawDatas(ref drawInfo, Eyes_Texture, null, headPosition, drawPlayer.bodyFrame, drawPlayer.headRotation, drawInfo.headVect, 1f, drawInfo.playerEffect, 0);
 				MakeColoredDrawDatas(ref drawInfo, EyeLids_Texture, null, headPosition + eyelidOffset, eyelidFrame, drawPlayer.headRotation, drawInfo.headVect, 1f, drawInfo.playerEffect, 0);
