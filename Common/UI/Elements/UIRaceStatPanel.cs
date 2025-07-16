@@ -9,6 +9,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 
 namespace MrPlagueRaces.Common.UI.States
@@ -47,14 +48,14 @@ namespace MrPlagueRaces.Common.UI.States
 			statBackground.Append(statText);
 		}
 
-		public override void MouseOver(UIMouseEvent evt)
+		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			MrPlagueUICharacterCreation.hoverText = _hoverText;
-		}
+			base.DrawSelf(spriteBatch);
 
-		public override void MouseOut(UIMouseEvent evt)
-		{
-			MrPlagueUICharacterCreation.hoverText = "";
+			if (IsMouseHovering)
+			{
+				UICommon.TooltipMouseText(_hoverText);
+			}
 		}
 	}
 }

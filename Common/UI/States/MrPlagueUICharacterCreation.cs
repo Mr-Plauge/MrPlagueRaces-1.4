@@ -83,6 +83,8 @@ namespace MrPlagueRaces.Common.UI.States
 
 		private UIColoredImageButton _raceSelectCategoryButton;
 
+		private UIElement _rootContainer;
+
 		private UIElement _topContainer;
 
 		private UIElement _middleContainer;
@@ -131,13 +133,15 @@ namespace MrPlagueRaces.Common.UI.States
 
 		public bool raceStatMenu = false;
 
+		private const int SMALL_PANEL_HEIGHT = 380;
+
+		private const int LARGE_PANEL_HEIGHT = 600;
+
+		private const int PATH_HEIGHT = 4;
+
 		private UIGamepadHelper _helper;
 
 		private List<int> _foundPoints = new List<int>();
-
-		private UITextPanel<string> statHoverText;
-
-		public static string hoverText = "";
 
 		public MrPlagueUICharacterCreation(Player player)
 		{
@@ -175,11 +179,10 @@ namespace MrPlagueRaces.Common.UI.States
 		private void BuildPage()
 		{
 			RemoveAllChildren();
-			int path = 4;
 			UIElement s = new UIElement
 			{
 				Width = StyleDimension.FromPixels(588f),
-				Height = StyleDimension.FromPixels(380 + path),
+				Height = StyleDimension.FromPixels(SMALL_PANEL_HEIGHT + PATH_HEIGHT),
 				Top = StyleDimension.FromPixels(220f),
 				HAlign = 0.5f,
 				VAlign = 0f
@@ -189,7 +192,7 @@ namespace MrPlagueRaces.Common.UI.States
 			UIPanel listenPort = new UIPanel
 			{
 				Width = StyleDimension.FromPercent(1f),
-				Height = StyleDimension.FromPixels(s.Height.Pixels - 150f - (float)path),
+				Height = new StyleDimension(-150f - PATH_HEIGHT, 1f),
 				Top = StyleDimension.FromPixels(50f),
 				BackgroundColor = new Color(33, 43, 79) * 0.8f
 			};
@@ -210,20 +213,13 @@ namespace MrPlagueRaces.Common.UI.States
 			{
 				Top = StyleDimension.FromPixelsAndPercent(modPack.Height.Pixels + 6f, 0f),
 				Width = StyleDimension.FromPixelsAndPercent(0f, 1f),
-				Height = StyleDimension.FromPixelsAndPercent(listenPort.Height.Pixels - 70f, 0f)
+				Height = StyleDimension.FromPixelsAndPercent(-70f, 1f)
 			};
-			statHoverText = new UITextPanel<string>(hoverText)
-			{
-				Width = StyleDimension.FromPixelsAndPercent(1f, 0f),
-				Height = StyleDimension.FromPixelsAndPercent(1f, 0f),
-				BackgroundColor = Color.Transparent,
-				BorderColor = Color.Transparent
-			};
-			Append(statHoverText);
 			uIElement.SetPadding(0f);
 			uIElement.PaddingTop = 3f;
 			uIElement.PaddingBottom = 0f;
 			listenPort.Append(uIElement);
+			_rootContainer = s;
 			_topContainer = modPack;
 			_middleContainer = uIElement;
 			MakeInfoMenu(uIElement);
@@ -1060,6 +1056,7 @@ namespace MrPlagueRaces.Common.UI.States
 			_selectedPicker = CategoryId.RaceSelect;
 			_middleContainer.Append(_raceSelectContainer);
 			_raceSelectCategoryButton.SetSelected(selected: true);
+			ChangeHeight(LARGE_PANEL_HEIGHT, 0f);
 		}
 
 		private void Click_ClothStyles(UIMouseEvent evt, UIElement listeningElement)
@@ -1495,6 +1492,8 @@ namespace MrPlagueRaces.Common.UI.States
 			_clothStylesContainer.Remove();
 			_infoContainer.Remove();
 			_raceSelectContainer.Remove();
+
+			ChangeHeight(SMALL_PANEL_HEIGHT, 0f);
 		}
 
 		private void SelectColorPicker(CategoryId selection)
@@ -1611,9 +1610,6 @@ namespace MrPlagueRaces.Common.UI.States
 				}
 				Utils.DrawBorderStringFourWay(spriteBatch, FontAssets.MouseText.Value, result, vector.X, vector.Y, new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), Color.Black, Vector2.Zero);
 			}
-			statHoverText.Left = StyleDimension.FromPixelsAndPercent(Main.mouseX + 10f, 0f);
-			statHoverText.Top = StyleDimension.FromPixelsAndPercent(Main.mouseY + 12f, 0f);
-			statHoverText.SetText(hoverText);
 			SetupGamepadPoints(spriteBatch);
 		}
 
@@ -1901,6 +1897,13 @@ namespace MrPlagueRaces.Common.UI.States
 		private int SortPoints(SnapPoint a, SnapPoint b)
 		{
 			return a.Id.CompareTo(b.Id);
+		}
+
+		private void ChangeHeight(int pixel, float percent)
+		{
+			_rootContainer.Height.Set(pixel + PATH_HEIGHT, percent);
+			// Recalculate();
+			Recalculate();
 		}
 
 		private static Color ScaledHslToRgb(Vector3 hsl)
