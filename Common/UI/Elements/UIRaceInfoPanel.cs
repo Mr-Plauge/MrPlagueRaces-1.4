@@ -225,7 +225,7 @@ namespace MrPlagueRaces.Common.UI.States
 				StatCalculationSystem.GetIntDifference(0, _player.lifeRegen, lifeRegenComparison, lifeRegenPercentage), 
 				StatCalculationSystem.GetIntDifference(20, _player.statManaMax2, statManaMax2Comparison, statManaMax2Percentage), 
 				StatCalculationSystem.GetIntDifference(0, _player.manaRegenBonus, manaRegenBonusComparison, manaRegenBonusPercentage),
-				StatCalculationSystem.GetFloatDifference(1f, _player.manaCost),
+				StatCalculationSystem.GetFloatDifference(1f, _player.manaCost, true, true),
 				StatCalculationSystem.GetIntDifference(0, _player.statDefense, statDefenseComparison, statDefensePercentage),
 				StatCalculationSystem.GetFloatDifference(0f, _player.endurance),
 				StatCalculationSystem.GetFloatDifference(0f, _player.thorns),
@@ -257,9 +257,9 @@ namespace MrPlagueRaces.Common.UI.States
 			string[] statHoverText = 
 			{
 				"Health",
-				"Health Regeneration Rate",
+				"Health Regeneration",
 				"Mana",
-				"Mana Regeneration Rate",
+				"Mana Regeneration",
 				"Mana Cost",
 				"Defense",
 				"Endurance",
@@ -291,7 +291,7 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			Clear();
 
-			if (mrPlagueRacesPlayer.race.Description != null)
+			if ((mrPlagueRacesPlayer.race.Description != null && mrPlagueRacesPlayer.race.Description != ""))
 			{
 				descriptionBackground = new UISlicedImage(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/CategoryPanelHighlight", (AssetRequestMode)1))
 				{
@@ -319,7 +319,7 @@ namespace MrPlagueRaces.Common.UI.States
 				descriptionBackground.Height = new StyleDimension(descriptionText.MinHeight.Pixels, 0f);
 			}
 
-			if (mrPlagueRacesPlayer.race.AbilitiesDescription != null)
+			if ((mrPlagueRacesPlayer.race.AbilitiesDescription != null && mrPlagueRacesPlayer.race.AbilitiesDescription != ""))
 			{
 				abilitiesBackground = new UISlicedImage(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/CategoryPanelHighlight", (AssetRequestMode)1))
 				{
@@ -371,10 +371,23 @@ namespace MrPlagueRaces.Common.UI.States
 					buttonCount += 1;
 				}
 			}
-			totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0) + (buttonCount / 2 + ((buttonCount % 2 != 0) ? 1 : 0)) * 35);
-			//totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0));
-			//totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0));
-			//totalHeight = 35;
-		}
-	}
+			totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + ((mrPlagueRacesPlayer.race.AbilitiesDescription != null && mrPlagueRacesPlayer.race.AbilitiesDescription != "") ? (int)abilitiesBackground.Height.Pixels : 0) + (buttonCount / 2 + ((buttonCount % 2 != 0) ? 1 : 0)) * 35);
+            //totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0) + (mrPlagueRacesPlayer.race.AbilitiesDescription != null ? (int)abilitiesBackground.Height.Pixels : 0));
+            //totalHeight = ((mrPlagueRacesPlayer.race.Description != null ? (int)descriptionBackground.Height.Pixels : 0));
+            //totalHeight = 35;
+        }
+        public override void MouseOver(UIMouseEvent evt)
+        {
+            var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (mrPlagueRacesPlayer.race.Description != null && mrPlagueRacesPlayer.race.Description != "")
+			{
+                MrPlagueUICharacterCreation.hoverText = mrPlagueRacesPlayer.race.Description + (mrPlagueRacesPlayer.race.AbilitiesDescription != null && mrPlagueRacesPlayer.race.AbilitiesDescription != "" ? ("\n" + mrPlagueRacesPlayer.race.AbilitiesDescription) : "");
+            }
+        }
+
+        public override void MouseOut(UIMouseEvent evt)
+        {
+            MrPlagueUICharacterCreation.hoverText = "";
+        }
+    }
 }

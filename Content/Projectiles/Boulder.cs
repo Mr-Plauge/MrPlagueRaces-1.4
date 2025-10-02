@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -23,7 +24,6 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.friendly = true;
 			Projectile.tileCollide = false;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 			Projectile.ai[0] = 5;
 		}
 
@@ -57,7 +57,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.ai[0]++;
 			if (Projectile.ai[0] > 5) {
 				SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack, Projectile.Center);
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y, Main.rand.Next(15) - Main.rand.Next(15), Main.rand.Next(15) - Main.rand.Next(15), ProjectileType<BouncyBoulder>(), 1 + player.statDefense / 2, 0, Projectile.owner);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y, Main.rand.Next(15) - Main.rand.Next(15), Main.rand.Next(15) - Main.rand.Next(15), ProjectileType<BouncyBoulder>(), (5 + (player.statDefense < 20 ? player.statDefense / 3 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.BoulderGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.BoulderGolem]]) : 1f), 0, Projectile.owner);
 				Projectile.ai[0] = 0;
 			}
 		}

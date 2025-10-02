@@ -43,7 +43,7 @@ namespace MrPlagueRaces.Common.UI.States
 			_selectedBorderTexture = Main.Assets.Request<Texture2D>("Images/UI/CharCreation/CategoryPanelHighlight", (AssetRequestMode)1);
 			_hoveredBorderTexture = Main.Assets.Request<Texture2D>("Images/UI/CharCreation/CategoryPanelBorder", (AssetRequestMode)1);
 			float textScale = 1f;
-			UIText uIText = new UIText("Create Race", textScale)
+			UIText uIText = new UIText("Create Race (Improved!)", textScale)
 			{
 				HAlign = 0.5f,
 				VAlign = 0.5f

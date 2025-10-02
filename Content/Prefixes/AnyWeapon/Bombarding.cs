@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -68,12 +70,13 @@ namespace MrPlagueRaces.Content.Prefixes
 		}
 
 		public override bool? UseItem(Item item, Player player)
-		{
-			if (item.prefix == PrefixType<Bombarding>() && !player.HasBuff(BuffType<Bombarded>()))
+        {
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (item.prefix == PrefixType<Bombarding>() && !player.HasBuff(BuffType<Bombarded>()))
 			{
-				Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
+				Vector2 velocity = Vector2.Normalize(mrPlagueRacesPlayer.mouseWorld - player.Center) * 10f;
 				for (int i = 0; i < 5; i++) {
-					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X + Main.rand.Next(6) - Main.rand.Next(6), velocity.Y + Main.rand.Next(6) - Main.rand.Next(6), ProjectileType<BombardingFlame>(), item.damage / 2, 5, player.whoAmI);
+					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X + Main.rand.Next(6) - Main.rand.Next(6), velocity.Y + Main.rand.Next(6) - Main.rand.Next(6), ProjectileType<BombardingFlame>(), (item.damage / 6) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Bombarding) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Bombarding]]) : 1f), 5, player.whoAmI);
 				}
 				SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, player.Center);
 				player.AddBuff(BuffType<Bombarded>(), 40);

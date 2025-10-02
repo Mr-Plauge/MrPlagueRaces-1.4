@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -14,8 +15,11 @@ namespace MrPlagueRaces.Content.Projectiles
 {
 	public class BarrierGolem : ModProjectile
 	{
-		public int leftBarrier = 0;
-		public int rightBarrier = 0;
+		// {T} Added this instead of using ai[0].
+		public bool creationFlag = false;
+
+		// {T} Removed left and right barrier vars, now using ai[0] and ai[1] respectively.
+
 		public override void SetStaticDefaults() {
 			// DisplayName.SetDefault("BarrierGolem");
 		}
@@ -25,18 +29,18 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.height = 48;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override void AI() {
 			Projectile.timeLeft++;
 			Player player = Main.player[Projectile.owner];
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			Projectile.velocity.Y += 0.5f;
-			if (Projectile.ai[0] == 0 && Main.myPlayer == Projectile.owner) {
-				Projectile.position = new Vector2(Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            Projectile.velocity.Y += 0.5f;
+			if (!creationFlag) {
+				Projectile.position = new Vector2(mrPlagueRacesPlayer.mouseWorld.X - 22, mrPlagueRacesPlayer.mouseWorld.Y - 42);
 				SoundEngine.PlaySound(SoundID.DD2_DefenseTowerSpawn, Projectile.Center);
-				int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
+                int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
 				Main.gore[goreIndex].scale = 0.6f;
 				Main.gore[goreIndex].alpha = 100;
 				Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
@@ -60,16 +64,37 @@ namespace MrPlagueRaces.Content.Projectiles
 					Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);
 				}
 				Projectile.direction = Projectile.spriteDirection = lihzahrdPlayer.direction == 1 ? 1 : -1;
-				leftBarrier = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y - 15, 0f, 0f, ProjectileType<Barrier>(), 1 + player.statDefense, 0, Projectile.owner);
-				rightBarrier = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y - 15, 0f, 0f, ProjectileType<Barrier>(), 1 + player.statDefense, 0, Projectile.owner);
-			}
-			Projectile.ai[0]++;
-			Main.projectile[leftBarrier].direction = 1;
-			Main.projectile[rightBarrier].direction = -1;
-			if (!Main.projectile[leftBarrier].active || !Main.projectile[rightBarrier].active || (Main.projectile[leftBarrier].position.X - Projectile.position.X) < -500 || (Main.projectile[rightBarrier].position.X - Projectile.position.X) > 500) {
-				Projectile.Kill();
-			}
-		}
+
+				if (Main.myPlayer == Projectile.owner) // {T} Don't run projectile spawning on non-owner clients.
+				{
+					Projectile.ai[0] = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y - 15, 0f, 0f, ProjectileType<Barrier>(), (5 + (player.statDefense < 20 ? player.statDefense / 3 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.BarrierGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.BarrierGolem]]) : 1f), 5f, Projectile.owner);
+					Projectile.ai[1] = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y - 15, 0f, 0f, ProjectileType<Barrier>(), (5 + (player.statDefense < 20 ? player.statDefense / 3 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.BarrierGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.BarrierGolem]]) : 1f), 5f, Projectile.owner);
+					Projectile.netUpdate = true;
+				}
+
+				creationFlag = true;
+            }
+
+            // {T} Just using these to reduce calls to Main.projectile.
+            var leftBarrier = Main.projectile[(int)Projectile.ai[0]];
+            var rightBarrier = Main.projectile[(int)Projectile.ai[1]];
+
+            leftBarrier.direction = 1;
+			rightBarrier.direction = -1;
+			if (player.whoAmI == Main.myPlayer)
+			{
+				if (!leftBarrier.active || !rightBarrier.active || (leftBarrier.position.X - Projectile.position.X) < -500 || (rightBarrier.position.X - Projectile.position.X) > 500)
+				{
+					Projectile.Kill();
+				}
+				for (int i = 0; i < Main.maxProjectiles; i++)
+				{
+					Projectile projectile = Main.projectile[i];
+					if (projectile.active && projectile.type == ProjectileType<Barrier>() && projectile.owner == player.whoAmI && projectile.whoAmI != Projectile.ai[0] && projectile.whoAmI != Projectile.ai[1])
+						projectile.Kill();
+				}
+			} // {T} Shifted this bracket to encompass both kill conditions, since they only need to run on the owner's side.
+        }
 
 		public override void OnKill(int timeLeft) {
 			Player player = Main.player[Projectile.owner];
@@ -116,8 +141,12 @@ namespace MrPlagueRaces.Content.Projectiles
 		}
 
 		public override bool PreDrawExtras() {
-			Vector2 leftBarrierCenter = new Vector2(Main.projectile[leftBarrier].Center.X, Main.projectile[leftBarrier].Center.Y + 16);
-			Vector2 rightBarrierCenter = new Vector2(Main.projectile[rightBarrier].Center.X, Main.projectile[rightBarrier].Center.Y + 16);
+            // {T} Just using these to reduce calls to Main.projectile.
+            var leftBarrier = Main.projectile[(int)Projectile.ai[0]];
+            var rightBarrier = Main.projectile[(int)Projectile.ai[1]];
+
+            Vector2 leftBarrierCenter = new Vector2(leftBarrier.Center.X, leftBarrier.Center.Y + 16);
+			Vector2 rightBarrierCenter = new Vector2(rightBarrier.Center.X, rightBarrier.Center.Y + 16);
 
 			Vector2 centerToLeft = new Vector2(Projectile.Center.X, Projectile.Center.Y + 10);
 			Vector2 centerToRight = new Vector2(Projectile.Center.X, Projectile.Center.Y + 10);

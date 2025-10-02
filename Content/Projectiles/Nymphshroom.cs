@@ -57,11 +57,16 @@ namespace MrPlagueRaces.Content.Projectiles
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			Player player = Main.player[Projectile.owner];
-			player.AddBuff(BuffType<Mycobulwark>(), 120);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            player.AddBuff(BuffType<Mycobulwark>(), 120);
 			player.Teleport(Projectile.position, 15);
 			SoundEngine.PlaySound(SoundID.NPCDeath58, Projectile.Center);
 			SoundEngine.PlaySound(SoundID.NPCDeath55, Projectile.Center);
-			for (int i = 0; i < 3; i++) {
+            if (player.whoAmI == Main.myPlayer)
+            {
+                mrPlagueRacesPlayer.MushfolkTeleportSound(-1, Main.myPlayer);
+            }
+            for (int i = 0; i < 3; i++) {
 				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X + Main.rand.Next(60) - Main.rand.Next(60), Projectile.Center.Y + Main.rand.Next(60) - Main.rand.Next(60), 0f, 0f, ProjectileType<HealingSpores>(), 0, 0, Projectile.owner);
 			}
 			Projectile.Kill();

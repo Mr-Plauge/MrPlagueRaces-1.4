@@ -6,7 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
-using MrPlagueRaces.Common.Races.Kobold;
+using MrPlagueRaces.Common.Races.Soulbeast;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Projectiles
@@ -30,7 +30,8 @@ namespace MrPlagueRaces.Content.Projectiles
 
 		public override void AI() {
 			Player player = Main.player[Projectile.owner];
-			Vector2 vector31 = player.RotatedRelativePoint(player.MountedCenter);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            Vector2 vector31 = player.RotatedRelativePoint(player.MountedCenter);
 			Projectile.direction = Projectile.spriteDirection = (Projectile.velocity.X > 0f) ? 1 : 1;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			if (++Projectile.frame >= Main.projFrames[Projectile.type])
@@ -43,25 +44,22 @@ namespace MrPlagueRaces.Content.Projectiles
 				SoundEngine.PlaySound(SoundID.DD2_GhastlyGlaivePierce, Projectile.Center);
 				Projectile.soundDelay = 12;
 			}
-			if (Main.myPlayer == Projectile.owner)
+			if (Main.myPlayer == Projectile.owner ? (MrPlagueRaces.RaceAbilityKeybind2.Current && !MrPlagueRaces.RaceAbilityKeybind1.Current && !player.dead) : !player.dead)
 			{
-				if (MrPlagueRaces.RaceAbilityKeybind2.Current && !MrPlagueRaces.RaceAbilityKeybind1.Current && !player.dead)
+				float num123 = 1f;
+				num123 = 15f * Projectile.scale;
+				Vector2 vector34 = mrPlagueRacesPlayer.mouseWorld - vector31;
+				vector34.Normalize();
+				if (vector34.HasNaNs())
 				{
-					float num123 = 1f;
-					num123 = 15f * Projectile.scale;
-					Vector2 vector34 = Main.MouseWorld - vector31;
-					vector34.Normalize();
-					if (vector34.HasNaNs())
-					{
-						vector34 = Vector2.UnitX * (float)player.direction;
-					}
-					vector34 *= num123;
-					Projectile.velocity = vector34;
+					vector34 = Vector2.UnitX * (float)player.direction;
 				}
-				else
-				{
-					Projectile.Kill();
-				}
+				vector34 *= num123;
+				Projectile.velocity = vector34;
+			}
+			else
+			{
+				Projectile.Kill();
 			}
 			Vector2 vector40 = Projectile.Center + Projectile.velocity * 3f;
 			Lighting.AddLight(Projectile.Center, player.eyeColor.ToVector3());
@@ -77,12 +75,16 @@ namespace MrPlagueRaces.Content.Projectiles
 		{
 			Player player = Main.player[Projectile.owner];
 			target.AddBuff(BuffType<SoulFracture>(), 360);
-		}
+            player.AddBuff(BuffType<SoulSiphon>(), 10);
+            SoundEngine.PlaySound(SoundID.DD2_WitherBeastCrystalImpact, target.Center);
+        }
 
 		public override void OnHitPlayer(Player target, Player.HurtInfo info)
 		{
 			Player player = Main.player[Projectile.owner];
 			target.AddBuff(BuffType<SoulFracture>(), 360);
-		}
+			player.AddBuff(BuffType<SoulSiphon>(), 10);
+            SoundEngine.PlaySound(SoundID.DD2_WitherBeastCrystalImpact, target.Center);
+        }
 	}
 }

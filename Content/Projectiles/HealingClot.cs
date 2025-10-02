@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Mounts;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Vampire;
 using static Terraria.ModLoader.ModContent;
 
@@ -41,8 +42,9 @@ namespace MrPlagueRaces.Content.Projectiles
 			if (Projectile.Center.X - player.Center.X < 5 && Projectile.Center.X - player.Center.X > -5 && Projectile.Center.Y - player.Center.Y < 5 && Projectile.Center.Y - player.Center.Y > -5) {
 				Projectile.Kill();
 				SoundEngine.PlaySound(SoundID.Item3, Projectile.Center);
-				player.HealEffect(player.statLifeMax2 / 25);
-				player.statLife += player.statLifeMax2 / 25;
+
+				// {T} Using the Heal function to respect the max life limit (otherwise you will go over your max for a tick. Also this is one line, not two)
+				player.Heal((player.statLifeMax2 / 25) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<VampireConfig>().vampireLifeSteal]));
 			}
 			for (int i = 0; i < 2; i++) {
 				int dust = Dust.NewDust(Projectile.position, 0, 0, 278);

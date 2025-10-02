@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -14,9 +15,11 @@ namespace MrPlagueRaces.Content.Projectiles
 {
 	public class SpiderGolem : ModProjectile
 	{
+		// {T} Added this to replace ai[0].
+		public bool creationFlag = false;
+
+		// {T} Removed left and right grip variables. Now using ai[0] and ai[1] respectively.
 		public int directionX = 1;
-		public int leftGrip = 0;
-		public int rightGrip = 0;
 		public int bulletTimer = 0;
 		public override void SetStaticDefaults() {
 			// DisplayName.SetDefault("SpiderGolem");
@@ -27,17 +30,17 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.height = 48;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override void AI() {
 			Projectile.timeLeft++;
 			Player player = Main.player[Projectile.owner];
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			if (Projectile.ai[0] == 0 && Main.myPlayer == Projectile.owner) {
-				Projectile.position = new Vector2(Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (!creationFlag) {
+				Projectile.position = new Vector2(mrPlagueRacesPlayer.mouseWorld.X - 22, mrPlagueRacesPlayer.mouseWorld.Y - 42);
 				SoundEngine.PlaySound(SoundID.DD2_DefenseTowerSpawn, Projectile.Center);
-				int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
+                int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
 				Main.gore[goreIndex].scale = 0.6f;
 				Main.gore[goreIndex].alpha = 100;
 				Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
@@ -61,12 +64,23 @@ namespace MrPlagueRaces.Content.Projectiles
 					Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);
 				}
 				Projectile.direction = Projectile.spriteDirection = lihzahrdPlayer.direction == 1 ? 1 : -1;
-				leftGrip = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y, 0f, 0f, ProjectileType<GolemWallGripper>(), 0, 0, Projectile.owner);
-				rightGrip = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y, 0f, 0f, ProjectileType<GolemWallGripper>(), 0, 0, Projectile.owner);
+
+				if (Main.myPlayer == Projectile.owner) // {T} Avoid spawning projectiles on non-owner clients.
+				{
+					Projectile.ai[0] = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y, 0f, 0f, ProjectileType<GolemWallGripper>(), 0, 0, Projectile.owner);
+					Projectile.ai[1] = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y, 0f, 0f, ProjectileType<GolemWallGripper>(), 0, 0, Projectile.owner);
+					Projectile.netUpdate = true;
+				}
+
+				creationFlag = true;
 			}
-			Projectile.ai[0]++;
-			Main.projectile[leftGrip].direction = -1;
-			Main.projectile[rightGrip].direction = 1;
+
+            // {T} Just easier to use, and reduces calls to Main.projectile.
+            var leftGrip = Main.projectile[(int)Projectile.ai[0]];
+            var rightGrip = Main.projectile[(int)Projectile.ai[1]];
+
+            leftGrip.direction = -1;
+            rightGrip.direction = 1;
 
 			NPC closestNPC = FindClosestNPC(150f);
 			if (closestNPC != null && closestNPC.position.Y > Projectile.position.Y) {
@@ -74,8 +88,12 @@ namespace MrPlagueRaces.Content.Projectiles
 				bulletTimer++;
 				if (bulletTimer == 5) {
 					SoundEngine.PlaySound(SoundID.Item11, Projectile.Center);
-					for (int i = 0; i < 5; i++) {
-						Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Projectile.Center.Y + 10 + Main.rand.Next(5) - Main.rand.Next(5), 0f, 15f + Main.rand.Next(5) - Main.rand.Next(5), ProjectileType<SpiderBullet>(), 1 + player.statDefense / 3, 0, Projectile.owner);
+					if (Main.myPlayer == Projectile.owner) // {T} We shouldn't spawn projectiles on non-owner clients.
+					{
+						for (int i = 0; i < 5; i++)
+						{
+							Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Projectile.Center.Y + 10 + Main.rand.Next(5) - Main.rand.Next(5), 0f, 15f + Main.rand.Next(5) - Main.rand.Next(5), ProjectileType<SpiderBullet>(), (3 + (player.statDefense < 20 ? player.statDefense / 3 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.SpiderGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.SpiderGolem]]) : 1f), 0, Projectile.owner);
+						}
 					}
 					bulletTimer = 0;
 				}
@@ -88,11 +106,15 @@ namespace MrPlagueRaces.Content.Projectiles
 			}
 			else {
 				Projectile.velocity.X = 1f * (directionX == 1 ? 1 : -1);
-			}
-			if (!Main.projectile[leftGrip].active || !Main.projectile[rightGrip].active || (Main.projectile[leftGrip].position.X - Projectile.position.X) < -1500 || (Main.projectile[rightGrip].position.X - Projectile.position.X) > 1500) {
-				Projectile.Kill();
-			}
-		}
+            }
+			if (player.whoAmI == Main.myPlayer)
+			{
+				if (!leftGrip.active || !rightGrip.active || (leftGrip.position.X - Projectile.position.X) < -1500 || (rightGrip.position.X - Projectile.position.X) > 1500)
+				{
+					Projectile.Kill();
+				}
+            }
+        }
 
 		public override void OnKill(int timeLeft) {
 			Player player = Main.player[Projectile.owner];
@@ -160,8 +182,12 @@ namespace MrPlagueRaces.Content.Projectiles
 		}
 
 		public override bool PreDrawExtras() {
-			Vector2 leftGripCenter = new Vector2(Main.projectile[leftGrip].Center.X, Main.projectile[leftGrip].Center.Y);
-			Vector2 rightGripCenter = new Vector2(Main.projectile[rightGrip].Center.X, Main.projectile[rightGrip].Center.Y);
+            // {T} Just easier to use, and reduces calls to Main.projectile.
+            var leftGrip = Main.projectile[(int)Projectile.ai[0]];
+            var rightGrip = Main.projectile[(int)Projectile.ai[1]];
+
+            Vector2 leftGripCenter = new Vector2(leftGrip.Center.X, leftGrip.Center.Y);
+			Vector2 rightGripCenter = new Vector2(rightGrip.Center.X, rightGrip.Center.Y);
 
 			Vector2 centerToLeft = new Vector2(Projectile.Center.X, Projectile.Center.Y);
 			Vector2 centerToRight = new Vector2(Projectile.Center.X, Projectile.Center.Y);

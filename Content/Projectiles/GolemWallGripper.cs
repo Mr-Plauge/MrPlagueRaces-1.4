@@ -25,7 +25,6 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.height = 14;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override void AI() {

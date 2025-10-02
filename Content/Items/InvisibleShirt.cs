@@ -34,8 +34,9 @@ namespace MrPlagueRaces.Content.Items
 			player.body = -1;
 		}
 
-		public override void AddRecipes() {
-			CreateRecipe(1).AddIngredient(ItemID.Cobweb, 20).AddTile(TileID.WorkBenches).Register();
-		}
+		public override void AddRecipes()
+        {
+            CreateRecipe(1).AddIngredient(ItemID.Cobweb, 20).AddTile(TileID.WorkBenches).AddCustomShimmerResult(ModContent.ItemType<EntangledStrands>(), 3).Register();
+        }
 	}
 }

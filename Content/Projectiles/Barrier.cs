@@ -22,7 +22,6 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.height = 104;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override void AI() {
@@ -35,19 +34,9 @@ namespace MrPlagueRaces.Content.Projectiles
 				Projectile.velocity.X = 16f * Projectile.direction;
 			}
 			else {
-				Projectile.velocity.X = 0;
+				Projectile.velocity.X = Projectile.direction * 0.00001f; // {T} Projectiles need a bit of velocity to know which way to knockback enemies.
 			}
 			Projectile.ai[0]++;
-		}
-
-		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-		{
-			if (target.Center.X > Projectile.Center.X) {
-				target.velocity.X += 3f;
-			}
-			if (target.Center.X < Projectile.Center.X) {
-				target.velocity.X -= 3f;
-			}
 		}
 
 		public override bool OnTileCollide(Vector2 oldVelocity)

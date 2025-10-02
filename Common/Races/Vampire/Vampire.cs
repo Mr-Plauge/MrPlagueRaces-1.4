@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -9,6 +11,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Mounts;
@@ -21,83 +24,168 @@ namespace MrPlagueRaces.Common.Races.Vampire
 		public override void Load()
         {
 			Description = "Naturally gifted with a form of soul magic, Vampires can morph into a bat-like state.";
-			AbilitiesDescription = $"[c/4DBF60:{"+"}] Press Z to transform into a bat. You enter stealth after a few seconds, making enemies ignore you.\n[c/4DBF60:{"+"}] Press X while in batform to release your abnormally long tongue, which latches onto enemies and drains their health.\n[c/FF3640:{"-"}] You cannot use healing potions.\n[c/FF3640:{"-"}] Getting attacked in sunlight burns you.";
+            DisplayName = "[c/FF0033:Vampire]";
+            //ClothStyle = 3; 
 			CensorClothing = false;
-			HairColor = new Color(91, 86, 94);
+            //StarterShirt = true;
+            HairColor = new Color(91, 86, 94);
 			SkinColor = new Color(91, 86, 94);
 			DetailColor = new Color(175, 165, 140);
 			EyeColor = new Color(255, 81, 81);
-		}
+            //ShirtColor = new Color(190, 74, 122);
+            //UnderShirtColor = new Color(216, 206, 183);
+        }
 
-		public override void ResetEffects(Player player)
-		{
-			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+        public override void PreRaceChange(Player player) // Called before the player's race is changed
+        {
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (player.mount.Type == MountType<StealthBat>())
+            {
+                player.fallStart = (int)(player.position.Y / 16f);
+                player.mount.Dismount(player);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    mrPlagueRacesPlayer.SyncDismount(-1, Main.myPlayer);
+                }
+            }
+        }
+
+        public override void ResetEffects(Player player)
+        {
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireAbility1, $"[c/4DBF60:+] Press Z to transform into a bat. You enter stealth after a few seconds, increasing your damage and making enemies ignore you.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireAbility2, $"[c/4DBF60:+] Press X while in batform to release your tongue, which latches onto enemies and drains their health.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireLight == LightTiers.BatOnly, $"[c/4DBF60:+] In batform, you are able to see a short distance while in the dark.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireLight == LightTiers.NotBat, $"[c/4DBF60:+] Outside of batform, you are able to see a short distance while in the dark.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireLight == LightTiers.On, $"[c/4DBF60:+] You are able to see a short distance while in the dark.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireHealingPotionDenial, $"[c/FF3640:-] You cannot use healing potions.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireNoRegen, $"[c/FF3640:-] You do not passively regenerate health.");
+            RegisterAbilityDescription(ModContent.GetInstance<VampireConfig>().vampireSunlightWeakness, $"[c/FF3640:-] Getting attacked in sunlight burns you.");
+
+            RaceStatDictionary = ModContent.GetInstance<VampireConfig>().vampireStats;
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
-				player.moveSpeed += 0.1f;
+                /*player.moveSpeed += 0.1f;
 				if (player.mount.Type == MountType<StealthBat>()) {
 					player.endurance -= 0.5f;
 				}
 				else {
 					player.endurance -= 0.15f;
 				}
-				player.statLifeMax2 -= (player.statLifeMax2 / 4);
+                player.statLifeMax2 -= (player.statLifeMax2 / 4);*/
 			}
-		}
+        }
 
-		public override void ProcessTriggers(Player player, TriggersSet triggersSet)
+        public override void Kill(Player player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (player.mount.Type == MountType<StealthBat>())
+            {
+                player.fallStart = (int)(player.position.Y / 16f);
+                player.mount.Dismount(player);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    mrPlagueRacesPlayer.SyncDismount(-1, Main.myPlayer);
+                }
+            }
+        }
+
+        public override void ProcessTriggers(Player player, TriggersSet triggersSet)
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			var vampirePlayer = player.GetModPlayer<VampirePlayer>();
 			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
 				if (!player.dead)
-				{
-					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+                {
+					if (ModContent.GetInstance<VampireConfig>().vampireAbility1)
 					{
-						if (player.mount.Type != MountType<StealthBat>()) {
-							player.mount.SetMount(MountType<StealthBat>(), player, false);
-							SoundEngine.PlaySound(SoundID.AbigailUpgrade, player.Center);
-							int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
-							Main.gore[num].velocity *= 0.3f;
-							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
-							Main.gore[num].velocity *= 0.3f;
-							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
-							Main.gore[num].velocity *= 0.3f;
+						if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed)
+						{
+							if (player.mount.Type != MountType<StealthBat>())
+                            {
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.VampireTransformDust(-1, Main.myPlayer);
+                                }
+                                player.mount.SetMount(MountType<StealthBat>(), player, false);
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.SyncBat(-1, Main.myPlayer);
+                                }
+                                SoundEngine.PlaySound(SoundID.AbigailUpgrade, player.Center);
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.VampireTransformSound(-1, Main.myPlayer);
+                                }
+                                int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
+								Main.gore[num].velocity *= 0.3f;
+								num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
+								Main.gore[num].velocity *= 0.3f;
+								num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
+								Main.gore[num].velocity *= 0.3f;
+                            }
+							else
+                            {
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.VampireTransformDust(-1, Main.myPlayer);
+                                }
+                                player.fallStart = (int)(player.position.Y / 16f);
+                                player.mount.Dismount(player);
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.SyncDismount(-1, Main.myPlayer);
+                                }
+                                SoundEngine.PlaySound(SoundID.AbigailAttack, player.Center);
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.VampireExitTransformationSound(-1, Main.myPlayer);
+                                }
+                                int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
+								Main.gore[num].velocity *= 0.3f;
+								num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
+								Main.gore[num].velocity *= 0.3f;
+								num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
+								Main.gore[num].velocity *= 0.3f;
+                            }
 						}
-						else {
-							player.mount.Dismount(player);
-							SoundEngine.PlaySound(SoundID.AbigailAttack, player.Center);
-							int num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y - 10f), player.velocity, 99);
-							Main.gore[num].velocity *= 0.3f;
-							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)(player.height / 2) - 10f), player.velocity, 99);
-							Main.gore[num].velocity *= 0.3f;
-							num = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(player.position.X, player.position.Y + (float)player.height - 10f), player.velocity, 99);
-							Main.gore[num].velocity *= 0.3f;
-						}
-					}
-					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && player.mount.Type == MountType<StealthBat>())
+                    }
+					if (ModContent.GetInstance<VampireConfig>().vampireAbility2)
 					{
-						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-						if (player.ownedProjectileCounts[ProjectileType<LeechTongue>()] == 0) {
-							SoundEngine.PlaySound(SoundID.Item111, player.Center);
-							SoundEngine.PlaySound(SoundID.Item171, player.Center);
-							vampirePlayer.LeechTongue = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X, velocity.Y, ProjectileType<LeechTongue>(), 1, 0, player.whoAmI);
+						if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && player.mount.Type == MountType<StealthBat>())
+						{
+							Vector2 velocity = Vector2.Normalize(mrPlagueRacesPlayer.mouseWorld - player.Center) * 10f;
+							if (player.ownedProjectileCounts[ProjectileType<LeechTongue>()] == 0)
+							{
+								SoundEngine.PlaySound(SoundID.Item111, player.Center);
+								SoundEngine.PlaySound(SoundID.Item171, player.Center);
+                                if (player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.VampireShootTongueSound(-1, Main.myPlayer);
+                                }
+                                // {T} Now supplying -1 for ai[1] in the below line, since that will now store the index of the NPC the tongue is stuck to.
+                                vampirePlayer.LeechTongue = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X, velocity.Y, ProjectileType<LeechTongue>(), 1, 0, player.whoAmI, 0, -1);
+							}
+							else
+							{
+								Main.projectile[vampirePlayer.LeechTongue].ai[0] = 60;
+								NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, vampirePlayer.LeechTongue); // {T} This was never getting synced! It is now :3
+                            }
 						}
-						else {
-							Main.projectile[vampirePlayer.LeechTongue].ai[0] = 60;
+						if (player.mount.Type == MountType<StealthBat>())
+						{
+							if (player.controlUseItem)
+							{
+								player.controlUseItem = false;
+							}
 						}
 					}
-					if (player.mount.Type == MountType<StealthBat>()) {
-						if (player.controlUseItem) {
-							player.controlUseItem = false;
-						}
-					}
-				}
-			}
+                }
+            }
 		}
 
 		public override void UpdateBadLifeRegen(Player player) {
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
-			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats && ModContent.GetInstance<VampireConfig>().vampireNoRegen) {
 				if (player.lifeRegen > 0)
 					player.lifeRegen = 0;
 				player.lifeRegenTime = 0;
@@ -107,7 +195,7 @@ namespace MrPlagueRaces.Common.Races.Vampire
 		public override bool CanUseItem(Player player, Item item)
 		{
 			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
-			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
+			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats && ModContent.GetInstance<VampireConfig>().vampireHealingPotionDenial) {
 				if (item.healLife > 0) {
 					return false;
 				}
@@ -152,14 +240,37 @@ namespace MrPlagueRaces.Common.Races.Vampire
 					}
 					else {
 						vampirePlayer.stealthTimer = 0;
-					}
-					if (vampirePlayer.ExposedToSun()) {
-						player.AddBuff(BuffType<Photosensitive>(), 2);
-					}
-				}
+                    }
+                    if (ModContent.GetInstance<VampireConfig>().vampireSunlightWeakness)
+                    {
+						if (vampirePlayer.ExposedToSun())
+						{
+							player.AddBuff(BuffType<Photosensitive>(), 2);
+						}
+                    }
+                    if (ModContent.GetInstance<VampireConfig>().vampireLight == LightTiers.On || (ModContent.GetInstance<VampireConfig>().vampireLight == LightTiers.BatOnly && player.mount.Type == MountType<StealthBat>()) || (ModContent.GetInstance<VampireConfig>().vampireLight == LightTiers.NotBat && player.mount.Type != MountType<StealthBat>()))
+                    {
+                        Lighting.AddLight(player.Center, player.eyeColor.ToVector3());
+                    }
+                }
 			}
-		}
-	}
+        }
+
+        public override void PostUpdate(Player player)
+        {
+            var vampirePlayer = player.GetModPlayer<VampirePlayer>();
+            if (player.whoAmI == Main.myPlayer)
+            {
+				if (Main.netMode != NetmodeID.SinglePlayer)
+				{
+					vampirePlayer.SyncPlayer(-1, Main.myPlayer, false);
+				}
+
+                var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+                mrPlagueRacesPlayer.SyncRotationsAndOffsets(-1, Main.myPlayer);
+            }
+        }
+    }
 
 	public class VampirePlayer : ModPlayer
 	{
@@ -175,7 +286,9 @@ namespace MrPlagueRaces.Common.Races.Vampire
 			packet.Write(stealthTimer);
 			packet.Write(LeechTongue);
 			packet.Write(Leeching);
-		}
+
+            packet.Send(toWho, fromWho);
+        }
 
 		public bool ExposedToSun()
 		{
@@ -300,5 +413,59 @@ namespace MrPlagueRaces.Common.Races.Vampire
 				return (!hasCeilingAbove || !behindSmallWall) && !((double)Player.Center.Y > Main.worldSurface * 16.0) && Main.dayTime && !(Collision.DrownCollision(Player.position, Player.width, Player.height, Player.gravDir));
 			}
 		}
-	}
+    }
+
+    public enum LightTiers
+    {
+        Off,
+        BatOnly,
+        NotBat,
+        On
+    }
+
+    public class VampireConfig : ModConfig
+    {
+        public static VampireConfig Instance;
+        public override ConfigScope Mode => ConfigScope.ServerSide;
+
+        //[Header("Vampire")]
+        [BackgroundColor(110, 141, 255)]
+        public Dictionary<RacialStatType, RacialStatPercentageModifier> vampireStats = new Dictionary<RacialStatType, RacialStatPercentageModifier>()
+        {
+            //n describes negative, p describes positive. IE, n20 is equivalent to -20%
+            [RacialStatType.statLifeMax2] = RacialStatPercentageModifier.n25,
+            [RacialStatType.moveSpeed] = RacialStatPercentageModifier.p10,
+            [RacialStatType.endurance] = RacialStatPercentageModifier.n15
+        };
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool vampireAbility1;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool vampireAbility2;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier vampireStealthDamage;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier vampireBatVelocity;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier vampireBatFlightDuration;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier vampireLifeSteal;
+        [DefaultValue(LightTiers.BatOnly)]
+        [BackgroundColor(110, 141, 255)]
+        public LightTiers vampireLight;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool vampireHealingPotionDenial;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool vampireNoRegen;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool vampireSunlightWeakness;
+    }
 }

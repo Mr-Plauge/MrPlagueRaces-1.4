@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -73,7 +75,7 @@ namespace MrPlagueRaces.Content.Prefixes
 			{
 				if (Player.armor[i].prefix == PrefixType<Streamlined>())
 				{
-					Player.maxRunSpeed += 2f;
+					Player.maxRunSpeed += 2f * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Streamlined) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Streamlined]]) : 1f);
 					Player.moveSpeed += 0.05f;
 				}
 			}

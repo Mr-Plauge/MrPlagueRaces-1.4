@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -23,7 +24,6 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.friendly = true;
 			Projectile.tileCollide = false;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override bool? CanDamage()

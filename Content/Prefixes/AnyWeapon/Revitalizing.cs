@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -74,16 +76,16 @@ namespace MrPlagueRaces.Content.Prefixes
 		{
 			if (Player.HeldItem.prefix == PrefixType<Revitalizing>() && !target.active) {
 				Player.AddBuff(BuffType<RevitalizingBuff>(), 60);
-				Player.HealEffect(Player.statLifeMax2 / 100);
-				Player.statLife += Player.statLifeMax2 / 100;
+				Player.HealEffect((Player.statLifeMax2 / 100) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Revitalizing) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Revitalizing]]) : 1f));
+				Player.statLife += (Player.statLifeMax2 / 100) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Revitalizing) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Revitalizing]]) : 1f);
 			}
 		}
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
 		{
 			if (Player.HeldItem.prefix == PrefixType<Revitalizing>() && !target.active) {
 				Player.AddBuff(BuffType<RevitalizingBuff>(), 60);
-				Player.HealEffect(Player.statLifeMax2 / 100);
-				Player.statLife += Player.statLifeMax2 / 100;
+				Player.HealEffect((Player.statLifeMax2 / 100) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Revitalizing) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Revitalizing]]) : 1f));
+				Player.statLife += (Player.statLifeMax2 / 100) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Revitalizing) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Revitalizing]]) : 1f);
 			}
 		}
 		/*public override void OnHitPvp(Item item, Player target, int damage, bool crit)

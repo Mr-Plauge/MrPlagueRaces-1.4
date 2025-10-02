@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -80,7 +82,7 @@ namespace MrPlagueRaces.Content.Prefixes
 				}
 			}
 			if (reinforcedFactor > 0 && !Player.HasBuff(BuffType<Shielded>())) {
-				Player.endurance += 0.75f * reinforcedFactor;
+				Player.endurance += (0.75f * reinforcedFactor) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Reinforced) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Reinforced]]) : 1f);
 			}
 		}
 

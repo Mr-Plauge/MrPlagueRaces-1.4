@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using MrPlagueRaces.Common.Races.Vampire;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Buffs
@@ -35,7 +36,7 @@ namespace MrPlagueRaces.Content.Buffs
 						Player.npcTypeNoAggro[i] = true;
 					}
 					Player.aggro -= 5000;
-					Player.GetDamage(DamageClass.Generic) += 10f;
+					Player.GetDamage(DamageClass.Generic) += 3f * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<VampireConfig>().vampireStealthDamage]);
 				}
 				unseen = false;
 			}

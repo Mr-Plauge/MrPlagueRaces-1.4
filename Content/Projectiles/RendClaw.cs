@@ -32,33 +32,31 @@ namespace MrPlagueRaces.Content.Projectiles
 
 		public override void AI() {
 			Player player = Main.player[Projectile.owner];
-			Vector2 vector31 = player.RotatedRelativePoint(player.MountedCenter);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            Vector2 vector31 = player.RotatedRelativePoint(player.MountedCenter);
 			if (frameInterval >= 2) {
 				frameInterval = 0;
 				Projectile.frame += 1;
 			}
 			frameInterval++;
-			if (Main.myPlayer == Projectile.owner)
+			if (Projectile.frame < 6 && !player.dead)
 			{
-				if (Projectile.frame < 6 && !player.dead)
+				float num123 = 1f;
+				num123 = 15f * Projectile.scale;
+				Vector2 vector34 = mrPlagueRacesPlayer.mouseWorld - vector31;
+				vector34.Normalize();
+				if (vector34.HasNaNs())
 				{
-					float num123 = 1f;
-					num123 = 15f * Projectile.scale;
-					Vector2 vector34 = Main.MouseWorld - vector31;
-					vector34.Normalize();
-					if (vector34.HasNaNs())
-					{
-						vector34 = Vector2.UnitX * (float)player.direction;
-					}
-					vector34 *= num123;
-					Projectile.velocity = vector34;
-					Projectile.direction = Projectile.spriteDirection = (Projectile.velocity.X > 0f) ? 1 : 1;
-					Projectile.rotation = Projectile.velocity.ToRotation();
+					vector34 = Vector2.UnitX * (float)player.direction;
 				}
-				else
-				{
-					Projectile.Kill();
-				}
+				vector34 *= num123;
+				Projectile.velocity = vector34;
+				Projectile.direction = Projectile.spriteDirection = (Projectile.velocity.X > 0f) ? 1 : 1;
+				Projectile.rotation = Projectile.velocity.ToRotation();
+			}
+			else
+			{
+				Projectile.Kill();
 			}
 			Vector2 vector40 = Projectile.Center + Projectile.velocity * 3f;
 			Lighting.AddLight(Projectile.Center, player.eyeColor.ToVector3());

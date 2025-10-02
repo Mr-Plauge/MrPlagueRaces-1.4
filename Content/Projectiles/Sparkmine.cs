@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Kobold;
 using static Terraria.ModLoader.ModContent;
 
@@ -75,8 +77,13 @@ namespace MrPlagueRaces.Content.Projectiles
 
 		public void Explode() {
 			Player player = Main.player[Projectile.owner];
-			Vector2 velocity = Vector2.Normalize(Projectile.position - player.Center) * (10 + (player.statLifeMax2 / 80));
-			player.velocity = -velocity;
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (player.whoAmI == Main.myPlayer)
+            {
+                mrPlagueRacesPlayer.KoboldExplosionSound(-1, Main.myPlayer);
+            }
+            Vector2 velocity = Vector2.Normalize(Projectile.position - player.Center) * (10 + (player.statLifeMax2 / 80));
+			player.velocity = -velocity * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<KoboldConfig>().koboldSparkmineVelocity]);
 			player.fallStart = (int)(player.position.Y / 16f);
 			SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
 			if (player.HeldItem.pick > 0) {
@@ -137,8 +144,12 @@ namespace MrPlagueRaces.Content.Projectiles
 				Main.dust[dust].color = player.eyeColor;
 				Main.dust[dust].noGravity = true;
 				Main.dust[dust].velocity *= 2f;
-			}
-			Projectile.position = Projectile.Center;
+            }
+            if (player.whoAmI == Main.myPlayer)
+            {
+                mrPlagueRacesPlayer.KoboldExplosionSparkDust(-1, Main.myPlayer, Projectile.position.X, Projectile.position.Y, Projectile.width, Projectile.height);
+            }
+            Projectile.position = Projectile.Center;
 			Projectile.width = 260;
 			Projectile.height = 260;
 			Projectile.Center = Projectile.position;
@@ -158,7 +169,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			Color drawColor = Projectile.GetAlpha(lightColor);
 			Main.EntitySpriteDraw(textureEyes,
 				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-				sourceRectangle, new Color(player.eyeColor.ToVector4() * Projectile.Opacity), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+				sourceRectangle, new Color(player.eyeColor.ToVector4() * Projectile.Opacity * 2), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 		}
 	}
 }

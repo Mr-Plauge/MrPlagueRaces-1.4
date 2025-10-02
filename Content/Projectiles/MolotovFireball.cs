@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Dragonkin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Projectiles
@@ -11,17 +13,20 @@ namespace MrPlagueRaces.Content.Projectiles
 	public class MolotovFireball : ModProjectile
 	{
 		public override void SetStaticDefaults() {
-			// DisplayName.SetDefault("Molotov Fireball");
-		}
+            // DisplayName.SetDefault("Molotov Fireball");
+            Main.projFrames[Projectile.type] = 6;
+        }
 
 		public override void SetDefaults() {
+			Main.projFrames[Projectile.type] = 6;
 			Projectile.width = 32;
-			Projectile.height = 18;
+			Projectile.height = 24;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 		}
 
 		public override void AI() {
+			Main.projFrames[Projectile.type] = 6;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Player player = Main.player[Projectile.owner];
 			Projectile.ai[0]++;
@@ -40,8 +45,18 @@ namespace MrPlagueRaces.Content.Projectiles
 			}
 			if (Main.rand.Next(3) == 1) {
 				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);
-			}
-		}
+            }
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 6)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+                if (Projectile.frame > 5)
+                {
+                    Projectile.frame = 0;
+                }
+            }
+        }
 
 		public override bool? CanDamage()
 		{
@@ -61,7 +76,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			for (int i = 0; i < 15; i++) {
 				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);
 				Main.dust[dust].velocity *= 5;
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y,  Main.rand.Next(6) - Main.rand.Next(6),  Main.rand.Next(6) - Main.rand.Next(6), ProjectileType<MolotovFlame>(), 1 + (player.statDefense * 4), 0, Projectile.owner);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y,  Main.rand.Next(6) - Main.rand.Next(6),  Main.rand.Next(6) - Main.rand.Next(6), ProjectileType<MolotovFlame>(), (1 + (player.statDefense < 20 ? player.statDefense / 5 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<DragonkinConfig>().dragonkinFireDamage]), 0, Projectile.owner);
 			}
 		}
 

@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -10,6 +12,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using static Terraria.ModLoader.ModContent;
@@ -21,8 +24,8 @@ namespace MrPlagueRaces.Common.Races.Kenku
 		public override void Load()
         {
 			Description = "Naturally capable of flight, Kenku possess greater control over aerial movement.";
-			AbilitiesDescription = $"[c/4DBF60:{"+"}] While airborne, press Z to swoop forwards.\n[c/4DBF60:{"+"}] Press X to fire a volley of feathers. Fly within range of the feathers to launch yourself.\n[c/4DBF60:{"+"}] You are equipped with natural wings by default. Their power scales with max health.\n[c/4DBF60:{"+"}] At above 160 max health, you no longer take fall damage.";
-			CensorClothing = false;
+            DisplayName = "[c/6F5BF0:Kenku]";
+            CensorClothing = false;
 			StarterShirt = true;
 			HairColor = new Color(120, 96, 172);
 			SkinColor = new Color(120, 96, 172);
@@ -30,21 +33,31 @@ namespace MrPlagueRaces.Common.Races.Kenku
 			EyeColor = new Color(151, 73, 0);
 			ShirtColor = new Color(201, 180, 177);
 			UnderShirtColor = new Color(199, 122, 156);
-		}
+        }
 
-		public override void ResetEffects(Player player)
-		{
-			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+        public override void ResetEffects(Player player)
+        {
+            RegisterAbilityDescription(ModContent.GetInstance<KenkuConfig>().kenkuAbility1, $"[c/4DBF60:+] While airborne, press Z to swoop forwards.");
+            RegisterAbilityDescription(ModContent.GetInstance<KenkuConfig>().kenkuAbility2, $"[c/4DBF60:+] Press X to fire a volley of feathers. Fly within range of the feathers to launch yourself.");
+            RegisterAbilityDescription(ModContent.GetInstance<KenkuConfig>().kenkuWings, $"[c/4DBF60:+] You are equipped with natural wings by default. Their power scales with max health.");
+            RegisterAbilityDescription(ModContent.GetInstance<KenkuConfig>().kenkuNoFallDmg, $"[c/4DBF60:+] At above 160 max health, you no longer take fall damage.");
+
+            RaceStatDictionary = ModContent.GetInstance<KenkuConfig>().kenkuStats;
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
-				player.moveSpeed += 0.2f;
+				/*player.moveSpeed += 0.2f;
 				player.jumpSpeedBoost += 0.15f;
 				player.statLifeMax2 -= (player.statLifeMax2 / 3);
-				player.endurance -= 0.3f;
+				player.endurance -= 0.3f;*/
 				player.rocketTime = 0;
 				player.rocketTimeMax = 0;
-				if (player.statLifeMax2 > 160) {
-					player.noFallDmg = true;
-				}
+				if (ModContent.GetInstance<KenkuConfig>().kenkuNoFallDmg)
+				{
+                    if (player.statLifeMax2 > 160)
+                    {
+                        player.noFallDmg = true;
+                    }
+                }
 			}
 		}
 
@@ -54,125 +67,158 @@ namespace MrPlagueRaces.Common.Races.Kenku
 			var kenkuPlayer = player.GetModPlayer<KenkuPlayer>();
 			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
 				float anchor = player.statLifeMax2;
-				if (player.statLifeMax2 > 120) {
+                int maxVelocity = (6 + (player.statLifeMax2 / 100));
+                if (player.statLifeMax2 > 120) {
 					anchor = 120;
 				}
 				if (!player.dead && player.active)
-				{
-					if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed && player.velocity.Y != 0 && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Dashed>()))
+                {
+					if (ModContent.GetInstance<KenkuConfig>().kenkuAbility1)
 					{
-						player.velocity.X = 16 * player.direction;
-						SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, player.Center);
-						kenkuPlayer.wingFrame = 2;
-						kenkuPlayer.wingFrameCounter = 0;
-						kenkuPlayer.dashTime = 32;
-						player.AddBuff(BuffType<Dashed>(), 220);
-					}
-					if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Fatigued>()))
-					{
-						Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-						player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
-						player.fallStart = (int)(player.position.Y / 16f);
-						player.velocity.X = 6 * -player.direction;
-						SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, player.Center);
-						kenkuPlayer.wingFrame = 2;
-						kenkuPlayer.wingFrameCounter = 0;
-						kenkuPlayer.dashTime = 32;
-						for (int i = 0; i < 12; i++) {
-							int projectile = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (float)(player.width / 2) / 16, player.Center.Y, velocity.X + Main.rand.Next(3) - Main.rand.Next(3), velocity.Y + Main.rand.Next(3) - Main.rand.Next(3), ProjectileType<KenkuFeather>(), (6 * (player.statLifeMax2 / 40)), 0, player.whoAmI);
-							Main.projectile[projectile].velocity *= 3f;
+						if (MrPlagueRaces.RaceAbilityKeybind1.JustPressed && player.velocity.Y != 0 && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Dashed>()))
+						{
+							player.velocity.X = (16 * player.direction) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<KenkuConfig>().kenkuSwoopVelocity]);
+							SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, player.Center);
+                            if (player.whoAmI == Main.myPlayer)
+                            {
+                                mrPlagueRacesPlayer.KenkuDashSound(-1, Main.myPlayer);
+                            }
+                            kenkuPlayer.wingFrame = 2;
+							kenkuPlayer.wingFrameCounter = 0;
+							kenkuPlayer.dashTime = 32;
+							player.AddBuff(BuffType<Dashed>(), 220);
 						}
-						player.AddBuff(BuffType<Fatigued>(), 320);
-					}
-					int maxVelocity = (6 + (player.statLifeMax2 / 100));
-					if (player.wings == 0) {
-						if (player.controlJump) {
-							kenkuPlayer.dashTime = 0;
+                    }
+					if (ModContent.GetInstance<KenkuConfig>().kenkuAbility2)
+					{
+						if (MrPlagueRaces.RaceAbilityKeybind2.JustPressed && kenkuPlayer.wingTime > 0 && !player.HasBuff(BuffType<Fatigued>()))
+						{
+							Vector2 velocity = Vector2.Normalize(mrPlagueRacesPlayer.mouseWorld - player.Center) * 10f;
+							player.direction = mrPlagueRacesPlayer.mouseWorld.X >= player.Center.X ? 1 : -1;
 							player.fallStart = (int)(player.position.Y / 16f);
-							if (player.velocity.Y != 0) {
-								kenkuPlayer.flying = true;
+							player.velocity.X = 6 * -player.direction;
+							SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, player.Center);
+                            if (player.whoAmI == Main.myPlayer)
+                            {
+                                mrPlagueRacesPlayer.KenkuSummonFeathersSound(-1, Main.myPlayer);
+                            }
+                            kenkuPlayer.wingFrame = 2;
+							kenkuPlayer.wingFrameCounter = 0;
+							kenkuPlayer.dashTime = 32;
+							for (int i = 0; i < 12; i++)
+							{
+                                // {T} Moved the multiplication of velocity into the NewProjectile call instead of a separate line.
+								// It is NOT network-friendly to modify a projectile directly after it has been spawned, as those changes will not be
+								// synced across the network. Such changes should only be done in the projectile's AI code.
+                                Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X + (float)(player.width / 2) / 16, player.Center.Y, (velocity.X + Main.rand.Next(3) - Main.rand.Next(3)) * 3f, (velocity.Y + Main.rand.Next(3) - Main.rand.Next(3)) * 3f, ProjectileType<KenkuFeather>(), (int)((1f + (player.ConsumedLifeFruit * 0.075f)) * (3 * (player.statLifeMax2 / 40))) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<KenkuConfig>().kenkuFeatherDamage]), 0, player.whoAmI);
 							}
-							if (kenkuPlayer.wingTime > 0) {
-								kenkuPlayer.wingFrameCounter++;
-								if (kenkuPlayer.wingFrameCounter > 4)
+							player.AddBuff(BuffType<Fatigued>(), 320);
+						}
+                    }
+					if (ModContent.GetInstance<KenkuConfig>().kenkuWings)
+					{
+						if (player.wings == 0 && !player.stoned && !player.frozen && !player.webbed && !player.shimmering)
+						{
+							if (player.controlJump)
+							{
+								kenkuPlayer.dashTime = 0;
+								player.fallStart = (int)(player.position.Y / 16f);
+								if (player.velocity.Y != 0)
 								{
-									kenkuPlayer.wingFrame++;
-									kenkuPlayer.wingFrameCounter = 0;
-									if (kenkuPlayer.wingFrame >= 4)
-									{
-										kenkuPlayer.wingFrame = 0;
-										SoundEngine.PlaySound(SoundID.Item32, player.Center);
-									}
+									kenkuPlayer.flying = true;
 								}
-								float ascentWhenFalling = (float)(anchor / 100);
-								float ascentWhenRising = (float)(anchor / 420);
-								float maxCanAscendMultiplier = (float)(anchor / 100);
-								float maxAscentMultiplier = (float)(anchor / 25);
-								float constantAscend = (float)(anchor / 500);
-
-								player.velocity.Y -= ascentWhenFalling * player.gravDir;
-
-								if (player.gravDir == 1f)
+								if (kenkuPlayer.wingTime > 0)
 								{
-									if (player.velocity.Y > 0f)
+									kenkuPlayer.wingFrameCounter++;
+									if (kenkuPlayer.wingFrameCounter > 4)
 									{
-										player.velocity.Y -= ascentWhenRising;
+										kenkuPlayer.wingFrame++;
+										kenkuPlayer.wingFrameCounter = 0;
+										if (kenkuPlayer.wingFrame >= 4)
+										{
+											kenkuPlayer.wingFrame = 0;
+											SoundEngine.PlaySound(SoundID.Item32, player.Center);
+                                            if (player.whoAmI == Main.myPlayer)
+                                            {
+                                                mrPlagueRacesPlayer.KenkuFlapSound(-1, Main.myPlayer);
+                                            }
+                                        }
 									}
-									else if (player.velocity.Y > (0f - 5) * maxAscentMultiplier)
+									float ascentWhenFalling = (float)(anchor / 100);
+									float ascentWhenRising = (float)(anchor / 420);
+									float maxCanAscendMultiplier = (float)(anchor / 100);
+									float maxAscentMultiplier = (float)(anchor / 25);
+									float constantAscend = (float)(anchor / 500);
+
+									player.velocity.Y -= ascentWhenFalling * player.gravDir;
+
+									if (player.gravDir == 1f)
 									{
-										player.velocity.Y -= constantAscend;
+										if (player.velocity.Y > 0f)
+										{
+											player.velocity.Y -= ascentWhenRising;
+										}
+										else if (player.velocity.Y > (0f - 5) * maxAscentMultiplier)
+										{
+											player.velocity.Y -= constantAscend;
+										}
+										if (player.velocity.Y < (0f - 5) * maxCanAscendMultiplier)
+										{
+											player.velocity.Y = (0f - 5) * maxCanAscendMultiplier;
+										}
 									}
-									if (player.velocity.Y < (0f - 5) * maxCanAscendMultiplier)
+									else
 									{
-										player.velocity.Y = (0f - 5) * maxCanAscendMultiplier;
+										if (player.velocity.Y < 0f)
+										{
+											player.velocity.Y += ascentWhenRising;
+										}
+										else if (player.velocity.Y < 5 * maxAscentMultiplier)
+										{
+											player.velocity.Y += constantAscend;
+										}
+										if (player.velocity.Y > 5 * maxCanAscendMultiplier)
+										{
+											player.velocity.Y = 5 * maxCanAscendMultiplier;
+										}
 									}
+									kenkuPlayer.wingTime -= 1f;
 								}
 								else
 								{
-									if (player.velocity.Y < 0f)
+									if (player.velocity.Y > 3f)
 									{
-										player.velocity.Y += ascentWhenRising;
+										player.velocity.Y = 3f;
 									}
-									else if (player.velocity.Y < 5 * maxAscentMultiplier)
+									if (player.velocity.Y > 1)
 									{
-										player.velocity.Y += constantAscend;
-									}
-									if (player.velocity.Y > 5 * maxCanAscendMultiplier)
-									{
-										player.velocity.Y = 5 * maxCanAscendMultiplier;
+										kenkuPlayer.wingFrameCounter = 0;
+										kenkuPlayer.wingFrame = 2;
 									}
 								}
-								kenkuPlayer.wingTime -= 1f;
-							}
-							else {
-								if (player.velocity.Y > 3f) {
-									player.velocity.Y = 3f;
+								if (player.controlLeft && player.velocity.X > ((player.maxRunSpeed * 2) * -1))
+								{
+									player.velocity.X += -0.1f;
 								}
-								if (player.velocity.Y > 1) {
-									kenkuPlayer.wingFrameCounter = 0;
-									kenkuPlayer.wingFrame = 2;
+								if (player.controlRight && player.velocity.X < (player.maxRunSpeed * 2))
+								{
+									player.velocity.X += 0.1f;
 								}
 							}
-							if (player.controlLeft && player.velocity.X > ((player.maxRunSpeed * 2) * -1))
+							else if (kenkuPlayer.dashTime == 0)
 							{
-								player.velocity.X += -0.1f;
+								kenkuPlayer.wingFrameCounter = 0;
+								kenkuPlayer.wingFrame = 0;
 							}
-							if (player.controlRight && player.velocity.X < (player.maxRunSpeed * 2))
+							if (player.empressBrooch && kenkuPlayer.wingTime != 0f)
 							{
-								player.velocity.X += 0.1f;
+								kenkuPlayer.wingTime = player.statLifeMax2 * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<KenkuConfig>().kenkuWingsPower]);
 							}
 						}
-						else if (kenkuPlayer.dashTime == 0) {
-							kenkuPlayer.wingFrameCounter = 0;
-							kenkuPlayer.wingFrame = 0;
-						}
-						if (player.empressBrooch && kenkuPlayer.wingTime != 0f)
+						if (player.velocity.Y == 0)
 						{
-							kenkuPlayer.wingTime = player.statLifeMax2;
+							kenkuPlayer.wingTime = player.statLifeMax2 * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<KenkuConfig>().kenkuWingsPower]);
 						}
-					}
-					if (player.velocity.Y == 0) {
-						kenkuPlayer.wingTime = player.statLifeMax2;
 					}
 				}
 				if (!player.controlJump || player.velocity.Y == 0) {
@@ -231,12 +277,31 @@ namespace MrPlagueRaces.Common.Races.Kenku
 						{
 							kenkuPlayer.wingFrame = 0;
 							SoundEngine.PlaySound(SoundID.Item32, player.Center);
-						}
+                            if (player.whoAmI == Main.myPlayer)
+                            {
+                                mrPlagueRacesPlayer.KenkuFlapSound(-1, Main.myPlayer);
+                            }
+                        }
 					}
 				}
 			}
-		}
-	}
+        }
+
+        public override void PostUpdate(Player player)
+        {
+            var kenkuPlayer = player.GetModPlayer<KenkuPlayer>();
+            if (player.whoAmI == Main.myPlayer)
+            {
+				if (Main.netMode != NetmodeID.SinglePlayer)
+				{
+					kenkuPlayer.SyncPlayer(-1, Main.myPlayer, false);
+				}
+
+                var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+                mrPlagueRacesPlayer.SyncRotationsAndOffsets(-1, Main.myPlayer);
+            }
+        }
+    }
 
 	public class KenkuPlayer : ModPlayer
 	{
@@ -256,7 +321,9 @@ namespace MrPlagueRaces.Common.Races.Kenku
 			packet.Write(wingFrame);
 			packet.Write(wingFrameCounter);
 			packet.Write(dashTime);
-		}
+
+            packet.Send(toWho, fromWho);
+        }
 	}
 
 	public class KenkuWings : PlayerDrawLayer
@@ -324,5 +391,46 @@ namespace MrPlagueRaces.Common.Races.Kenku
 			int shader = (index == 0 ? drawInfo.skinDyePacked : index == 1 ? drawInfo.skinDyePacked : index == 2 ? 0 : index == 3 ? 0 : index == 4 ? drawInfo.hairDyePacked : index == 5 ? drawInfo.skinDyePacked : index == 6 ? drawInfo.skinDyePacked : index == 7 ? 0 : index == 8 ? 0 : drawInfo.hairDyePacked);
 			return shader;
 		}
-	}
+    }
+
+    public class KenkuConfig : ModConfig
+    {
+        public static KenkuConfig Instance;
+        public override ConfigScope Mode => ConfigScope.ServerSide;
+
+        //[Header("Kenku")]
+        [BackgroundColor(110, 141, 255)]
+        public Dictionary<RacialStatType, RacialStatPercentageModifier> kenkuStats = new Dictionary<RacialStatType, RacialStatPercentageModifier>()
+        {
+            //n describes negative, p describes positive. IE, n20 is equivalent to -20%
+            [RacialStatType.statLifeMax2] = RacialStatPercentageModifier.n33,
+            [RacialStatType.moveSpeed] = RacialStatPercentageModifier.p20,
+            [RacialStatType.jumpSpeedBoost] = RacialStatPercentageModifier.p15,
+            [RacialStatType.endurance] = RacialStatPercentageModifier.n30
+        };
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool kenkuAbility1;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool kenkuAbility2;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool kenkuWings;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier kenkuWingsPower;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier kenkuFeatherDamage;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier kenkuSwoopVelocity;
+        [DefaultValue(RacialStatPercentageModifier.zero)]
+        [BackgroundColor(110, 141, 255)]
+        public RacialStatPercentageModifier kenkuFeatherVelocity;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool kenkuNoFallDmg;
+    }
 }

@@ -7,6 +7,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Buffs
@@ -35,7 +37,7 @@ namespace MrPlagueRaces.Content.Buffs
 
 		public override void ResetEffects() {
 			if (accelerative) {
-				Player.maxRunSpeed += 5f;
+				Player.maxRunSpeed += 5f * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Accelerative) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Accelerative]]) : 1f);
 				Player.runAcceleration += 0.05f;
 			}
 			accelerative = false;

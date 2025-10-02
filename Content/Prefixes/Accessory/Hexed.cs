@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -84,7 +86,7 @@ namespace MrPlagueRaces.Content.Prefixes
 			{
 				if (Player.armor[i].prefix == PrefixType<Hexed>())
 				{
-					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X, Player.Center.Y, 4 * Player.direction, Main.rand.Next(4) - Main.rand.Next(4), ProjectileType<ShadowflameSeeker>(), Player.statLifeMax2 / 25, 5, Player.whoAmI);
+					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X, Player.Center.Y, 4 * Player.direction, Main.rand.Next(4) - Main.rand.Next(4), ProjectileType<ShadowflameSeeker>(), (Player.statLifeMax2 / 40) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Hexed) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Hexed]]) : 1f), 5, Player.whoAmI);
 					SoundEngine.PlaySound(SoundID.DD2_EtherianPortalSpawnEnemy, Player.Center);
 				}
 			}

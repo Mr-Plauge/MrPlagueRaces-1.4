@@ -16,12 +16,57 @@ namespace MrPlagueRaces.Common.Players
 {
 	public class RaceHookPlayer : ModPlayer
 	{
-		public override void ResetEffects()
+		public void PreRaceChange()
+		{
+            var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (mrPlagueRacesPlayer.race != null)
+            {
+                mrPlagueRacesPlayer.race.PreRaceChange(Player);
+                Player.ghost = false;
+                Player.fullRotation = 0f;
+                Player.headRotation = 0f;
+                Player.bodyRotation = 0f;
+                Player.legRotation = 0f;
+                Player.headPosition = new Vector2(0, 0);
+                Player.bodyPosition = new Vector2(0, 0);
+                Player.legPosition = new Vector2(0, 0);
+
+                // {T} These are some extra fields I think should be reset, too.
+				// This is mainly just an issue with Turtle's races, rather than most humanoid races.
+                // If you think this shouldn't be here, I *can* go and add it into the PreRaceChange function of all of my races instead,
+				// but it will be a little bit annoying :p
+                Player.bodyFrame.Width = 40; // This is the default body frame width for the player.
+                Player.legFrame.Width = Player.bodyFrame.Width;
+
+                // Reset the player's hitbox size. This method will keep the player centered, rather than making their position shift slightly,
+				// and is the 'right' way imo to change the player's hitbox size.
+                Player.position = Player.Bottom; // Set up the position.
+                Player.Size = Player.DefaultSize; // Reset the size.
+                Player.Bottom = Player.position; // Put the position back.
+            }
+        }
+        public void PostRaceChange()
+        {
+            var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (mrPlagueRacesPlayer.race != null)
+            {
+                mrPlagueRacesPlayer.race.PostRaceChange(Player);
+                if (Player.statMana < 0)
+                {
+                    Player.statMana = 0;
+                }
+            }
+        }
+        public override void ResetEffects()
 		{
 			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (mrPlagueRacesPlayer.race != null)
-			{
-				mrPlagueRacesPlayer.race.ResetEffects(Player);
+            {
+				if (mrPlagueRacesPlayer.race.hasRegisteredAbilityDescriptions)
+				{
+                    mrPlagueRacesPlayer.race.AbilitiesDescription = "";
+                }
+                mrPlagueRacesPlayer.race.ResetEffects(Player);
 			}
 		}
 
@@ -68,9 +113,18 @@ namespace MrPlagueRaces.Common.Players
 			{
 				mrPlagueRacesPlayer.race.PreUpdate(Player);
 			}
-		}
+        }
 
-		public override void ProcessTriggers(TriggersSet triggersSet)
+        public override void PostUpdate()
+        {
+            var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (mrPlagueRacesPlayer.race != null)
+            {
+                mrPlagueRacesPlayer.race.PostUpdate(Player);
+            }
+        }
+
+        public override void ProcessTriggers(TriggersSet triggersSet)
 		{
 			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (mrPlagueRacesPlayer.race != null)
@@ -219,9 +273,22 @@ namespace MrPlagueRaces.Common.Players
 			{
 				return true;
 			}
-		}
+        }
 
-		public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
+        public override bool FreeDodge(Player.HurtInfo info)
+        {
+            var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (mrPlagueRacesPlayer.race != null)
+            {
+                return mrPlagueRacesPlayer.race.FreeDodge(Player, info);
+            }
+			else
+			{
+				return false;
+			}
+        }
+
+        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
 		{
 			var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (mrPlagueRacesPlayer.race != null)

@@ -88,7 +88,7 @@ namespace MrPlagueRaces.Content.Mounts
 
 		public override void UpdateEffects(Player player)
 		{
-			MountData.runSpeed = (player.maxRunSpeed / 3) + player.accRunSpeed;
+			MountData.runSpeed = ((player.maxRunSpeed / 3) + player.accRunSpeed) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdCrawlVelocity]);
 		}
 	}
 }

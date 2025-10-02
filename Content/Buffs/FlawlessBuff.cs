@@ -7,6 +7,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Buffs
@@ -42,8 +44,8 @@ namespace MrPlagueRaces.Content.Buffs
 				{
 					if (Player.armor[i].prefix == PrefixType<Flawless>())
 					{
-						critFactor += 5;
-						damageFactor += 0.1f;
+						critFactor += 5 * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Flawless) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Flawless]]) : 1f);
+						damageFactor += 0.1f * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Flawless) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Flawless]]) : 1f);
 					}
 				}
 				Player.GetCritChance(DamageClass.Generic) += critFactor;

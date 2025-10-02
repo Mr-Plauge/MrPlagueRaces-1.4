@@ -7,52 +7,86 @@ using Terraria.Localization;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.UI;
 using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Players;
+using MrPlagueRaces.Common.UI.States;
 
 namespace MrPlagueRaces.Common.UI.Elements
 {
 	public class UIRaceButton : UIElement
 	{
-		private readonly Player _player;
+		public Player _player;
 
-		public readonly int RaceId;
+		public Player _clonePlayer;
 
-		private readonly Asset<Texture2D> _BasePanelTexture;
+        public readonly int RaceId;
 
-		private readonly Asset<Texture2D> _selectedBorderTexture;
+		public readonly bool IsChangeButton;
 
-		private readonly Asset<Texture2D> _hoveredBorderTexture;
+        public readonly bool IsClothStyleButton;
 
-		private readonly UICharacter _char;
+        public readonly Asset<Texture2D> _BasePanelTexture;
 
-		private bool _hovered;
+		public readonly Asset<Texture2D> _selectedBorderTexture;
 
-		private bool _soundedHover;
+		public readonly Asset<Texture2D> _hoveredBorderTexture;
 
-		private Race _realRace;
-		private int _realSkinVariant;
-		private int _realHair;
-		private Color _realHairColor;
-		private Color _realSkinColor;
-		private Color _realDetailColor;
-		private Color _realEyeColor;
-		private Color _realShirtColor;
-		private Color _realUnderShirtColor;
-		private Color _realPantsColor;
-		private Color _realShoeColor;
+		public readonly UICharacter _char;
 
-		public UIRaceButton(Player player, int raceId)
+		public bool _hovered;
+
+		public bool _soundedHover;
+
+		public Race _realRace;
+		public int _realSkinVariant;
+		public int _realHair;
+        public int _realHairAux1;
+        public int _realHairAux2;
+        public int _realHairAux3;
+        public Color _realHairColor;
+		public Color _realSkinColor;
+		public Color _realDetailColor;
+        public Color _realDetailColorAux1;
+        public Color _realDetailColorAux2;
+        public Color _realDetailColorAux3;
+        public Color _realEyeColor;
+		public Color _realShirtColor;
+		public Color _realUnderShirtColor;
+		public Color _realPantsColor;
+		public Color _realShoeColor;
+
+		public UIRaceButton(Player player, int raceId, bool isChangeButton = false, bool isClothStyleButton = false)
 		{
 			_player = player;
-			RaceId = raceId;
-			Width = StyleDimension.FromPixels(44f);
+            _clonePlayer = new Player();
+            var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
+            var cloneModPlayer = _clonePlayer.GetModPlayer<MrPlagueRacesPlayer>();
+            _clonePlayer.skinVariant = _player.skinVariant;
+            _clonePlayer.skinColor = _player.skinColor;
+            _clonePlayer.hairColor = _player.hairColor;
+            _clonePlayer.eyeColor = _player.eyeColor;
+            _clonePlayer.hair = _player.hair;
+            cloneModPlayer.noShadows = true;
+            cloneModPlayer.detailColor = mrPlagueRacesPlayer.detailColor;
+            cloneModPlayer.auxilaryDetailColor1 = mrPlagueRacesPlayer.auxilaryDetailColor1;
+            cloneModPlayer.auxilaryDetailColor2 = mrPlagueRacesPlayer.auxilaryDetailColor2;
+            cloneModPlayer.auxilaryDetailColor3 = mrPlagueRacesPlayer.auxilaryDetailColor3;
+            cloneModPlayer.auxilaryHairstyle1 = mrPlagueRacesPlayer.auxilaryHairstyle1;
+            cloneModPlayer.auxilaryHairstyle2 = mrPlagueRacesPlayer.auxilaryHairstyle2;
+            cloneModPlayer.auxilaryHairstyle3 = mrPlagueRacesPlayer.auxilaryHairstyle3;
+            cloneModPlayer.race = mrPlagueRacesPlayer.race;
+            RaceId = raceId;
+			IsChangeButton = isChangeButton;
+            IsClothStyleButton = isClothStyleButton;
+            Width = StyleDimension.FromPixels(44f);
 			Height = StyleDimension.FromPixels(80f);
 			_BasePanelTexture = Main.Assets.Request<Texture2D>("Images/UI/CharCreation/CategoryPanel", (AssetRequestMode)1);
 			_selectedBorderTexture = Main.Assets.Request<Texture2D>("Images/UI/CharCreation/CategoryPanelHighlight", (AssetRequestMode)1);
 			_hoveredBorderTexture = Main.Assets.Request<Texture2D>("Images/UI/CharCreation/CategoryPanelBorder", (AssetRequestMode)1);
-			_char = new UICharacter(_player, animated: false, hasBackPanel: false)
+			_char = new UICharacter(_clonePlayer, animated: false, hasBackPanel: false)
 			{
 				HAlign = 0.5f,
 				VAlign = 0.5f
@@ -62,19 +96,23 @@ namespace MrPlagueRaces.Common.UI.Elements
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-			GetRealValues();
-			mrPlagueRacesPlayer.race = RaceLoader.Races[RaceId];
-			SetRaceValues();
-			base.Draw(spriteBatch);
-			mrPlagueRacesPlayer.race = _realRace;
-			SetRealValues();
+            if (IsChangeButton || IsClothStyleButton)
+            {
+                _player = Main.LocalPlayer;
+            }
+            var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
+            var cloneModPlayer = _clonePlayer.GetModPlayer<MrPlagueRacesPlayer>();
+            _realRace = mrPlagueRacesPlayer.race;
+            cloneModPlayer.race = RaceLoader.Races[RaceId];
+			SetRaceValues(_clonePlayer, _clonePlayer); // set the clone's values
+            base.Draw(spriteBatch);
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-			if (_hovered)
+            var cloneModPlayer = _clonePlayer.GetModPlayer<MrPlagueRacesPlayer>();
+            if (_hovered)
 			{
 				if (!_soundedHover)
 				{
@@ -96,112 +134,203 @@ namespace MrPlagueRaces.Common.UI.Elements
 			{
 				Utils.DrawSplicedPanel(spriteBatch, _hoveredBorderTexture.Value, (int)dimensions.X, (int)dimensions.Y, (int)dimensions.Width, (int)dimensions.Height, 10, 10, 10, 10, Color.White);
 			}
+            if (IsClothStyleButton)
+            {
+                _clonePlayer.Male = _player.Male;
+                _clonePlayer.skinVariant = _player.skinVariant;
+                _clonePlayer.skinColor = _player.skinColor;
+                _clonePlayer.hairColor = _player.hairColor;
+                _clonePlayer.eyeColor = _player.eyeColor;
+                _clonePlayer.hair = _player.hair;
+                _clonePlayer.shirtColor = _player.shirtColor;
+                _clonePlayer.underShirtColor = _player.underShirtColor;
+                _clonePlayer.pantsColor = _player.pantsColor;
+                _clonePlayer.shoeColor = _player.shoeColor;
+                cloneModPlayer.noShadows = true;
+                cloneModPlayer.detailColor = mrPlagueRacesPlayer.detailColor;
+                cloneModPlayer.auxilaryDetailColor1 = mrPlagueRacesPlayer.auxilaryDetailColor1;
+                cloneModPlayer.auxilaryDetailColor2 = mrPlagueRacesPlayer.auxilaryDetailColor2;
+                cloneModPlayer.auxilaryDetailColor3 = mrPlagueRacesPlayer.auxilaryDetailColor3;
+                cloneModPlayer.auxilaryHairstyle1 = mrPlagueRacesPlayer.auxilaryHairstyle1;
+                cloneModPlayer.auxilaryHairstyle2 = mrPlagueRacesPlayer.auxilaryHairstyle2;
+                cloneModPlayer.auxilaryHairstyle3 = mrPlagueRacesPlayer.auxilaryHairstyle3;
+                cloneModPlayer.race = mrPlagueRacesPlayer.race;
+            }
 		}
 
 		public override void LeftMouseDown(UIMouseEvent evt)
-		{
-			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-			mrPlagueRacesPlayer.race = RaceLoader.Races[RaceId];
-			SetRaceValues();
-			SoundEngine.PlaySound(SoundID.MenuTick);
-			base.LeftMouseDown(evt);
-		}
+        {
+            var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
+            var raceHookPlayer = _player.GetModPlayer<RaceHookPlayer>();
 
-		public override void MouseOver(UIMouseEvent evt)
+            if (IsChangeButton)
+            {
+                raceHookPlayer.PreRaceChange(); // preracechange is set here
+                mrPlagueRacesPlayer.race = RaceLoader.Races[RaceId];
+                raceHookPlayer.PostRaceChange(); // preracechange is set here
+                if (PlayerInput.Triggers.Current.Down)
+				{
+                    SetRaceValues(_player, _clonePlayer, true, false, false, false);
+                }
+				else
+				{
+                    SetRaceValues(_player, _clonePlayer, true, false, false);
+                }
+                if (_player.whoAmI == Main.myPlayer)
+                {
+                    mrPlagueRacesPlayer.SyncRace(-1, Main.myPlayer);
+                    mrPlagueRacesPlayer.SyncPlayerAppearance(-1, Main.myPlayer);
+                }
+            }
+            else if (IsClothStyleButton)
+            {
+                SetRaceValues(_player, _clonePlayer, false, true, false, false);
+                if (_player.whoAmI == Main.myPlayer)
+                {
+                    mrPlagueRacesPlayer.SyncPlayerAppearance(-1, Main.myPlayer);
+                }
+            }
+			else
+            {
+                raceHookPlayer.PreRaceChange(); // preracechange is set here
+                mrPlagueRacesPlayer.race = RaceLoader.Races[RaceId];
+                raceHookPlayer.PostRaceChange(); // preracechange is set here
+                SetRaceValues(_player, _clonePlayer);
+            }
+            SoundEngine.PlaySound(SoundID.MenuTick);
+            base.LeftMouseDown(evt);
+        }
+
+        public override void MouseOver(UIMouseEvent evt)
 		{
-			base.MouseOver(evt);
 			_hovered = true;
 			_char.SetAnimated(animated: true);
-		}
+            if (IsChangeButton)
+            {
+                var cloneModPlayer = _clonePlayer.GetModPlayer<MrPlagueRacesPlayer>();
+                if (cloneModPlayer.race.Description != null && cloneModPlayer.race.Description != "")
+                {
+                    RaceChangeUI.hoverText = cloneModPlayer.race.Description + (cloneModPlayer.race.AbilitiesDescription != null && cloneModPlayer.race.AbilitiesDescription != "" ? ("\n" + cloneModPlayer.race.AbilitiesDescription) : "");
+                }
+            }
+            base.MouseOver(evt);
+        }
 
 		public override void MouseOut(UIMouseEvent evt)
 		{
-			base.MouseOut(evt);
 			_hovered = false;
-			_char.SetAnimated(animated: false);
-		}
+			_char.SetAnimated(animated: false); 
+            if (IsChangeButton)
+            {
+                RaceChangeUI.hoverText = "";
+            }
+            base.MouseOut(evt);
+        }
 
-		public void GetRealValues()
-		{
-			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-			_realRace = mrPlagueRacesPlayer.race;
-			_realSkinVariant = _player.skinVariant;
-			_realHair = _player.hair;
-			_realHairColor = _player.hairColor;
-			_realSkinColor = _player.skinColor;
-			_realDetailColor = mrPlagueRacesPlayer.detailColor;
-			_realEyeColor = _player.eyeColor;
-			_realShirtColor = _player.shirtColor;
-			_realUnderShirtColor = _player.underShirtColor;
-			_realPantsColor = _player.pantsColor;
-			_realShoeColor = _player.shoeColor;
-		}
+		public void SetRaceValues(Player player, Player clonePlayer, bool shouldReplaceHair = true, bool shouldReplaceClothingStyle = true, bool shouldReplaceClothingColors = true, bool shouldReplaceSkinValues = true)
+        {
+            Item blankItem = new Item();
+            blankItem.SetDefaults(0);
+            Item familiarShirt = new Item();
+            familiarShirt.SetDefaults(ItemID.FamiliarShirt);
+            Item familiarPants = new Item();
+            familiarPants.SetDefaults(ItemID.FamiliarPants);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            var cloneModPlayer = clonePlayer.GetModPlayer<MrPlagueRacesPlayer>();
 
-		public void SetRealValues()
-		{
-			Item blankItem = new Item();
-			blankItem.SetDefaults(0);
-			Item familiarShirt = new Item();
-			familiarShirt.SetDefaults(ItemID.FamiliarShirt);
-			Item familiarPants = new Item();
-			familiarPants.SetDefaults(ItemID.FamiliarPants);
-			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (shouldReplaceClothingStyle)
+            {
+                if (IsClothStyleButton)
+                {
+                    if (player.Male)
+                    {
+                        switch (player.skinVariant)
+                        {
+                            case 0:
+                                player.skinVariant = 2;
+                                break;
+                            case 2:
+                                player.skinVariant = 1;
+                                break;
+                            case 1:
+                                player.skinVariant = 3;
+                                break;
+                            case 3:
+                                player.skinVariant = 8;
+                                break;
+                            case 8:
+                                player.skinVariant = 0;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (player.skinVariant)
+                        {
+                            case 4:
+                                player.skinVariant = 6;
+                                break;
+                            case 6:
+                                player.skinVariant = 5;
+                                break;
+                            case 5:
+                                player.skinVariant = 7;
+                                break;
+                            case 7:
+                                player.skinVariant = 9;
+                                break;
+                            case 9:
+                                player.skinVariant = 4;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    player.skinVariant = (player.Male ? PlayerLayerHelpers.MaleClothingIDs[cloneModPlayer.race.ClothStyle - 1] : PlayerLayerHelpers.FemaleClothingIDs[cloneModPlayer.race.ClothStyle - 1]);
+                }
+            }
+            if (shouldReplaceClothingColors)
+            {
+                player.armor[11] = blankItem;
+                player.armor[12] = blankItem;
 
-			_player.skinVariant = _realSkinVariant;
-			_player.armor[11] = blankItem;
-			_player.armor[12] = blankItem;
-			if (mrPlagueRacesPlayer.race.StarterShirt)
-			{
-				_player.armor[11] = familiarShirt;
-			}
-			if (mrPlagueRacesPlayer.race.StarterPants)
-			{
-				_player.armor[12] = familiarPants;
-			}
-			_player.hair = _realHair;
-			_player.hairColor = _realHairColor;
-			_player.skinColor = _realSkinColor;
-			mrPlagueRacesPlayer.detailColor = _realDetailColor;
-			_player.eyeColor = _realEyeColor;
-			_player.shirtColor = _realShirtColor;
-			_player.underShirtColor = _realUnderShirtColor;
-			_player.pantsColor = _realPantsColor;
-			_player.shoeColor = _realShoeColor;
-		}
+                if (cloneModPlayer.race.StarterShirt || IsClothStyleButton)
+                {
+                    player.armor[11] = familiarShirt;
+                }
+                if (cloneModPlayer.race.StarterPants || IsClothStyleButton)
+                {
+                    player.armor[12] = familiarPants;
+                }
+                player.shirtColor = cloneModPlayer.race.ShirtColor;
+                player.underShirtColor = cloneModPlayer.race.UnderShirtColor;
+                player.pantsColor = cloneModPlayer.race.PantsColor;
+                player.shoeColor = cloneModPlayer.race.ShoeColor;
+            }
+            if (shouldReplaceSkinValues)
+            {
+                player.hairColor = cloneModPlayer.race.HairColor;
+                player.skinColor = cloneModPlayer.race.SkinColor;
+                mrPlagueRacesPlayer.detailColor = cloneModPlayer.race.DetailColor;
+                mrPlagueRacesPlayer.auxilaryDetailColor1 = cloneModPlayer.race.AuxilaryDetailColor1;
+                mrPlagueRacesPlayer.auxilaryDetailColor2 = cloneModPlayer.race.AuxilaryDetailColor2;
+                mrPlagueRacesPlayer.auxilaryDetailColor3 = cloneModPlayer.race.AuxilaryDetailColor3;
+                player.eyeColor = cloneModPlayer.race.EyeColor;
+            }
+            if (shouldReplaceHair)
+            {
+                player.hair = cloneModPlayer.race.HairStyle;
+                mrPlagueRacesPlayer.auxilaryHairstyle1 = cloneModPlayer.race.AuxilaryHairstyle1;
+                mrPlagueRacesPlayer.auxilaryHairstyle2 = cloneModPlayer.race.AuxilaryHairstyle2;
+                mrPlagueRacesPlayer.auxilaryHairstyle3 = cloneModPlayer.race.AuxilaryHairstyle3;
+            }
+            cloneModPlayer.race.PostSetRaceValues(ref player, ref clonePlayer, ref shouldReplaceHair, ref shouldReplaceClothingStyle, ref shouldReplaceClothingColors, ref shouldReplaceSkinValues);
+        }
 
-		public void SetRaceValues()
-		{
-			int[] male = { 0, 2, 1, 3, 8 };
-			int[] female = { 4, 6, 5, 7, 9 };
-
-			Item blankItem = new Item();
-			blankItem.SetDefaults(0);
-			Item familiarShirt = new Item();
-			familiarShirt.SetDefaults(ItemID.FamiliarShirt);
-			Item familiarPants = new Item();
-			familiarPants.SetDefaults(ItemID.FamiliarPants);
-			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-
-			_player.skinVariant = (_player.Male ? male[mrPlagueRacesPlayer.race.ClothStyle - 1] : female[mrPlagueRacesPlayer.race.ClothStyle - 1]);
-			_player.armor[11] = blankItem;
-			_player.armor[12] = blankItem;
-			if (mrPlagueRacesPlayer.race.StarterShirt)
-			{
-				_player.armor[11] = familiarShirt;
-			}
-			if (mrPlagueRacesPlayer.race.StarterPants)
-			{
-				_player.armor[12] = familiarPants;
-			}
-			_player.hair = mrPlagueRacesPlayer.race.HairStyle;
-			_player.hairColor = mrPlagueRacesPlayer.race.HairColor;
-			_player.skinColor = mrPlagueRacesPlayer.race.SkinColor;
-			mrPlagueRacesPlayer.detailColor = mrPlagueRacesPlayer.race.DetailColor;
-			_player.eyeColor = mrPlagueRacesPlayer.race.EyeColor;
-			_player.shirtColor = mrPlagueRacesPlayer.race.ShirtColor;
-			_player.underShirtColor = mrPlagueRacesPlayer.race.UnderShirtColor;
-			_player.pantsColor = mrPlagueRacesPlayer.race.PantsColor;
-			_player.shoeColor = mrPlagueRacesPlayer.race.ShoeColor;
-		}
-	}
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+        }
+    }
 }

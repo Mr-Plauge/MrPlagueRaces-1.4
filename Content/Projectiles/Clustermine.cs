@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Kobold;
 using static Terraria.ModLoader.ModContent;
 
@@ -69,9 +71,14 @@ namespace MrPlagueRaces.Content.Projectiles
 
 		public void Explode() {
 			Player player = Main.player[Projectile.owner];
-			if ((int)(player.position.X - Projectile.position.X) / 16 < 16 && (player.position.X - Projectile.position.X) / 16 > -16 && (player.position.Y - Projectile.position.Y) / 16 < 16 && (player.position.Y - Projectile.position.Y) / 16 > -16) {
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (player.whoAmI == Main.myPlayer)
+            {
+                mrPlagueRacesPlayer.KoboldExplosionSound(-1, Main.myPlayer);
+            }
+            if ((int)(player.position.X - Projectile.position.X) / 16 < 16 && (player.position.X - Projectile.position.X) / 16 > -16 && (player.position.Y - Projectile.position.Y) / 16 < 16 && (player.position.Y - Projectile.position.Y) / 16 > -16) {
 				Vector2 velocity = Vector2.Normalize(Projectile.position - player.Center) * (6 + (player.statLifeMax2 / 80));
-				player.velocity = -velocity;
+				player.velocity = -velocity * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<KoboldConfig>().koboldClustermineVelocity]);
 				player.fallStart = (int)(player.position.Y / 16f);
 			}
 			SoundEngine.PlaySound(SoundID.NPCDeath14, Projectile.Center);
@@ -105,22 +112,22 @@ namespace MrPlagueRaces.Content.Projectiles
 				}
 			}
 			int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
-			Main.gore[goreIndex].scale = 0.8f;
+			Main.gore[goreIndex].scale = 0.6f;
 			Main.gore[goreIndex].alpha = 100;
 			Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
 			Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1.5f;
 			goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
-			Main.gore[goreIndex].scale = 0.8f;
+			Main.gore[goreIndex].scale = 0.6f;
 			Main.gore[goreIndex].alpha = 100;
 			Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1.5f;
 			Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1.5f;
 			goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
-			Main.gore[goreIndex].scale = 0.8f;
+			Main.gore[goreIndex].scale = 0.6f;
 			Main.gore[goreIndex].alpha = 100;
 			Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
 			Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y - 1.5f;
 			goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
-			Main.gore[goreIndex].scale = 0.8f;
+			Main.gore[goreIndex].scale = 0.6f;
 			Main.gore[goreIndex].alpha = 100;
 			Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1.5f;
 			Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y - 1.5f;
@@ -133,8 +140,12 @@ namespace MrPlagueRaces.Content.Projectiles
 				Main.dust[dust].color = player.eyeColor;
 				Main.dust[dust].noGravity = true;
 				Main.dust[dust].velocity *= 2f;
-			}
-			Projectile.position = Projectile.Center;
+            }
+            if (player.whoAmI == Main.myPlayer)
+            {
+                mrPlagueRacesPlayer.KoboldExplosionSparkDust(-1, Main.myPlayer, Projectile.position.X, Projectile.position.Y, Projectile.width, Projectile.height);
+            }
+            Projectile.position = Projectile.Center;
 			Projectile.width = 260;
 			Projectile.height = 260;
 			Projectile.Center = Projectile.position;
@@ -162,7 +173,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			Color drawColor = Projectile.GetAlpha(lightColor);
 			Main.EntitySpriteDraw(textureEyes,
 				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-				sourceRectangle, new Color(player.eyeColor.ToVector4() * Projectile.Opacity), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+				sourceRectangle, new Color(player.eyeColor.ToVector4() * Projectile.Opacity * 2), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 		}
 	}
 }

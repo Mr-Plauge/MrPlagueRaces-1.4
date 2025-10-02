@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -25,6 +26,7 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.hide = true;
+			Projectile.extraUpdates = 10; // {T} Added this so the laser projectile is more reliable. It effectively increases how fast this projectile ticks, without missing collisions.
 		}
 
 		public override void AI() {

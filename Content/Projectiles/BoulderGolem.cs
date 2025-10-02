@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -14,8 +15,10 @@ namespace MrPlagueRaces.Content.Projectiles
 {
 	public class BoulderGolem : ModProjectile
 	{
-		public int leftBoulder = 0;
-		public int rightBoulder = 0;
+		// {T} Using this flag instead of ai[0] as ai[0] was never used in an owner-only context.
+		public bool creationFlag = false;
+
+		// {T} Did away with the left and right boulder variables, now tracking using ai[0] and ai[1] respectively.
 		public float spin;
 		public float extend;
 		public override void SetStaticDefaults() {
@@ -27,18 +30,18 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.height = 48;
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override void AI() {
 			Projectile.timeLeft++;
 			Player player = Main.player[Projectile.owner];
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			Projectile.velocity.Y += 0.5f;
-			if (Projectile.ai[0] == 0 && Main.myPlayer == Projectile.owner) {
-				Projectile.position = new Vector2(Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            Projectile.velocity.Y += 0.5f;
+			if (!creationFlag) {
+				Projectile.position = new Vector2(mrPlagueRacesPlayer.mouseWorld.X - 22, mrPlagueRacesPlayer.mouseWorld.Y - 42);
 				SoundEngine.PlaySound(SoundID.DD2_DefenseTowerSpawn, Projectile.Center);
-				int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
+                int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
 				Main.gore[goreIndex].scale = 0.6f;
 				Main.gore[goreIndex].alpha = 100;
 				Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
@@ -62,22 +65,47 @@ namespace MrPlagueRaces.Content.Projectiles
 					Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);
 				}
 				Projectile.direction = Projectile.spriteDirection = lihzahrdPlayer.direction == 1 ? 1 : -1;
-				leftBoulder = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y + 16, 0f, 0f, ProjectileType<Boulder>(), 1 + player.statDefense, 0, Projectile.owner);
-				rightBoulder = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y + 16, 0f, 0f, ProjectileType<Boulder>(), 1 + player.statDefense, 0, Projectile.owner);
+
+				if (Main.myPlayer == Projectile.owner) // {T} Don't spawn projectiles for non-owner clients.
+				{
+					Projectile.ai[0] = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y + 16, 0f, 0f, ProjectileType<Boulder>(), (5 + (player.statDefense < 20 ? player.statDefense / 3 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.BoulderGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.BoulderGolem]]) : 1f), 0, Projectile.owner);
+                    Projectile.ai[1] = Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y + 16, 0f, 0f, ProjectileType<Boulder>(), (5 + (player.statDefense < 20 ? player.statDefense / 3 : player.statDefense < 40 ? player.statDefense / 2 : player.statDefense < 60 ? player.statDefense : player.statDefense * 1.25f)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.BoulderGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.BoulderGolem]]) : 1f), 0, Projectile.owner);
+					Projectile.netUpdate = true;
+				}
+
+				creationFlag = true;
+            }
+
+			if (Main.myPlayer == Projectile.owner) // {T} Don't check and kill projectiles unless they're owned by us.
+			{
+				for (int i = 0; i < Main.maxProjectiles; i++)
+				{
+					Projectile projectile = Main.projectile[i];
+					if (projectile.active && projectile.type == ProjectileType<Boulder>() && projectile.owner == player.whoAmI && projectile.whoAmI != Projectile.ai[0] && projectile.whoAmI != Projectile.ai[1])
+						projectile.Kill();
+				}
 			}
-			Projectile.ai[0]++;
-			spin += 0.1f;
+            spin += 0.1f;
 			if (extend < 100) {
 				extend += 5;
 			}
-			Main.projectile[leftBoulder].direction = -1;
-			Main.projectile[rightBoulder].direction = 1;
-			Main.projectile[leftBoulder].Center = new Vector2(Projectile.Center.X, Projectile.Center.Y + 16) + Vector2.One.RotatedBy(spin) * extend;
-			Main.projectile[rightBoulder].Center = new Vector2(Projectile.Center.X, Projectile.Center.Y + 16) + Vector2.One.RotatedBy(spin) * -extend;
-			Main.projectile[leftBoulder].rotation += 0.1f;
-			Main.projectile[rightBoulder].rotation += 0.1f;
-			if (!Main.projectile[leftBoulder].active || !Main.projectile[rightBoulder].active || (Main.projectile[leftBoulder].position.X - Projectile.position.X) < -500 || (Main.projectile[rightBoulder].position.X - Projectile.position.X) > 500) {
-				Projectile.Kill();
+
+            // {T} Just reducing the repeated calls to Main.projectile.
+            var leftBoulder = Main.projectile[(int)Projectile.ai[0]];
+            var rightBoulder = Main.projectile[(int)Projectile.ai[1]];
+
+            leftBoulder.direction = -1;
+			rightBoulder.direction = 1;
+			leftBoulder.Center = new Vector2(Projectile.Center.X, Projectile.Center.Y + 16) + Vector2.One.RotatedBy(spin) * extend;
+			rightBoulder.Center = new Vector2(Projectile.Center.X, Projectile.Center.Y + 16) + Vector2.One.RotatedBy(spin) * -extend;
+			leftBoulder.rotation += 0.1f;
+			rightBoulder.rotation += 0.1f;
+			if (player.whoAmI == Main.myPlayer)
+			{
+				if (!leftBoulder.active || !rightBoulder.active || (leftBoulder.position.X - Projectile.position.X) < -500 || (rightBoulder.position.X - Projectile.position.X) > 500)
+				{
+					Projectile.Kill();
+				}
 			}
 		}
 
@@ -121,8 +149,12 @@ namespace MrPlagueRaces.Content.Projectiles
 		}
 
 		public override bool PreDrawExtras() {
-			Vector2 leftBoulderCenter = new Vector2(Main.projectile[leftBoulder].Center.X, Main.projectile[leftBoulder].Center.Y);
-			Vector2 rightBoulderCenter = new Vector2(Main.projectile[rightBoulder].Center.X, Main.projectile[rightBoulder].Center.Y);
+            // {T} Just reducing the repeated calls to Main.projectile.
+            var leftBoulder = Main.projectile[(int)Projectile.ai[0]];
+            var rightBoulder = Main.projectile[(int)Projectile.ai[1]];
+
+            Vector2 leftBoulderCenter = new Vector2(leftBoulder.Center.X, leftBoulder.Center.Y);
+			Vector2 rightBoulderCenter = new Vector2(rightBoulder.Center.X, rightBoulder.Center.Y);
 
 			Vector2 centerToLeft = new Vector2(Projectile.Center.X, Projectile.Center.Y + 16);
 			Vector2 centerToRight = new Vector2(Projectile.Center.X, Projectile.Center.Y + 16);

@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -91,7 +93,7 @@ namespace MrPlagueRaces.Content.Prefixes
 				}
 			}
 			if (volatileFactor > 0) {
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Player.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), 0, 0, ProjectileType<VolatileExplosion>(), (Player.statLifeMax2 / 15) * volatileFactor, 5, Player.whoAmI);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Player.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), 0, 0, ProjectileType<VolatileExplosion>(), ((Player.statLifeMax2 / 25) * volatileFactor) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Volatile) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Volatile]]) : 1f), 5, Player.whoAmI);
 			}
 		}
 	}

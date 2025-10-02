@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -83,7 +85,7 @@ namespace MrPlagueRaces.Content.Prefixes
 		public override void PreUpdate() {
 			if (duration > 0) {
 				for (int i = 0; i < 6; i++) {
-					Lighting.AddLight(new Vector2(Player.Center.X + ((i * 45) * Player.direction), Player.Center.Y), new Color(162, 96, 195).ToVector3() * 1.25f);
+					Lighting.AddLight(new Vector2(Player.Center.X + ((i * 45) * Player.direction), Player.Center.Y), new Color(162, 96, 195).ToVector3() * (1.25f * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Trailblazing) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Trailblazing]]) : 1f)));
 				}
 				duration--;
 			}

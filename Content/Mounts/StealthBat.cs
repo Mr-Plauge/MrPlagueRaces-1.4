@@ -80,13 +80,13 @@ namespace MrPlagueRaces.Content.Mounts
 		{
 			if (player.velocity.Y != 0)
 			{
-				MountData.runSpeed = (player.moveSpeed) + (player.accRunSpeed) + (player.wingTimeMax / 30);
+				MountData.runSpeed = (player.moveSpeed) + (player.accRunSpeed) + (player.wingTimeMax / 30) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<VampireConfig>().vampireBatVelocity]);
 			}
 			else
 			{
 				MountData.runSpeed = 1f;
 			}
-			MountData.flightTimeMax = player.wingTimeMax + 100;
+			MountData.flightTimeMax = player.wingTimeMax + 100 * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<VampireConfig>().vampireBatFlightDuration]);
 		}
 
 		public override bool Draw(List<DrawData> playerDrawData, int drawType, Player drawPlayer, ref Texture2D texture, ref Texture2D glowTexture, ref Vector2 drawPosition, ref Rectangle frame, ref Color drawColor, ref Color glowColor, ref float rotation, ref SpriteEffects spriteEffects, ref Vector2 drawOrigin, ref float drawScale, float shadow) {

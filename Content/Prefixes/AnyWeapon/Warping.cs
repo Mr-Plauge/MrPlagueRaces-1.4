@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -75,7 +77,7 @@ namespace MrPlagueRaces.Content.Prefixes
 			if (Player.HeldItem.prefix == PrefixType<Warping>() && !target.active) {
 				Player.Teleport(target.position, 15);
 				SoundEngine.PlaySound(SoundID.NPCDeath55, Player.Center);
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Player.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), Player.direction, 0, ProjectileType<ImpactExplosion>(), Player.HeldItem.damage, 10, Player.whoAmI);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Player.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), Player.direction, 0, ProjectileType<ImpactExplosion>(), (Player.HeldItem.damage / 2) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Warping) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Warping]]) : 1f), 10, Player.whoAmI);
 			}
 		}
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
@@ -83,7 +85,7 @@ namespace MrPlagueRaces.Content.Prefixes
 			if (Player.HeldItem.prefix == PrefixType<Warping>() && !target.active) {
 				Player.Teleport(target.position, 15);
 				SoundEngine.PlaySound(SoundID.NPCDeath55, Player.Center);
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Player.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), Player.direction, 0, ProjectileType<ImpactExplosion>(), Player.HeldItem.damage, 10, Player.whoAmI);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Player.Center.X + Main.rand.Next(15) - Main.rand.Next(15), Player.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), Player.direction, 0, ProjectileType<ImpactExplosion>(), (Player.HeldItem.damage / 2) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Warping) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Warping]]) : 1f), 10, Player.whoAmI);
 			}
 		}
 		/*public override void OnHitPvp(Item item, Player target, int damage, bool crit) tModPorter Note: Removed. Use OnHurt on the receiving player and check info.PvP. Use info.DamageSource.SourcePlayerIndex to get the attacking player 

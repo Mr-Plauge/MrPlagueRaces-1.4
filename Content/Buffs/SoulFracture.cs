@@ -35,11 +35,13 @@ namespace MrPlagueRaces.Content.Buffs
 		public bool SoulFracture;
 
 		public override void ResetEffects() {
-			SoulFracture = false;
-			if (SoulFracture) {
-				Player.statDefense /= 100;
-			}
-		}
+			if (SoulFracture)
+            {
+                Player.velocity.X *= 0.9f;
+				Player.statDefense *= 0;
+            }
+            SoulFracture = false;
+        }
 
 		public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
 			if (SoulFracture && Main.rand.Next(5) < 4) {
@@ -57,11 +59,13 @@ namespace MrPlagueRaces.Content.Buffs
 		public bool SoulFracture;
 
 		public override void ResetEffects(NPC npc) {
-			SoulFracture = false;
-			if (SoulFracture) {
-				npc.defense /= 100;
-			}
-		}
+			if (SoulFracture)
+            {
+                npc.velocity.X *= 0.9f;
+                npc.defense *= 0;
+            }
+            SoulFracture = false;
+        }
 
 		public override void DrawEffects(NPC npc, ref Color drawColor) {
 			if (SoulFracture && Main.rand.Next(5) < 4) {

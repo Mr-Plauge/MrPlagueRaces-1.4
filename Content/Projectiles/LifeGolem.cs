@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -13,6 +14,9 @@ namespace MrPlagueRaces.Content.Projectiles
 {
 	public class LifeGolem : ModProjectile
 	{
+		// {T} Using this in place of Projectile.ai[0], since ai[0] was only never used in an owner-only context.
+		public bool creationFlag = false;
+
 		public override void SetStaticDefaults() {
 			// DisplayName.SetDefault("LifeGolem");
 		}
@@ -23,18 +27,18 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Main.projFrames[Projectile.type] = 9;
-			Projectile.ownerHitCheck = true;
 		}
 
 		public override void AI() {
 			Projectile.timeLeft++;
 			Player player = Main.player[Projectile.owner];
 			var lihzahrdPlayer = player.GetModPlayer<LihzahrdPlayer>();
-			Projectile.velocity.Y += 0.5f;
-			if (Projectile.ai[0] == 0 && Main.myPlayer == Projectile.owner) {
-				Projectile.position = new Vector2(Main.MouseWorld.X - 22, Main.MouseWorld.Y - 42);
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            Projectile.velocity.Y += 0.5f;
+			if (!creationFlag) {
+				Projectile.position = new Vector2(mrPlagueRacesPlayer.mouseWorld.X - 22, mrPlagueRacesPlayer.mouseWorld.Y - 42);
 				SoundEngine.PlaySound(SoundID.DD2_DefenseTowerSpawn, Projectile.Center);
-				int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
+                int goreIndex = Gore.NewGore(Wiring.GetProjectileSource(0, 0), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), 1f);
 				Main.gore[goreIndex].scale = 0.6f;
 				Main.gore[goreIndex].alpha = 100;
 				Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
@@ -58,8 +62,9 @@ namespace MrPlagueRaces.Content.Projectiles
 					Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6);
 				}
 				Projectile.direction = Projectile.spriteDirection = lihzahrdPlayer.direction == 1 ? 1 : -1;
-			}
-			Projectile.ai[0]++;
+				creationFlag = true;
+
+            }
 			Projectile.frameCounter++;
 			if (Projectile.frameCounter > 9)
 			{
@@ -71,7 +76,10 @@ namespace MrPlagueRaces.Content.Projectiles
 				}
 				if (Projectile.frame == 4)
 				{
-					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y - 10, Projectile.spriteDirection == 1 ? 15 : -15, 0, ProjectileType<LifeBomb>(), 0, 0,  Projectile.owner);
+					if (player.whoAmI == Main.myPlayer)
+					{
+                        Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X, Projectile.Center.Y - 10, Projectile.spriteDirection == 1 ? 15 : -15, 0, ProjectileType<LifeBomb>(), 0, 0, Projectile.owner);
+                    }
 				}
 				if (Projectile.frame == 5)
 				{

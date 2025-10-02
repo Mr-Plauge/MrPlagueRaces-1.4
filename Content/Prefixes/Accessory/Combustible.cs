@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -98,7 +100,7 @@ namespace MrPlagueRaces.Content.Prefixes
 
 					if (sqrDistanceToTarget < sqrcombustibleFactor) {
 						sqrcombustibleFactor = sqrDistanceToTarget;
-						target.AddBuff(BuffType<DarkInferno>(), 60);
+						target.AddBuff(BuffType<DarkInferno>(), 60 * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Combustible) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Combustible]]) : 1f));
 					}
 				}
 			}

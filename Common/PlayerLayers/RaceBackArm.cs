@@ -13,19 +13,12 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using MrPlagueRaces.Common.Races;
 
 namespace MrPlagueRaces.Common
 {
-	public class RaceBackArm : PlayerDrawLayer
+	public class RaceBackArm : PlayerDrawLayer // RaceBackArm is responsible for drawing the player's back arm
 	{
-		private Asset<Texture2D>[] Shirt_Texture = new Asset<Texture2D>[13];
-		private Asset<Texture2D>[] Undershirt_Texture = new Asset<Texture2D>[13];
-		private Asset<Texture2D>[] ShirtAddition_Texture = new Asset<Texture2D>[13];
-
-		private Asset<Texture2D>[] Arm_Texture = new Asset<Texture2D>[10];
-		private Asset<Texture2D>[] Hand_Texture = new Asset<Texture2D>[10];
-		private string[] PlayerColors = { "ColorSkin", "ColorDetail", "Colorless", "ColorEyes", "ColorHair", "ColorSkin/Glowmask", "ColorDetail/Glowmask", "Colorless/Glowmask", "ColorEyes/Glowmask", "ColorHair/Glowmask" };
-
 		public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Skin);
 
 		public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) 
@@ -43,30 +36,10 @@ namespace MrPlagueRaces.Common
 
 			var mrPlagueRacesPlayer = drawPlayer.GetModPlayer<MrPlagueRacesPlayer>();
 
-			if (mrPlagueRacesPlayer.race != null) {
-			
-				TextureAssets.Players[drawInfo.skinVar, 5] = ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Blank");
+			if (mrPlagueRacesPlayer.race != null) 
+			{
+                TextureAssets.Players[drawInfo.skinVar, 5] = ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Blank");
 				TextureAssets.Players[drawInfo.skinVar, 7] = ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Blank");
-
-				for (int i = 0; i < 5; i++)
-				{
-					Shirt_Texture[male[i]] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"Clothes/Style_{i + 1}/Shirt", $"MrPlagueRaces/Assets/Textures/Players/Clothes/Male/Clothes/Style_{i + 1}/Shirt");
-					Undershirt_Texture[male[i]] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"Clothes/Style_{i + 1}/Undershirt", $"MrPlagueRaces/Assets/Textures/Players/Clothes/Male/Clothes/Style_{i + 1}/Undershirt");
-					ShirtAddition_Texture[male[i]] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"Clothes/Style_{i + 1}/ShirtAddition", $"MrPlagueRaces/Assets/Textures/Players/Clothes/Male/Clothes/Style_{i + 1}/ShirtAddition");
-				}
-
-				for (int i = 0; i < 5; i++)
-				{
-					Shirt_Texture[female[i]] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"Clothes/Style_{i + 1}/Shirt", $"MrPlagueRaces/Assets/Textures/Players/Clothes/Female/Clothes/Style_{i + 1}/Shirt");
-					Undershirt_Texture[female[i]] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"Clothes/Style_{i + 1}/Undershirt", $"MrPlagueRaces/Assets/Textures/Players/Clothes/Female/Clothes/Style_{i + 1}/Undershirt");
-					ShirtAddition_Texture[female[i]] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"Clothes/Style_{i + 1}/ShirtAddition", $"MrPlagueRaces/Assets/Textures/Players/Clothes/Female/Clothes/Style_{i + 1}/ShirtAddition");
-				}
-
-				for (int i = 0; i < 10; i++)
-				{
-					Arm_Texture[i] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"{PlayerColors[i]}/Arms");
-					Hand_Texture[i] = mrPlagueRacesPlayer.GetRaceTexture(drawPlayer, $"{PlayerColors[i]}/Hands");
-				}
 				
 				Vector2 bodyPosition = new Vector2((float)(int)(drawInfo.Position.X - Main.screenPosition.X - (float)(drawPlayer.bodyFrame.Width / 2) + (float)(drawPlayer.width / 2)), (float)(int)(drawInfo.Position.Y - Main.screenPosition.Y + (float)drawPlayer.height - (float)drawPlayer.bodyFrame.Height + 4f)) + drawPlayer.bodyPosition + new Vector2((float)(drawPlayer.bodyFrame.Width / 2), (float)(drawPlayer.bodyFrame.Height / 2));
 				Vector2 backArmPosition = new Vector2((float)(int)(drawInfo.Position.X - Main.screenPosition.X - (float)(drawPlayer.bodyFrame.Width / 2) + (float)(drawPlayer.width / 2)), (float)(int)(drawInfo.Position.Y - Main.screenPosition.Y + (float)drawPlayer.height - (float)drawPlayer.bodyFrame.Height + 4f)) + drawPlayer.bodyPosition + new Vector2((float)(drawPlayer.bodyFrame.Width / 2), (float)(drawPlayer.bodyFrame.Height / 2));
@@ -89,19 +62,27 @@ namespace MrPlagueRaces.Common
 					{
 						if (!drawInfo.hidesTopSkin)
 						{
-							MakeColoredDrawDatas(ref drawInfo, Arm_Texture, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
-						}
+							PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, mrPlagueRacesPlayer.race.Arm_Sheet, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_Auxilary1_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 1);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_Auxilary2_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 2);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_Auxilary3_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 3);
+                        }
 						if (!flag && !drawInfo.hidesTopSkin)
 						{
-							MakeColoredDrawDatas(ref drawInfo, Hand_Texture, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
-							flag = true;
+							PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, mrPlagueRacesPlayer.race.Hand_Sheet, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_Auxilary1_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 1);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_Auxilary2_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 2);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_Auxilary3_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 3);
+                            flag = true;
 						}
 						if (drawPlayer.armor[1].type == ItemID.FamiliarShirt || drawPlayer.armor[11].type == ItemID.FamiliarShirt)
 						{
-							drawInfo.DrawDataCache.Add(new DrawData(Undershirt_Texture[drawInfo.skinVar].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorUnderShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
-							drawInfo.DrawDataCache.Add(new DrawData(ShirtAddition_Texture[drawInfo.skinVar].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
-							drawInfo.DrawDataCache.Add(new DrawData(Undershirt_Texture[drawInfo.skinVar].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorUnderShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
-							drawInfo.DrawDataCache.Add(new DrawData(Shirt_Texture[drawInfo.skinVar].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.Undershirt_Sheet[drawInfo.skinVar].Texture[0].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorUnderShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.ShirtAddition_Sheet[drawInfo.skinVar].Texture[0].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.Undershirt_Sheet[drawInfo.skinVar].Texture[0].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorUnderShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.Shirt_Sheet[drawInfo.skinVar].Texture[0].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
 						}
 						drawPlayer.invis = true;
 					}
@@ -112,69 +93,31 @@ namespace MrPlagueRaces.Common
 					{
 						if (!drawPlayer.invis)
 						{
-							MakeColoredDrawDatas(ref drawInfo, Arm_Texture, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
-						}
+							PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, mrPlagueRacesPlayer.race.Arm_Sheet, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_Auxilary1_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 1);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_Auxilary2_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 2);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Arm_Auxilary3_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 3);
+                        }
 						if (!flag && !drawInfo.hidesTopSkin)
 						{
-							MakeColoredDrawDatas(ref drawInfo, Hand_Texture, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
-							flag = true;
+							PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, mrPlagueRacesPlayer.race.Hand_Sheet, null, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_Auxilary1_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 1);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_Auxilary2_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 2);
+                            PlayerLayerHelpers.MakeColoredDrawDatas(ref drawInfo, null, mrPlagueRacesPlayer.race.Hand_Auxilary3_StyleSheet, backArmPosition, drawInfo.compBackArmFrame, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0, 3);
+                            flag = true;
 						}
 						if (drawPlayer.armor[1].type == ItemID.FamiliarShirt || drawPlayer.armor[11].type == ItemID.FamiliarShirt)
 						{
-							drawInfo.DrawDataCache.Add(new DrawData(Undershirt_Texture[drawInfo.skinVar].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorUnderShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
-							drawInfo.DrawDataCache.Add(new DrawData(ShirtAddition_Texture[drawInfo.skinVar].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
-							drawInfo.DrawDataCache.Add(new DrawData(Undershirt_Texture[drawInfo.skinVar].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorUnderShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
-							drawInfo.DrawDataCache.Add(new DrawData(Shirt_Texture[drawInfo.skinVar].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.Undershirt_Sheet[drawInfo.skinVar].Texture[0].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorUnderShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.ShirtAddition_Sheet[drawInfo.skinVar].Texture[0].Value, backArmPosition, drawInfo.compBackArmFrame, drawInfo.colorShirt, rotation, bodyVect2, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.Undershirt_Sheet[drawInfo.skinVar].Texture[0].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorUnderShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
+							drawInfo.DrawDataCache.Add(new DrawData(mrPlagueRacesPlayer.race.Shirt_Sheet[drawInfo.skinVar].Texture[0].Value, bodyPosition, drawInfo.compBackShoulderFrame, drawInfo.colorShirt, bodyRotation, drawInfo.bodyVect, 1f, drawInfo.playerEffect, 0));
 						}
 					}
 				}
 			}
 		}
-
-		private void MakeColoredDrawDatas(ref PlayerDrawSet drawInfo, Asset<Texture2D>[] texture, Asset<Texture2D>[,] textureHair, Vector2 position, Rectangle? sourceRect, float rotation, Vector2 origin, float scale, SpriteEffects effect, int inactiveLayerDepth)
-		{
-			DrawData drawData;
-			Player drawPlayer = drawInfo.drawPlayer;
-			int index;
-			for (index = 0; index < 10; index++)
-			{
-				if (textureHair != null && textureHair[index, drawPlayer.hair] != ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Blank"))
-				{
-					drawData = new DrawData(textureHair[index, drawPlayer.hair].Value, position, sourceRect, PlayerColor(ref drawInfo, index), rotation, origin, scale, effect, 0);
-					drawData.shader = PlayerShader(ref drawInfo, index);
-					drawInfo.DrawDataCache.Add(drawData);
-				}
-				if (texture != null && texture[index] != ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/Blank"))
-				{
-					drawData = new DrawData(texture[index].Value, position, sourceRect, PlayerColor(ref drawInfo, index), rotation, origin, scale, effect, 0);
-					drawData.shader = PlayerShader(ref drawInfo, index);
-					drawInfo.DrawDataCache.Add(drawData);
-				}
-			}
-		}
-
-		private Color PlayerColor(ref PlayerDrawSet drawInfo, int index)
-		{
-			Player drawPlayer = drawInfo.drawPlayer;
-			var mrPlagueRacesPlayer = drawPlayer.GetModPlayer<MrPlagueRacesPlayer>();
-			Color color = (index == 0 ? drawInfo.colorHead : index == 1 ? new Color(mrPlagueRacesPlayer.colorDetail.R, mrPlagueRacesPlayer.colorDetail.G, mrPlagueRacesPlayer.colorDetail.B, drawPlayer.skinColor.A) : index == 2 ? drawInfo.colorEyeWhites : index == 3 ? drawInfo.colorEyes : index == 4 ? drawInfo.colorHair : index == 5 ? drawPlayer.GetImmuneAlpha(drawPlayer.skinColor, 0f) : index == 6 ? drawPlayer.GetImmuneAlpha(mrPlagueRacesPlayer.detailColor, 0f) : index == 7 ? drawPlayer.GetImmuneAlpha(Color.White, 0f) : index == 8 ? drawPlayer.GetImmuneAlpha(drawPlayer.eyeColor, 0f) : drawPlayer.GetImmuneAlpha(drawPlayer.GetHairColor(useLighting: false), 0f));
-			return color;
-		}
-
-		private int PlayerShader(ref PlayerDrawSet drawInfo, int index)
-		{
-			int shader = (index == 0 ? drawInfo.skinDyePacked : index == 1 ? drawInfo.skinDyePacked : index == 2 ? 0 : index == 3 ? 0 : index == 4 ? drawInfo.hairDyePacked : index == 5 ? drawInfo.skinDyePacked : index == 6 ? drawInfo.skinDyePacked : index == 7 ? 0 : index == 8 ? 0 : drawInfo.hairDyePacked);
-			return shader;
-		}
-
-		private static bool IsArmorDrawnWhenInvisible(int torsoID)
-		{
-			if ((uint)(torsoID - 21) <= 1u)
-			{
-				return false;
-			}
-			return true;
-		}
-		
 	}
 }

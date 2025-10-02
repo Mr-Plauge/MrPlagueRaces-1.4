@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -9,9 +11,11 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using static Terraria.ModLoader.ModContent;
+using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace MrPlagueRaces.Common.Races.Lycan
 {
@@ -19,28 +23,42 @@ namespace MrPlagueRaces.Common.Races.Lycan
 	{
 		public override void Load()
         {
-			Description = "Temporally anomalous, Lycans rewind and reiterate through the situations they create.";
-			AbilitiesDescription = $"[c/4DBF60:{"+"}] Hold Z to record time. Let go to rewind time, rewinding all nearby entities to their previous locations.\n[c/4DBF60:{"+"}] Hold X to replay your last rewound timeline. Let go to teleport to the current position in the replay.";
-			CensorClothing = false;
+			Description = "Born from temporal magic, Lycans can rewind themselves into alternate timelines.";
+            DisplayName = "[c/FF386D:Lycan]";
+            CensorClothing = false;
 			StarterShirt = true;
-			HairColor = new Color(244, 245, 246);
+			HairColor = new Color(117, 144, 167);
 			SkinColor = new Color(117, 144, 167);
 			DetailColor = new Color(70, 82, 111);
-			EyeColor = new Color(255, 61, 114);
+            AuxilaryDetailColor1 = new Color(244, 245, 246);
+            EyeColor = new Color(255, 61, 114);
 			ShirtColor = new Color(198, 173, 158);
 			UnderShirtColor = new Color(244, 109, 109);
-		}
+        }
 
-		public override void ResetEffects(Player player)
-		{
-			var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+        public override void PreRaceChange(Player player) // Called before the player's race is changed
+        {
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+			var rewindPlayer = player.GetModPlayer<RewindPlayer>();
+            rewindPlayer.chargingRewind = false;
+            rewindPlayer.chargingTimeline = false;
+        }
+
+        public override void ResetEffects(Player player)
+        {
+            RegisterAbilityDescription(ModContent.GetInstance<LycanConfig>().lycanAbility1 && !ModContent.GetInstance<LycanConfig>().lycanRewindNPCs, $"[c/4DBF60:+] Hold Z to record time. Let go to rewind time, rewinding yourself to your previous location. While rewinding, you are invincible.");
+            RegisterAbilityDescription(ModContent.GetInstance<LycanConfig>().lycanAbility1 && ModContent.GetInstance<LycanConfig>().lycanRewindNPCs, $"[c/4DBF60:+] Hold Z to record time. Let go to rewind time, rewinding all nearby entities to their previous locations. While rewinding, you are invincible.");
+            RegisterAbilityDescription(ModContent.GetInstance<LycanConfig>().lycanAbility2, $"[c/4DBF60:+] Hold X to replay your last rewound timeline. Let go to teleport to the current position in the replay.");
+
+            RaceStatDictionary = ModContent.GetInstance<LycanConfig>().lycanStats;
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
 			if (ModContent.GetInstance<MrPlagueRacesConfig>().raceStats) {
-				player.GetDamage(DamageClass.Generic) += 0.15f;
+				/*player.GetDamage(DamageClass.Generic) += 0.15f;
 				player.endurance += 0.1f;
 				player.moveSpeed += 0.15f;
 				player.jumpSpeedBoost += 0.05f;
 				player.tileSpeed -= 0.1f;
-				player.wallSpeed -= 0.1f;
+				player.wallSpeed -= 0.1f;*/
 			}
 		}
 
@@ -54,29 +72,68 @@ namespace MrPlagueRaces.Common.Races.Lycan
 
 				if (!player.dead)
 				{
-					if (MrPlagueRaces.RaceAbilityKeybind1.Current && !player.HasBuff(BuffType<TemporalRecoil>()) && rewindPlayer.timelineCounter == 0) {
-						rewindPlayer.chargingRewind = true;
-					}
-					else {
-						rewindPlayer.chargingRewind = false;
-					}
-
-					float sqrDistanceToTarget = Vector2.DistanceSquared(rewindPlayer.rewindPosition[0], player.Center);
-					if (sqrDistanceToTarget < sqrMaxDetectDistance || rewindPlayer.timelineCounter > 0) {
-						nearTimeline = true;
-					}
-					if (nearTimeline) {
-						if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Rebounded>()) && rewindPlayer.rewindCounter == 0 && rewindPlayer.rewindPosition[0] != Vector2.Zero) {
-							rewindPlayer.chargingTimeline = true;
+                    if (ModContent.GetInstance<LycanConfig>().lycanAbility1)
+					{
+                        // {T} Add syncing functions (and checks to not sync if the value is already correct).
+                        if (MrPlagueRaces.RaceAbilityKeybind1.Current && !player.HasBuff(BuffType<TemporalRecoil>()) && rewindPlayer.timelineCounter == 0)
+						{
+							if (!rewindPlayer.chargingRewind)
+							{
+								rewindPlayer.chargingRewind = true;
+                                rewindPlayer.SyncPlayer(-1, Main.myPlayer, false);
+                            }
 						}
-						else {
-							rewindPlayer.chargingTimeline = false;
+						else
+						{
+                            if (rewindPlayer.chargingRewind)
+                            {
+                                rewindPlayer.chargingRewind = false;
+                                rewindPlayer.SyncPlayer(-1, Main.myPlayer, false);
+                            }
+                        }
+                    }
+                    float sqrDistanceToTarget = Vector2.DistanceSquared(rewindPlayer.rewindPosition[0], player.Center);
+                    if (sqrDistanceToTarget < sqrMaxDetectDistance || rewindPlayer.timelineCounter > 0)
+                    {
+                        nearTimeline = true;
+                    }
+                    if (ModContent.GetInstance<LycanConfig>().lycanAbility2)
+					{
+						if (nearTimeline)
+						{
+                            // {T} Add syncing functions (and checks to not sync if the value is already correct).
+                            if (MrPlagueRaces.RaceAbilityKeybind2.Current && !player.HasBuff(BuffType<Rebounded>()) && rewindPlayer.rewindCounter == 0 && rewindPlayer.rewindPosition[0] != Vector2.Zero)
+							{
+                                if (!rewindPlayer.chargingTimeline)
+                                {
+                                    rewindPlayer.chargingTimeline = true;
+                                    rewindPlayer.SyncPlayer(-1, Main.myPlayer, false);
+                                }
+                            }
+							else
+							{
+                                if (rewindPlayer.chargingTimeline)
+                                {
+                                    rewindPlayer.chargingTimeline = false;
+                                    rewindPlayer.SyncPlayer(-1, Main.myPlayer, false);
+                                }
+							}
 						}
 					}
 				}
 			}
-		}
-	}
+        }
+
+        public override bool FreeDodge(Player player, Player.HurtInfo info)
+        {
+            var rewindPlayer = player.GetModPlayer<RewindPlayer>();
+            if (!rewindPlayer.chargingRewind && rewindPlayer.rewindCounter > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
 
 	public class RewindPlayer : ModPlayer
 	{
@@ -97,14 +154,38 @@ namespace MrPlagueRaces.Common.Races.Lycan
 		public float[] rewindFullRotation = new float[401];
 		public Vector2[] rewindFullRotationOrigin = new Vector2[401];
 
-		public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
-		{
-			if (!Player.dead)
+        // {T} Added syncing for networked games.
+        // Call it like SyncPlayer(-1, Main.myPlayer, false);
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				ModPacket packet = Mod.GetPacket();
+				packet.Write((byte)MrPlagueRacesMessageType.LycanSyncPlayer);
+				packet.Write((byte)Player.whoAmI);
+				packet.Write(chargingRewind);
+				packet.Write(chargingTimeline);
+
+				packet.Send(toWho, fromWho);
+			}
+        }
+
+        // {T} Changed this from ModifyDrawInfo to PostUpdate.
+        // You should NEVER use a drawing function for gameplay code. Try running this mod with uncapped FPS mods- it WILL explode.
+        // Easy fix though ;)
+        public override void PostUpdate()
+        {
+            var mrPlagueRacesPlayer = Player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (!Player.dead)
 			{
 				if (chargingTimeline == true) {
 					if (timelineCounter == 0) {
 						SoundEngine.PlaySound(SoundID.Item159, Player.Center);
-					}
+                        if (Player.whoAmI == Main.myPlayer)
+                        {
+                            mrPlagueRacesPlayer.LycanChargeSound(-1, Main.myPlayer);
+                        }
+                    }
 					counter++;
 					if (counter >= 20) {
 						counter = 0;
@@ -115,23 +196,39 @@ namespace MrPlagueRaces.Common.Races.Lycan
 								Main.dust[dustMark].velocity = Vector2.Zero;
 								Main.dust[dustMark].scale = 0.5f;
 								Main.dust[dustMark].noGravity = true;
-							}
+                                if (Player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.LycanRedDust(-1, Main.myPlayer, rewindPosition[i * 10].X, rewindPosition[i * 10].Y, 0.5f);
+                                }
+                            }
 						}
 						SoundEngine.PlaySound(SoundID.MenuTick, Player.Center);
-					}
+                        if (Player.whoAmI == Main.myPlayer)
+                        {
+                            mrPlagueRacesPlayer.LycanChargeTickSound(-1, Main.myPlayer);
+                        }
+                    }
 					int dustForward = Dust.NewDust(new Vector2(rewindPosition[timelineCounter].X + (Player.direction == 1 ? 8 : 4), rewindPosition[timelineCounter].Y + 8), 0, 0, 66);
 					Main.dust[dustForward].color = new Color(255, 0, 0);
 					Main.dust[dustForward].velocity = Vector2.Zero;
 					Main.dust[dustForward].scale = 0.8f;
 					Main.dust[dustForward].noGravity = true;
-					if (rewindPosition[timelineCounter + 1] != Vector2.Zero) {
+                    if (Player.whoAmI == Main.myPlayer)
+                    {
+                        mrPlagueRacesPlayer.LycanRedDust(-1, Main.myPlayer, rewindPosition[timelineCounter].X, rewindPosition[timelineCounter].Y, 0.8f);
+                    }
+                    if (rewindPosition[timelineCounter + 1] != Vector2.Zero) {
 						timelineCounter++;
 					}
 				}
 				else if (timelineCounter > 0) {
 					SoundEngine.PlaySound(SoundID.Item117, Player.Center);
 					SoundEngine.PlaySound(SoundID.Item130, Player.Center);
-					Player.Teleport(rewindPosition[timelineCounter], 15);
+                    if (Player.whoAmI == Main.myPlayer)
+                    {
+                        mrPlagueRacesPlayer.LycanTeleportSound(-1, Main.myPlayer);
+                    }
+                    Player.Teleport(rewindPosition[timelineCounter], 15);
 					Player.direction = rewindDirection[timelineCounter];
 					for (int i = 0; i < 40; i++) {
 						int dustRewind = Dust.NewDust(new Vector2(Player.position.X + (Player.direction == 1 ? 8 : 4), Player.position.Y + 8), 0, 0, 66);
@@ -139,8 +236,12 @@ namespace MrPlagueRaces.Common.Races.Lycan
 						Main.dust[dustRewind].velocity *= 5f;
 						Main.dust[dustRewind].scale = 0.9f;
 						Main.dust[dustRewind].noGravity = true;
-					}
-					timelineCounter = 0;
+                    }
+                    if (Player.whoAmI == Main.myPlayer)
+                    {
+                        mrPlagueRacesPlayer.LycanTeleportBurstDust(-1, Main.myPlayer, Player.position.X, Player.position.Y);
+                    }
+                    timelineCounter = 0;
 					Player.AddBuff(BuffType<Rebounded>(), 300);
 				}
 				if (rewindCounter > 0 || chargingRewind) {
@@ -161,24 +262,37 @@ namespace MrPlagueRaces.Common.Races.Lycan
 							rewindFullRotation[i] = 0;
 							rewindFullRotationOrigin[i] = Vector2.Zero;
 						}
-						for (int k = 0; k < Main.maxNPCs; k++) {
-							NPC target = Main.npc[k];
-							float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Player.Center);
-							if (sqrDistanceToTarget < sqrMaxDetectDistance) {
-								var rewindNPC = target.GetGlobalNPC<RewindNPC>();
-								rewindNPC.rewindHost = Player;
-							}
-						}
-						for (int k = 0; k < Main.maxProjectiles; k++) {
-							Projectile target = Main.projectile[k];
-							float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Player.Center);
-							if (sqrDistanceToTarget < sqrMaxDetectDistance) {
-								var rewindProjectile = target.GetGlobalProjectile<RewindProjectile>();
-								rewindProjectile.rewindHost = Player;
+						if (ModContent.GetInstance<LycanConfig>().lycanRewindNPCs)
+						{
+                            // {T} Changed the logic here to not target inactive NPCs, as it was throwing exceptions.
+                            foreach (NPC target in Main.ActiveNPCs)
+							{
+                                float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Player.Center);
+                                if (sqrDistanceToTarget < sqrMaxDetectDistance)
+                                {
+                                    var rewindNPC = target.GetGlobalNPC<RewindNPC>();
+                                    rewindNPC.rewindHost = Player;
+                                }
+                            }
+                        }
+						if (ModContent.GetInstance<LycanConfig>().lycanRewindProjectiles)
+						{
+                            // {T} Changed the logic here to not target inactive projectiles, as it was throwing exceptions.
+                            foreach (Projectile target in Main.ActiveProjectiles) {
+								float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Player.Center);
+								if (sqrDistanceToTarget < sqrMaxDetectDistance)
+								{
+									var rewindProjectile = target.GetGlobalProjectile<RewindProjectile>();
+									rewindProjectile.rewindHost = Player;
+								}
 							}
 						}
 						SoundEngine.PlaySound(SoundID.Item159, Player.Center);
-					}
+                        if (Player.whoAmI == Main.myPlayer)
+                        {
+                            mrPlagueRacesPlayer.LycanChargeSound(-1, Main.myPlayer);
+                        }
+                    }
 					initializedRewind = false;
 					counter++;
 					if (counter >= 20) {
@@ -190,10 +304,18 @@ namespace MrPlagueRaces.Common.Races.Lycan
 								Main.dust[dustMark].velocity = Vector2.Zero;
 								Main.dust[dustMark].scale = 0.5f;
 								Main.dust[dustMark].noGravity = true;
-							}
+                                if (Player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.LycanRedDust(-1, Main.myPlayer, rewindPosition[i * 10].X, rewindPosition[i * 10].Y, 0.5f);
+                                }
+                            }
 						}
 						SoundEngine.PlaySound(SoundID.MenuTick, Player.Center);
-					}
+                        if (Player.whoAmI == Main.myPlayer)
+                        {
+                            mrPlagueRacesPlayer.LycanChargeTickSound(-1, Main.myPlayer);
+                        }
+                    }
 					if (rewindCounter < 400) {
 						rewindPosition[rewindCounter] = Player.position;
 						rewindDirection[rewindCounter] = Player.direction;
@@ -210,7 +332,11 @@ namespace MrPlagueRaces.Common.Races.Lycan
 						Main.dust[dustForward].velocity = Vector2.Zero;
 						Main.dust[dustForward].scale = 0.8f;
 						Main.dust[dustForward].noGravity = true;
-						rewindCounter++;
+                        if (Player.whoAmI == Main.myPlayer)
+                        {
+                            mrPlagueRacesPlayer.LycanRedDust(-1, Main.myPlayer, rewindPosition[rewindCounter].X, rewindPosition[rewindCounter].Y, 0.8f);
+                        }
+                        rewindCounter++;
 					}
 					else {
 						for (int i = 0; i < 400; i++) {
@@ -242,7 +368,11 @@ namespace MrPlagueRaces.Common.Races.Lycan
 								Main.dust[dustForward].velocity = Vector2.Zero;
 								Main.dust[dustForward].scale = 0.8f;
 								Main.dust[dustForward].noGravity = true;
-							}
+                                if (Player.whoAmI == Main.myPlayer)
+                                {
+                                    mrPlagueRacesPlayer.LycanRedDust(-1, Main.myPlayer, rewindPosition[i].X, rewindPosition[i].Y, 0.8f);
+                                }
+                            }
 						}
 					}
 					int dustStart = Dust.NewDust(new Vector2(rewindPosition[0].X + (Player.direction == 1 ? 8 : 4), rewindPosition[0].Y + 8), 0, 0, 66);
@@ -250,7 +380,11 @@ namespace MrPlagueRaces.Common.Races.Lycan
 					Main.dust[dustStart].velocity = Vector2.Zero;
 					Main.dust[dustStart].scale = 0.8f;
 					Main.dust[dustStart].noGravity = true;
-				}
+                    if (Player.whoAmI == Main.myPlayer)
+                    {
+                        mrPlagueRacesPlayer.LycanRedDust(-1, Main.myPlayer, rewindPosition[0].X, rewindPosition[0].Y, 0.8f);
+                    }
+                }
 				else if (rewindCounter > 0) {
 					if (!initializedRewind) {
 						for (int i = 0; i < 40; i++) {
@@ -259,36 +393,56 @@ namespace MrPlagueRaces.Common.Races.Lycan
 							Main.dust[dustRewind].velocity *= 5f;
 							Main.dust[dustRewind].scale = 0.9f;
 							Main.dust[dustRewind].noGravity = true;
-							SoundEngine.PlaySound(SoundID.Item164, Player.Center);
-							Player.AddBuff(BuffType<TemporalRecoil>(), rewindCounter);
+                            if (Player.whoAmI == Main.myPlayer)
+                            {
+                                mrPlagueRacesPlayer.LycanBlueDust(-1, Main.myPlayer, Player.position.X, Player.position.Y, 0.9f);
+                            }
+                            SoundEngine.PlaySound(SoundID.Item164, Player.Center);
+                            if (Player.whoAmI == Main.myPlayer)
+                            {
+                                mrPlagueRacesPlayer.LycanRewindSound(-1, Main.myPlayer);
+                            }
+                            Player.AddBuff(BuffType<TemporalRecoil>(), rewindCounter);
 						}
 						initializedRewind = true;
 					}
 					for (int i = 0; i < 5; i++) {
 						if (rewindCounter > 0) {
-							Player.position = rewindPosition[rewindCounter];
-							Player.direction = rewindDirection[rewindCounter];
-							Player.headFrame = rewindHeadFrame[rewindCounter];
-							Player.bodyFrame = rewindBodyFrame[rewindCounter];
-							Player.legFrame = rewindLegFrame[rewindCounter];
-							Player.headRotation = rewindHeadRotation[rewindCounter];
-							Player.bodyRotation = rewindBodyRotation[rewindCounter];
-							Player.legRotation = rewindLegRotation[rewindCounter];
-							Player.fullRotation = rewindFullRotation[rewindCounter];
-							Player.fullRotationOrigin = rewindFullRotationOrigin[rewindCounter];
+                            // {T} Safety. I found you could crash the game by just using the ability for a single tick and releasing.
+                            if (rewindPosition[rewindCounter] != Vector2.Zero)
+                            {
+								Player.position = rewindPosition[rewindCounter];
+								Player.direction = rewindDirection[rewindCounter];
+								Player.headFrame = rewindHeadFrame[rewindCounter];
+								Player.bodyFrame = rewindBodyFrame[rewindCounter];
+								Player.legFrame = rewindLegFrame[rewindCounter];
+								Player.headRotation = rewindHeadRotation[rewindCounter];
+								Player.bodyRotation = rewindBodyRotation[rewindCounter];
+								Player.legRotation = rewindLegRotation[rewindCounter];
+								Player.fullRotation = rewindFullRotation[rewindCounter];
+								Player.fullRotationOrigin = rewindFullRotationOrigin[rewindCounter];
+							}
 							int dustRewind = Dust.NewDust(new Vector2(Player.position.X + (Player.direction == 1 ? 8 : 4), Player.position.Y + 8), 0, 0, 66);
 							Main.dust[dustRewind].color = new Color(0, 0, 255);
 							Main.dust[dustRewind].velocity = Vector2.Zero;
 							Main.dust[dustRewind].scale = 0.9f;
 							Main.dust[dustRewind].noGravity = true;
-							rewindCounter--;
+                            if (Player.whoAmI == Main.myPlayer)
+                            {
+                                mrPlagueRacesPlayer.LycanBlueDust(-1, Main.myPlayer, Player.position.X, Player.position.Y, 0.9f);
+                            }
+                            rewindCounter--;
 						}
 					}
 					counter++;
 					if (counter >= 10) {
 						counter = 0;
 						SoundEngine.PlaySound(SoundID.MenuTick, Player.Center);
-					}
+                        if (Player.whoAmI == Main.myPlayer)
+                        {
+                            mrPlagueRacesPlayer.LycanChargeTickSound(-1, Main.myPlayer);
+                        }
+                    }
 				}
 			}
 		}
@@ -481,5 +635,36 @@ namespace MrPlagueRaces.Common.Races.Lycan
 				}
 			}
 		}
-	}
+    }
+
+    public class LycanConfig : ModConfig
+    {
+        public static LycanConfig Instance;
+        public override ConfigScope Mode => ConfigScope.ServerSide;
+
+        //[Header("Lycan")]
+        [BackgroundColor(110, 141, 255)]
+        public Dictionary<RacialStatType, RacialStatPercentageModifier> lycanStats = new Dictionary<RacialStatType, RacialStatPercentageModifier>()
+        {
+            //n describes negative, p describes positive. IE, n20 is equivalent to -20%
+            [RacialStatType.allDamage] = RacialStatPercentageModifier.p15,
+            [RacialStatType.moveSpeed] = RacialStatPercentageModifier.p15,
+            [RacialStatType.jumpSpeedBoost] = RacialStatPercentageModifier.p5,
+            [RacialStatType.endurance] = RacialStatPercentageModifier.p10,
+            [RacialStatType.tileSpeed] = RacialStatPercentageModifier.n10,
+            [RacialStatType.wallSpeed] = RacialStatPercentageModifier.n10
+        };
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool lycanAbility1;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool lycanAbility2;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool lycanRewindNPCs;
+        [DefaultValue(true)]
+        [BackgroundColor(110, 141, 255)]
+        public bool lycanRewindProjectiles;
+    }
 }

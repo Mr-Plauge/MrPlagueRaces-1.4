@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -90,7 +92,7 @@ namespace MrPlagueRaces.Content.Prefixes
 				}
 			}
 			if (undyingFactor > 0) {
-				Player.statLife = Player.statLifeMax2 / 25;
+				Player.statLife = (Player.statLifeMax2 / 25) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Undying) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Undying]]) : 1f);
 				Player.AddBuff(BuffType<Reincarnated>(), 1800 - undyingFactor * 30);
 				SoundEngine.PlaySound(SoundID.DD2_BetsySummon, Player.Center);
 				SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Player.Center);

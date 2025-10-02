@@ -1,18 +1,23 @@
-[c/ed7873:Description:]
-DISCLAIMER: Racial Abilities are currently WIP. Check the mod's homepage for more info!
-MrPlague's Authentic Races adds playable races to the game, which are selectable in the player creation menu.
-Each race alters the player's appearance and provides custom abilities.
+MrPlague's Authentic Races adds a [c/FF9D00:DND-style race system] to Terraria.
+Each race alters the player's sprite sheets and comes with a set of configurable abilities. Users can design and publish their own races using a [c/FF9D00:built-in editor].
 
-[c/ed7873:Developed By:]
-- _mrplague (MrPlague#0079) (main developer)
-- crocwithshades (game balance)
-- bellcat (game balance)
-- havata (betatester)
+[c/c5c5c5:Thank you for over] [c/ffed00:273,000] [c/c5c5c5:workshop downloads!]
+[c/c5c5c5:- MrPlague] [i/s1:473]
 
-[c/ed7873:Special Credits:]
-- pinselthefluftrodon (fluftrodon suggester)
-- ellethefluftrodon (fluftrodon suggester)
-- totodex (kobold suggester)
-- mirsario (cleaned up the codebase earlier in development. Sorry, I made it all messy again -mrplague)
-- snowmelon (helped with audio volume)
-- tianic (provided the mathematics for fixing a stat calculation error)
+[i/s1:903] [c/ef507c:Developed By:]
+- MrPlague [c/c5c5c5:(main developer)]
+- Crocwithshades [c/c5c5c5:(game balance)]
+- Harpy [c/c5c5c5:(game balance)]
+- Havata [c/c5c5c5:(betatester)]
+- Rvin [c/c5c5c5:(betatester)]
+- Winkwing [c/c5c5c5:(betatester)]
+
+[i/s1:890] [c/ef507c:Special Credits:]
+- PinselTheFluftrodon [c/c5c5c5:(fluftrodon suggester)]
+- ElleTheFluftrodon [c/c5c5c5:(fluftrodon suggester)]
+- Totodex [c/c5c5c5:(kobold suggester)]
+- Mirsario [c/c5c5c5:(cleaned up the codebase earlier in development)]
+- Snowmelon [c/c5c5c5:(helped with audio volume)]
+- Tianic [c/c5c5c5:(provided the mathematics for fixing a stat calculation error)]
+- Fake_Shadow [c/c5c5c5:(inspiration for certain vampire hairstyles)]
+- Turtleren [c/c5c5c5:(netcode assistance, provided insight into useful API changes)]

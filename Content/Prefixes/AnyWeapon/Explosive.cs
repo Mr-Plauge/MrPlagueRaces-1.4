@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -73,13 +75,13 @@ namespace MrPlagueRaces.Content.Prefixes
 		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
 		{
 			if (Player.HeldItem.prefix == PrefixType<Explosive>()) {
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), target.Center.X + Main.rand.Next(15) - Main.rand.Next(15), target.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), 0, 0, ProjectileType<VolatileExplosion>(), Player.HeldItem.damage, 5, Player.whoAmI);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), target.Center.X + Main.rand.Next(15) - Main.rand.Next(15), target.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), 0, 0, ProjectileType<VolatileExplosion>(), (Player.HeldItem.damage / 3) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Explosive) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Explosive]]) : 1f), 5, Player.whoAmI);
 			}
 		}
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
 		{
 			if (Player.HeldItem.prefix == PrefixType<Explosive>()) {
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), target.Center.X + Main.rand.Next(15) - Main.rand.Next(15), target.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), 0, 0, ProjectileType<VolatileExplosion>(), Player.HeldItem.damage, 5, Player.whoAmI);
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), target.Center.X + Main.rand.Next(15) - Main.rand.Next(15), target.Center.Y + Main.rand.Next(15) - Main.rand.Next(15), 0, 0, ProjectileType<VolatileExplosion>(), (Player.HeldItem.damage / 3) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Explosive) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Explosive]]) : 1f), 5, Player.whoAmI);
 			}
 		}
 		/*public override void OnHitPvp(Item item, Player target, int damage, bool crit)

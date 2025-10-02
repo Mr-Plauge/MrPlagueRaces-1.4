@@ -32,12 +32,17 @@ namespace MrPlagueRaces.Content.Projectiles
 		public override void AI() {
 			Player player = Main.player[Projectile.owner];
 			var skeletonPlayer = player.GetModPlayer<SkeletonPlayer>();
-			Projectile.ai[0] += 1f;
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            Projectile.ai[0] += 1f;
 			Projectile.velocity.Y += 0.5f;
 			if (skeletonPlayer.teleportThree) {
 				skeletonPlayer.teleportThree = false;
 				SoundEngine.PlaySound(SoundID.DD2_SkeletonSummoned, Projectile.Center);
-				player.Teleport(new Vector2(Projectile.position.X + 26, Projectile.position.Y - 18), 15);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    mrPlagueRacesPlayer.SkeletonTeleportSound(-1, Main.myPlayer);
+                }
+                player.Teleport(new Vector2(Projectile.position.X + 26, Projectile.position.Y - 18), 15);
 				for (int i = 0; i < 3; i++) {
 					Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), Projectile.Center.X + Main.rand.Next(60) - Main.rand.Next(60), Projectile.Center.Y + Main.rand.Next(60) - Main.rand.Next(60), 0f, 0f, ProjectileType<PuffDust>(), 0, 0, Projectile.owner);
 				}

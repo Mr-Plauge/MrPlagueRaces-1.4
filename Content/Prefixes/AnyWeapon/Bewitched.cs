@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -68,11 +70,12 @@ namespace MrPlagueRaces.Content.Prefixes
 		}
 
 		public override bool? UseItem(Item item, Player player)
-		{
-			if (item.prefix == PrefixType<Bewitched>() && !player.HasBuff(BuffType<Invoked>()))
+        {
+            var mrPlagueRacesPlayer = player.GetModPlayer<MrPlagueRacesPlayer>();
+            if (item.prefix == PrefixType<Bewitched>() && !player.HasBuff(BuffType<Invoked>()))
 			{
-				Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * 10f;
-				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X, velocity.Y, ProjectileType<ShadowflameSeeker>(), item.damage / 2, 5, player.whoAmI);
+				Vector2 velocity = Vector2.Normalize(mrPlagueRacesPlayer.mouseWorld - player.Center) * 10f;
+				Projectile.NewProjectile(Wiring.GetProjectileSource(0, 0), player.Center.X, player.Center.Y, velocity.X, velocity.Y, ProjectileType<ShadowflameSeeker>(), (item.damage / 5) * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Bewitched) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Bewitched]]) : 1f), 5, player.whoAmI);
 				SoundEngine.PlaySound(SoundID.DD2_EtherianPortalSpawnEnemy, player.Center);
 				player.AddBuff(BuffType<Invoked>(), 40);
 			}

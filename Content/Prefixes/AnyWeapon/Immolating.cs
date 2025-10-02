@@ -12,6 +12,8 @@ using Terraria.ModLoader.IO;
 using MrPlagueRaces.Content.Buffs;
 using MrPlagueRaces.Content.Projectiles;
 using MrPlagueRaces.Content.Prefixes;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Goblin;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Prefixes
@@ -73,13 +75,13 @@ namespace MrPlagueRaces.Content.Prefixes
 		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
 		{
 			if (Player.HeldItem.prefix == PrefixType<Immolating>()) {
-				target.AddBuff(BuffType<DarkInferno>(), 60);
+				target.AddBuff(BuffType<DarkInferno>(), 60 * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Immolating) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Immolating]]) : 1f));
 			}
 		}
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
 		{
 			if (Player.HeldItem.prefix == PrefixType<Immolating>()) {
-				target.AddBuff(BuffType<DarkInferno>(), 60);
+				target.AddBuff(BuffType<DarkInferno>(), 60 * (int)(ModContent.GetInstance<GoblinConfig>().goblinPrefixes.ContainsKey(GoblinPrefixType.Immolating) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<GoblinConfig>().goblinPrefixes[GoblinPrefixType.Immolating]]) : 1f));
 			}
 		}
 		/*public override void OnHitPvp(Item item, Player target, int damage, bool crit)

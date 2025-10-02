@@ -1,5 +1,41 @@
 Conditions.LowHealth: When the player is below half HP
 
+UI: {
+	Confirm: Confirm
+	ColorPaletteNotifier: Preserving Color Palette Between Race Swaps
+	ButtonBack: Return to the player creation menu.
+	ButtonCreate: Create your race's Mod Source Folder. Build, reload, and publish the source to put it on the Steam Workshop.
+	ClothingStyles: Change your race's default clothing style.
+	HairStyles: Change your race's default hairstyle. Draws from the pool of hair sheets you have uploaded.
+	ColorPickers4: Modify your race's default hair color.
+	ColorPickers5: Modify your race's default eye color.
+	ColorPickers6: Modify your race's default skin color.
+	ColorPickers7: Modify your race's default detail color(s).
+	ColorPickers8: Modify your race's default shirt color.
+	ColorPickers9: Modify your race's default undershirt color.
+	ColorPickers10: Modify your race's default pants color.
+	ColorPickers11: Modify your race's default shoe color.
+	ColorPickers12: Modify your race's default detail color(s).
+	ColorPickers13: Modify your race's default detail color(s).
+	ColorPickers14: Modify your race's default detail color(s).
+	ColorPalette: Customize your race's default vanity data. This includes clothing, hairstyle, & color palette.
+	Appearance: Upload spritesheets & sound effects for your race.
+	Abilities: Modify your race's stat bonuses & weaknesses.
+	RaceInfo: Provide a modname, racename, and author.
+	ModName: The internal name of your mod.
+	ModDisplayName: The name that will be publicly displayed for your mod.
+	ModAuthor: The name(s) credited in your mod's description.
+	RaceName: The internal name of your race.
+	RaceDisplayName: The name that will be publicly displayed for your race.
+	FamiliarShirt: Toggle whether your race starts with a familiar shirt.
+	FamiliarPants: Toggle whether your race starts with familiar pants.
+	CensorClothing: Toggle your race's censor clothing. This can only be disabled if you have changed the body and leg sheets.
+	DetailCount_1: Adjust your race's number of detail colors. Currently set to 1.
+	DetailCount_2: Adjust your race's number of detail colors. Currently set to 2.
+	DetailCount_3: Adjust your race's number of detail colors. Currently set to 3.
+	DetailCount_4: Adjust your race's number of detail colors. Currently set to 4.
+}
+
 Keybinds: {
 	"Primary Racial Ability.DisplayName": Primary  Racial  Ability
 	"Secondary Racial Ability.DisplayName": Secondary  Racial  Ability
@@ -10,220 +46,1623 @@ Keybinds: {
 Items: {
 	InvisibleMask: {
 		DisplayName: Invisible Mask
-		Tooltip: ""
+		Tooltip: Hides your headwear
 	}
 
 	InvisibleShirt: {
 		DisplayName: Invisible Shirt
-		Tooltip: ""
+		Tooltip: Hides your torsowear
 	}
 
 	InvisibleTrousers: {
 		DisplayName: Invisible Trousers
-		Tooltip: ""
+		Tooltip: Hides your legwear
+	}
+
+	EntangledStrands: {
+		DisplayName: Entangled Strands
+		Tooltip:
+			'''
+			Allows a new race to be selected
+			Allows for modification of the player's hair, eye, skin, & detail colors
+			Allows for modification of the player's hairstyle
+			Hold Down while selecting a race to preserve your color palette
+			'Invisible threads made visible through the Aether'
+			'''
 	}
 }
 
 Configs: {
 	MrPlagueRacesConfig: {
-		DisplayName: Mr Plague Races Config
+		DisplayName: Adjustments (General)
 
 		raceStats: {
-			Label: Toggle Race Stats
-			Tooltip: Toggle race stats
+			Label: Racial Stats & Abilities
+			Tooltip:
+				'''
+				On: Enables racial stat changes & abilities
+				Off: Disables racial stat changes & abilities
+				'''
 		}
 
-		raceStatsImpact: {
-			Label: Racial Stat impact
-			Tooltip: Racial Stat impact
+		statMode: {
+			Label: Stat Balance
+			Tooltip:
+				'''
+				0: [c/4DBF60:Lite - Racial stats are of minimal impact]
+				1: [c/F26E0A:Medium - Racial stats slightly affect game progression]
+				2: [c/FF3640:Extreme - Racial stats greatly affect game progression]
+				'''
+		}
+
+		abilityMode: {
+			Label: Ability Balance
+			Tooltip:
+				'''
+				0: [c/4DBF60:Lite - Racial abilities are of minimal impact]
+				1: [c/F26E0A:Medium - Racial abilities slightly affect game progression]
+				2: [c/FF3640:Extreme - Racial abilities greatly affect game progression]
+				'''
 		}
 
 		experimentalContent: {
 			Label: Toggle Experimental Content
-			Tooltip: Toggle experimental content
+			Tooltip:
+				'''
+				On: Enables unfinished mod content
+				Off: Disables unfinished mod content
+
+				[c/4DBF60:As of 8/24/2025, this option enables (very buggy) Lihzahrd Golems in Multiplayer.]
+				'''
 		}
+
+		raceHurtSounds: {
+			Label: Racial Hurt Sounds
+			Tooltip:
+				'''
+				On: Hurt sounds are replaced by custom sounds
+				Off: Hurt sounds are not overridden
+				'''
+		}
+
+		Headers: {
+			GameplayOptions: Gameplay Options
+			TechnicalOptions: Technical Options
+			ExperimentalContent: Experimental Content
+		}
+
+		raceSelectionInPlayerCreationUI: {
+			Label: Override Player Creation UI
+			Tooltip:
+				'''
+				On: Player Creation UI is overridden to include race selection
+				Off: Player Creation UI is not overridden (to resolve mod compatibility issues)
+				'''
+		}
+
+		raceSelectionPanelHeight: {
+			Label: Height Extension (Race Selection UI)
+			Tooltip: Extends the visible contents of the race selection window
+		}
+
+		overrideDresserUI: {
+			Label: Override Dresser UI
+			Tooltip:
+				'''
+				On: Ingame Dresser UI is overridden to support custom player appearances
+				Off: Ingame Dresser UI is not overridden
+				'''
+		}
+
+		overrideHairstyleUI: {
+			Label: Override Stylist UI
+			Tooltip:
+				'''
+				On: Ingame Stylist UI is overridden to support custom player appearances
+				Off: Ingame Stylist UI is not overridden
+				'''
+		}
+	}
+
+	RacialStatPercentageModifier: {
+		Tooltip: ""
+		n100.Label: "[c/FF3640:-100%]"
+		n99.Label: "[c/FF3640:-99%]"
+		n98.Label: "[c/FF3640:-98%]"
+		n97.Label: "[c/FF3640:-97%]"
+		n96.Label: "[c/FF3640:-96%]"
+		n95.Label: "[c/FF3640:-95%]"
+		n94.Label: "[c/FF3640:-94%]"
+		n93.Label: "[c/FF3640:-93%]"
+		n92.Label: "[c/FF3640:-92%]"
+		n91.Label: "[c/FF3640:-91%]"
+		n90.Label: "[c/FF3640:-90%]"
+		n89.Label: "[c/FF3640:-89%]"
+		n88.Label: "[c/FF3640:-88%]"
+		n87.Label: "[c/FF3640:-87%]"
+		n86.Label: "[c/FF3640:-86%]"
+		n85.Label: "[c/FF3640:-85%]"
+		n84.Label: "[c/FF3640:-84%]"
+		n83.Label: "[c/FF3640:-83%]"
+		n82.Label: "[c/FF3640:-82%]"
+		n81.Label: "[c/FF3640:-81%]"
+		n80.Label: "[c/FF3640:-80%]"
+		n79.Label: "[c/FF3640:-79%]"
+		n78.Label: "[c/FF3640:-78%]"
+		n77.Label: "[c/FF3640:-77%]"
+		n76.Label: "[c/FF3640:-76%]"
+		n75.Label: "[c/FF3640:-75%]"
+		n74.Label: "[c/FF3640:-74%]"
+		n73.Label: "[c/FF3640:-73%]"
+		n72.Label: "[c/FF3640:-72%]"
+		n71.Label: "[c/FF3640:-71%]"
+		n70.Label: "[c/FF3640:-70%]"
+		n69.Label: "[c/FF3640:-69%]"
+		n68.Label: "[c/FF3640:-68%]"
+		n67.Label: "[c/FF3640:-67%]"
+		n66.Label: "[c/FF3640:-66%]"
+		n65.Label: "[c/FF3640:-65%]"
+		n64.Label: "[c/FF3640:-64%]"
+		n63.Label: "[c/FF3640:-63%]"
+		n62.Label: "[c/FF3640:-62%]"
+		n61.Label: "[c/FF3640:-61%]"
+		n60.Label: "[c/FF3640:-60%]"
+		n59.Label: "[c/FF3640:-59%]"
+		n58.Label: "[c/FF3640:-58%]"
+		n57.Label: "[c/FF3640:-57%]"
+		n56.Label: "[c/FF3640:-56%]"
+		n55.Label: "[c/FF3640:-55%]"
+		n54.Label: "[c/FF3640:-54%]"
+		n53.Label: "[c/FF3640:-53%]"
+		n52.Label: "[c/FF3640:-52%]"
+		n51.Label: "[c/FF3640:-51%]"
+		n50.Label: "[c/FF3640:-50%]"
+		n49.Label: "[c/FF3640:-49%]"
+		n48.Label: "[c/FF3640:-48%]"
+		n47.Label: "[c/FF3640:-47%]"
+		n46.Label: "[c/FF3640:-46%]"
+		n45.Label: "[c/FF3640:-45%]"
+		n44.Label: "[c/FF3640:-44%]"
+		n43.Label: "[c/FF3640:-43%]"
+		n42.Label: "[c/FF3640:-42%]"
+		n41.Label: "[c/FF3640:-41%]"
+		n40.Label: "[c/FF3640:-40%]"
+		n39.Label: "[c/FF3640:-39%]"
+		n38.Label: "[c/FF3640:-38%]"
+		n37.Label: "[c/FF3640:-37%]"
+		n36.Label: "[c/FF3640:-36%]"
+		n35.Label: "[c/FF3640:-35%]"
+		n34.Label: "[c/FF3640:-34%]"
+		n33.Label: "[c/FF3640:-33%]"
+		n32.Label: "[c/FF3640:-32%]"
+		n31.Label: "[c/FF3640:-31%]"
+		n30.Label: "[c/FF3640:-30%]"
+		n29.Label: "[c/FF3640:-29%]"
+		n28.Label: "[c/FF3640:-28%]"
+		n27.Label: "[c/FF3640:-27%]"
+		n26.Label: "[c/FF3640:-26%]"
+		n25.Label: "[c/FF3640:-25%]"
+		n24.Label: "[c/FF3640:-24%]"
+		n23.Label: "[c/FF3640:-23%]"
+		n22.Label: "[c/FF3640:-22%]"
+		n21.Label: "[c/FF3640:-21%]"
+		n20.Label: "[c/FF3640:-20%]"
+		n19.Label: "[c/FF3640:-19%]"
+		n18.Label: "[c/FF3640:-18%]"
+		n17.Label: "[c/FF3640:-17%]"
+		n16.Label: "[c/FF3640:-16%]"
+		n15.Label: "[c/FF3640:-15%]"
+		n14.Label: "[c/FF3640:-14%]"
+		n13.Label: "[c/FF3640:-13%]"
+		n12.Label: "[c/FF3640:-12%]"
+		n11.Label: "[c/FF3640:-11%]"
+		n10.Label: "[c/FF3640:-10%]"
+		n9.Label: "[c/FF3640:-9%]"
+		n8.Label: "[c/FF3640:-8%]"
+		n7.Label: "[c/FF3640:-7%]"
+		n6.Label: "[c/FF3640:-6%]"
+		n5.Label: "[c/FF3640:-5%]"
+		n4.Label: "[c/FF3640:-4%]"
+		n3.Label: "[c/FF3640:-3%]"
+		n2.Label: "[c/FF3640:-2%]"
+		n1.Label: "[c/FF3640:-1%]"
+		zero.Label: "[c/F26E0A:+0%]"
+		p1.Label: "[c/4DBF60:+1%]"
+		p2.Label: "[c/4DBF60:+2%]"
+		p3.Label: "[c/4DBF60:+3%]"
+		p4.Label: "[c/4DBF60:+4%]"
+		p5.Label: "[c/4DBF60:+5%]"
+		p6.Label: "[c/4DBF60:+6%]"
+		p7.Label: "[c/4DBF60:+7%]"
+		p8.Label: "[c/4DBF60:+8%]"
+		p9.Label: "[c/4DBF60:+9%]"
+		p10.Label: "[c/4DBF60:+10%]"
+		p11.Label: "[c/4DBF60:+11%]"
+		p12.Label: "[c/4DBF60:+12%]"
+		p13.Label: "[c/4DBF60:+13%]"
+		p14.Label: "[c/4DBF60:+14%]"
+		p15.Label: "[c/4DBF60:+15%]"
+		p16.Label: "[c/4DBF60:+16%]"
+		p17.Label: "[c/4DBF60:+17%]"
+		p18.Label: "[c/4DBF60:+18%]"
+		p19.Label: "[c/4DBF60:+19%]"
+		p20.Label: "[c/4DBF60:+20%]"
+		p21.Label: "[c/4DBF60:+21%]"
+		p22.Label: "[c/4DBF60:+22%]"
+		p23.Label: "[c/4DBF60:+23%]"
+		p24.Label: "[c/4DBF60:+24%]"
+		p25.Label: "[c/4DBF60:+25%]"
+		p26.Label: "[c/4DBF60:+26%]"
+		p27.Label: "[c/4DBF60:+27%]"
+		p28.Label: "[c/4DBF60:+28%]"
+		p29.Label: "[c/4DBF60:+29%]"
+		p30.Label: "[c/4DBF60:+30%]"
+		p31.Label: "[c/4DBF60:+31%]"
+		p32.Label: "[c/4DBF60:+32%]"
+		p33.Label: "[c/4DBF60:+33%]"
+		p34.Label: "[c/4DBF60:+34%]"
+		p35.Label: "[c/4DBF60:+35%]"
+		p36.Label: "[c/4DBF60:+36%]"
+		p37.Label: "[c/4DBF60:+37%]"
+		p38.Label: "[c/4DBF60:+38%]"
+		p39.Label: "[c/4DBF60:+39%]"
+		p40.Label: "[c/4DBF60:+40%]"
+		p41.Label: "[c/4DBF60:+41%]"
+		p42.Label: "[c/4DBF60:+42%]"
+		p43.Label: "[c/4DBF60:+43%]"
+		p44.Label: "[c/4DBF60:+44%]"
+		p45.Label: "[c/4DBF60:+45%]"
+		p46.Label: "[c/4DBF60:+46%]"
+		p47.Label: "[c/4DBF60:+47%]"
+		p48.Label: "[c/4DBF60:+48%]"
+		p49.Label: "[c/4DBF60:+49%]"
+		p50.Label: "[c/4DBF60:+50%]"
+		p51.Label: "[c/4DBF60:+51%]"
+		p52.Label: "[c/4DBF60:+52%]"
+		p53.Label: "[c/4DBF60:+53%]"
+		p54.Label: "[c/4DBF60:+54%]"
+		p55.Label: "[c/4DBF60:+55%]"
+		p56.Label: "[c/4DBF60:+56%]"
+		p57.Label: "[c/4DBF60:+57%]"
+		p58.Label: "[c/4DBF60:+58%]"
+		p59.Label: "[c/4DBF60:+59%]"
+		p60.Label: "[c/4DBF60:+60%]"
+		p61.Label: "[c/4DBF60:+61%]"
+		p62.Label: "[c/4DBF60:+62%]"
+		p63.Label: "[c/4DBF60:+63%]"
+		p64.Label: "[c/4DBF60:+64%]"
+		p65.Label: "[c/4DBF60:+65%]"
+		p66.Label: "[c/4DBF60:+66%]"
+		p67.Label: "[c/4DBF60:+67%]"
+		p68.Label: "[c/4DBF60:+68%]"
+		p69.Label: "[c/4DBF60:+69%]"
+		p70.Label: "[c/4DBF60:+70%]"
+		p71.Label: "[c/4DBF60:+71%]"
+		p72.Label: "[c/4DBF60:+72%]"
+		p73.Label: "[c/4DBF60:+73%]"
+		p74.Label: "[c/4DBF60:+74%]"
+		p75.Label: "[c/4DBF60:+75%]"
+		p76.Label: "[c/4DBF60:+76%]"
+		p77.Label: "[c/4DBF60:+77%]"
+		p78.Label: "[c/4DBF60:+78%]"
+		p79.Label: "[c/4DBF60:+79%]"
+		p80.Label: "[c/4DBF60:+80%]"
+		p81.Label: "[c/4DBF60:+81%]"
+		p82.Label: "[c/4DBF60:+82%]"
+		p83.Label: "[c/4DBF60:+83%]"
+		p84.Label: "[c/4DBF60:+84%]"
+		p85.Label: "[c/4DBF60:+85%]"
+		p86.Label: "[c/4DBF60:+86%]"
+		p87.Label: "[c/4DBF60:+87%]"
+		p88.Label: "[c/4DBF60:+88%]"
+		p89.Label: "[c/4DBF60:+89%]"
+		p90.Label: "[c/4DBF60:+90%]"
+		p91.Label: "[c/4DBF60:+91%]"
+		p92.Label: "[c/4DBF60:+92%]"
+		p93.Label: "[c/4DBF60:+93%]"
+		p94.Label: "[c/4DBF60:+94%]"
+		p95.Label: "[c/4DBF60:+95%]"
+		p96.Label: "[c/4DBF60:+96%]"
+		p97.Label: "[c/4DBF60:+97%]"
+		p98.Label: "[c/4DBF60:+98%]"
+		p99.Label: "[c/4DBF60:+99%]"
+		p100.Label: "[c/4DBF60:+100%]"
+	}
+
+	RacialStatType: {
+		Tooltip: Adds parameter Value to the stat defined in parameter Key.
+		statLifeMax2.Label: "[i/s1:29] Health"
+		lifeRegen.Label: "[i/s1:49] Health Regeneration"
+		statManaMax2.Label: "[i/s1:109] Mana"
+		manaRegenBonus.Label: "[i/s1:111] Mana Regeneration"
+		statDefense.Label: "[i/s1:938] Defense"
+		endurance.Label: "[i/s1:901] Endurance"
+		thorns.Label: "[i/s1:1150] Thorns"
+		lavaMax.Label: "[i/s1:3999] Lava Immunity Time"
+		meleeDamage.Label: "[i/s1:490] Melee Damage"
+		meleeSpeed.Label: "[i/s1:3106] Melee Speed"
+		rangedDamage.Label: "[i/s1:491] Ranged Damage"
+		magicDamage.Label: "[i/s1:489] Magic Damage"
+		manaCost.Label: "[i/s1:4001] Mana Cost Reduction"
+		minionDamage.Label: "[i/s1:2998] Minion Damage"
+		maxMinions.Label: "[i/s1:1309] Minions"
+		minionKB.Label: "[i/s1:4672] Minion Knockback"
+		maxTurrets.Label: "[i/s1:2366] Turrets"
+		allDamage.Label: "[i/s1:1301] Damage"
+		meleeCrit.Label: "[i/s1:3573] Melee Critical Strike Chance"
+		rangedCrit.Label: "[i/s1:3574] Ranged Critical Strike Chance"
+		magicCrit.Label: "[i/s1:3575] Magic Critical Strike Chance"
+		allCrit.Label: "[i/s1:3572] Critical Strike Chance"
+		armorPenetration.Label: "[i/s1:4007] Armor Penetration"
+		pickSpeed.Label: "[i/s1:4056] Mining Speed"
+		tileSpeed.Label: "[i/s1:2214] Tile Placement Speed"
+		wallSpeed.Label: "[i/s1:2217] Wall Placement Speed"
+		blockRange.Label: "[i/s1:2215] Placement Range"
+		moveSpeed.Label: "[i/s1:405] Movement Speed"
+		jumpSpeedBoost.Label: "[i/s1:3996] Jump Speed"
+		extraFall.Label: "[i/s1:158] Fall Damage Resistance"
+		fishingSkill.Label: "[i/s1:2309] Fishing Skill"
+		aggro.Label: "[i/s1:361] Aggro"
+		none.Label: "[i/s1:267] None"
+	}
+
+	DerpkinConfig: {
+		DisplayName: "[c/007BFF:Derpkin]"
+		Headers.Derpkin: "[c/007BFF:Derpkin]"
+
+		derpkinStats: {
+			Label: Stat Modifiers ([c/007BFF:Derpkin])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		derpkinAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Leap)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		derpkinAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Spin Dodge)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		derpkinLeapVelocity: {
+			Label: "[i/s1:2740][i/s1:4815] Velocity (Leap)"
+			Tooltip: Adjusts the velocity of Derpkin's leap ability
+		}
+
+		derpkinSpinVelocity: {
+			Label: "[i/s1:1167][i/s1:4815] Velocity (Spin Dodge)"
+			Tooltip: Adjusts the velocity of Derpkin's spin ability
+		}
+	}
+
+	DragonkinConfig: {
+		DisplayName: "[c/309665:Dragonkin]"
+		Headers.Dragonkin: "[c/309665:Dragonkin]"
+
+		dragonkinStats: {
+			Label: Stat Modifiers ([c/309665:Dragonkin])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		dragonkinSmokeDamage: {
+			Label: "[i/s1:4305][i/s1:1301] Damage (Burning Smoke)"
+			Tooltip: Adjusts the damage output of Burning Smoke
+		}
+
+		dragonkinFireDamage: {
+			Label: "[i/s1:4308][i/s1:1301] Damage (Molotov Fireball)"
+			Tooltip: Adjusts the damage output of Molotov Fireball
+		}
+
+		dragonkinAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Burning Smoke)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		dragonkinAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Molotov Fireball)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+	}
+
+	FluftrodonConfig: {
+		DisplayName: "[c/A1E7FF:Fluftrodon]"
+		Headers.Fluftrodon: "[c/A1E7FF:Fluftrodon]"
+
+		fluftrodonStats: {
+			Label: Stat Modifiers ([c/A1E7FF:Fluftrodon])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		fluftrodonWallJump: {
+			Label: "[i/s1:53] Wall Jumping"
+			Tooltip:
+				'''
+				On: Fluftrodon can jump off of tiles
+				Off: Fluftrodon cannot jump off of tiles
+				'''
+		}
+
+		fluftrodonAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Painting Tail)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		fluftrodonAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Charged Jump)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		fluftrodonLeapVelocity: {
+			Label: "[i/s1:1164][i/s1:4815] Velocity (Charged Jump)"
+			Tooltip: Adjusts the velocity of Fluftrodon's Charged Jump ability
+		}
+
+		fluftrodonWallJumpVelocity: {
+			Label: "[i/s1:53][i/s1:4815] Velocity (Wall Jump)"
+			Tooltip: Adjusts the velocity of Fluftrodon's Wall Jump ability
+		}
+	}
+
+	GoblinConfig: {
+		DisplayName: "[c/E2FF52:Goblin]"
+		Headers.Goblin: "[c/E2FF52:Goblin]"
+
+		goblinStats: {
+			Label: Stat Modifiers ([c/E2FF52:Goblin])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting values too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		goblinAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Shadowflame Reforge)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		goblinAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Shadowflame Harvester)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		goblinShadowHarvesterDamage: {
+			Label: "[i/s1:3864][i/s1:1301] Damage (Shadow Harvester)"
+			Tooltip: Adjusts the damage output of summoned Shadow Harvesters
+		}
+
+		goblinPrefixes: {
+			Label: Reforge Modifiers
+			Tooltip:
+				'''
+				Modify Goblin's shadowflame reforges
+				[c/F26E0A:Delete reforge modifiers to remove them from the reforge pool]
+				'''
+		}
+	}
+
+	HumanConfig: {
+		DisplayName: "[c/FF9D00:Human]"
+		Headers.Human: "[c/FF9D00:Human]"
+
+		humanStats: {
+			Label: Stat Modifiers ([c/FF9D00:Human])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+	}
+
+	KenkuConfig: {
+		DisplayName: "[c/6F5BF0:Kenku]"
+		Headers.Kenku: "[c/6F5BF0:Kenku]"
+
+		kenkuStats: {
+			Label: Stat Modifiers ([c/6F5BF0:Kenku])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		kenkuNoFallDmg: {
+			Label: "[i/s1:158] Fall Damage Immunity"
+			Tooltip:
+				'''
+				On: Kenku is immune to fall damage (above 160 max health)
+				Off: Kenku is not immune to fall damage
+				'''
+		}
+
+		kenkuWings: {
+			Label: "[i/s1:785] Built-in Wings"
+			Tooltip:
+				'''
+				On: Kenku has wings by default
+				Off: Kenku does not have wings by default
+				'''
+		}
+
+		kenkuWingsPower: {
+			Tooltip: Adjusts the flight duration of Kenku's default wings
+			Label: "[i/s1:889][i/s1:785] Flight Time (Built-in Wings)"
+		}
+
+		kenkuAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Aerial Swoop)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		kenkuAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Feather Volley)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		kenkuFeatherDamage: {
+			Label: "[i/s1:1516][i/s1:1301] Damage (Feather Volley)"
+			Tooltip: Adjusts the damage output of Feather Volley feathers
+		}
+
+		kenkuSwoopVelocity: {
+			Label: "[i/s1:575][i/s1:4815] Velocity (Aerial Swoop)"
+			Tooltip: Adjusts the velocity of Kenku's swoop ability
+		}
+
+		kenkuFeatherVelocity: {
+			Label: "[i/s1:1516][i/s1:4815] Velocity (Feather Volley)"
+			Tooltip: Adjusts the explosion force of Kenku's Feather Volley launches
+		}
+	}
+
+	KoboldConfig: {
+		DisplayName: "[c/FF3700:Kobold]"
+		Headers.Kobold: "[c/FF3700:Kobold]"
+
+		koboldStats: {
+			Label: Stat Modifiers ([c/FF3700:Kobold])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		koboldSunlightWeakness: {
+			Label: "[i/s1:4747] Sunlight Weakness"
+			Tooltip:
+				'''
+				On: Kobold is weakened in sunlight
+				Off: Kobold is not weakened in sunlight
+				'''
+		}
+
+		koboldLight: {
+			Label: "[i/s1:88] Light Aura"
+			Tooltip:
+				'''
+				On: Kobold produces an aura of light
+				Off: Kobold does not produce an aura of light
+				'''
+		}
+
+		koboldOresense: {
+			Label: "[i/s1:4802] Oresense"
+			Tooltip:
+				'''
+				On: Kobold highlights nearby ores with a particle aura
+				Off: Kobold does not highlight nearby ores
+				'''
+		}
+
+		koboldAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Sparkmine)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		koboldAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Clustermine)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		koboldAbility3: {
+			Label: "[i/s1:2705] Tertiary Ability (Mine Detonation)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		koboldSparkmineDamage: {
+			Label: "[i/s1:4160][i/s1:1301] Damage (Sparkmine)"
+			Tooltip: Adjusts the damage output of Sparkmine explosions
+		}
+
+		koboldClustermineDamage: {
+			Label: "[i/s1:4149][i/s1:1301] Damage (Clustermine)"
+			Tooltip: Adjusts the damage output of Clustermine explosions
+		}
+
+		koboldSparkmineVelocity: {
+			Label: "[i/s1:4160][i/s1:4815] Velocity (Sparkmine)"
+			Tooltip: Adjusts the explosion force of Kobold's sparkmines
+		}
+
+		koboldClustermineVelocity: {
+			Label: "[i/s1:4149][i/s1:4815] Velocity (Clustermine)"
+			Tooltip: Adjusts the explosion force of Kobold's clustermines
+		}
+	}
+
+	LihzahrdConfig: {
+		DisplayName: "[c/8CFF00:Lihzahrd]"
+		Headers.Lihzahrd: "[c/8CFF00:Lihzahrd]"
+
+		lihzahrdStats: {
+			Label: Stat Modifiers ([c/8CFF00:Lihzahrd])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		lihzahrdSunlessWeakness: {
+			Label: "[i/s1:899] Out-Of-Sunlight Weakness"
+			Tooltip:
+				'''
+				On: Lihzahrd is weakened when outside of sunlight
+				Off: Lihzahrd is not weakened when outside of sunlight
+				'''
+		}
+
+		lihzahrdAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Crawl)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		lihzahrdAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Summon Golems)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		lihzahrdCraftingRecipes: {
+			Label: "[i/s1:1142] Crafting Recipes"
+			Tooltip:
+				'''
+				On: Lihzahrd can craft lihzahrd bricks and traps
+				Off: Lihzahrd cannot craft lihzahrd bricks and traps
+				'''
+		}
+
+		lihzahrdGolems: {
+			Label: Golem Modifiers
+			Tooltip:
+				'''
+				Modify Lihzahrd's Golems
+				[c/F26E0A:Delete golem entries to remove them from the summoning menu]
+				'''
+		}
+
+		lihzahrdDisableUIAfterPlacement: {
+			Label: "[i/s1:2030] Golem UI Closes After Placement"
+			Tooltip:
+				'''
+				On: Placing a golem will close the golem UI
+				Off: Placing a golem will leave the golem UI open
+				'''
+		}
+
+		lihzahrdCrawlVelocity: {
+			Label: "[i/s1:1667][i/s1:4815] Velocity (Crawl)"
+			Tooltip: Adjusts Lihahrd's crawling velocity
+		}
+	}
+
+	LycanConfig: {
+		DisplayName: "[c/FF386D:Lycan]"
+		Headers.Lycan: "[c/FF386D:Lycan]"
+
+		lycanStats: {
+			Label: Stat Modifiers ([c/FF386D:Lycan])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		lycanAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Rewind Time)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		lycanAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Timeline Teleport)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		lycanRecordDuration: {
+			Label: "[i/s1:5199] Timeline Capacity"
+			Tooltip: Adjusts the capacity of Lycan's rewind memory
+		}
+
+		lycanRewindNPCs: {
+			Label: "[i/s1:4798] Rewind NPCs"
+			Tooltip:
+				'''
+				On: Rewind Time affects NPCs
+				Off: Rewind Time does not affect NPCs
+				'''
+		}
+
+		lycanRewindProjectiles: {
+			Label: "[i/s1:540] Rewind Projectiles"
+			Tooltip:
+				'''
+				On: Rewind Time affects projectiles
+				Off: Rewind Time does not affect projectiles
+				'''
+		}
+	}
+
+	MerfolkConfig: {
+		DisplayName: "[c/00FF9D:Merfolk]"
+		Headers.Merfolk: "[c/00FF9D:Merfolk]"
+
+		merfolkStats: {
+			Label: Stat Modifiers ([c/00FF9D:Merfolk])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		merfolkIgnoreWater: {
+			Label: "[i/s1:4346] Water Slowing Immunity"
+			Tooltip:
+				'''
+				On: Merfolk is not slowed by water
+				Off: Merfolk is slowed by water
+				'''
+		}
+
+		merfolkAccFlipper: {
+			Label: "[i/s1:187] Flipper Effect"
+			Tooltip:
+				'''
+				On: Merfolk can swim by default
+				Off: Merfolk cannot swim by default
+				'''
+		}
+
+		merfolkNoAirBreathing: {
+			Label: "[i/s1:394] Unable To Breathe Air"
+			Tooltip:
+				'''
+				On: Merfolk has an oxygen meter when outside of water
+				Off: Merfolk can breathe freely outside of water
+				'''
+		}
+
+		merfolkFishBowl: {
+			Label: "[i/s1:250] Fish Bowl Allows Airbreathing"
+			Tooltip:
+				'''
+				On: Wearing a fishbowl allows Merfolk to breathe outside of water
+				Off: Wearing a fishbowl does not allow Merfolk to breathe outside of water
+				'''
+		}
+
+		merfolkAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Improved Swimming)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		merfolkAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Underwater Lunge)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		merfolkRain: {
+			Label: "[i/s1:3182] Rain allows Airbreathing"
+			Tooltip:
+				'''
+				On: Being exposed to rain allows Merfolk to breathe outside of water
+				Off: Being exposed to rain does not allow Merfolk to breathe outside of water
+				'''
+		}
+
+		merfolkSwimVelocity: {
+			Label: "[i/s1:2313][i/s1:4815] Velocity (Improved Swimming)"
+			Tooltip: Adjusts the velocity of Merfolk's swimming ability
+		}
+
+		merfolkLungeVelocity: {
+			Label: "[i/s1:2303][i/s1:4815] Velocity (Underwater Lunge)"
+			Tooltip: Adjusts the velocity of Merfolk's lunge ability
+		}
+	}
+
+	MushfolkConfig: {
+		DisplayName: "[c/006EFF:Mushfolk]"
+		Headers.Mushfolk: "[c/006EFF:Mushfolk]"
+
+		mushfolkStats: {
+			Label: Stat Modifiers ([c/006EFF:Mushfolk])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		mushfolkAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Summon Trapshroom)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		mushfolkAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Summon Nymphshroom)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		mushfolkTrapshroomDamage: {
+			Label: "[i/s1:2541][i/s1:1301] Damage (Trapshroom)"
+			Tooltip: Adjusts the damage output of summoned Trapshrooms
+		}
+
+		mushfolkNymphshroomDamage: {
+			Label: "[i/s1:2542][i/s1:1301] Damage (Nymphshroom)"
+			Tooltip: Adjusts the damage output of summoned Nymphshrooms
+		}
+
+		mushfolkHealing: {
+			Label: "[i/s1:2541][i/s1:2323] Healing (Trapshrooms & Nymphshrooms)"
+			Tooltip: Adjusts the healing output of summoned Trapshrooms & Nymphshrooms
+		}
+	}
+
+	SkeletonConfig: {
+		DisplayName: "[c/E3C7AC:Skeleton]"
+		Headers.Skeleton: "[c/E3C7AC:Skeleton]"
+
+		skeletonStats: {
+			Label: Stat Modifiers ([c/E3C7AC:Skeleton])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		skeletonGills: {
+			Label: "[i/s1:497] Gills"
+			Tooltip:
+				'''
+				On: Skeleton can breathe underwater
+				Off: Skeleton cannot breathe underwater
+				'''
+		}
+
+		skeletonGhost: {
+			Label: "[i/s1:4801] Anti-Death Spirit"
+			Tooltip:
+				'''
+				On: Upon taking fatal damage, Skeleton releases its spirit to avoid dying
+				Off: Upon taking fatal damage, Skeleton dies
+				'''
+		}
+
+		skeletonAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Bone Pile Bodyswap)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		skeletonIntangibility: {
+			Label: "[i/s1:5364] Spirit Intangibility"
+			Tooltip: Select the progression threshold necessary for Skeleton's spirit to go through blocks
+		}
+
+		skeletonNoEarlyTemple: {
+			Label: "[i/s1:5364][i/s1:5376] No Pre-Plantera Temple"
+			Tooltip:
+				'''
+				On: Skeleton will die upon phasing into the Jungle Temple early
+				Off: Skeleton will not die upon phasing into the Jungle Temple early
+				'''
+		}
+
+		skeletonStuckPrevention: {
+			Label: "[i/s1:5364][i/s1:3751] Suffocation Prevention"
+			Tooltip:
+				'''
+				[c/FF3640:Off:] Exiting phase will leave you stuck in blocks
+				[c/F26E0A:Low:] Exiting phase will teleport you to the nearest pocket of air
+				[c/4DBF60:High:] If no nearby air pockets are found, you will be rewound to an unobstructed position
+				'''
+		}
+
+		skeletonGhostVelocity: {
+			Label: "[i/s1:4801][i/s1:4815] Velocity (Spirit Flight)"
+			Tooltip: Adjusts the flight velocity of Skeleton's spirit
+		}
+
+		skeletonDebuffImmunity: {
+			Label: "[i/s1:902] Debuff Immunity"
+			Tooltip:
+				'''
+				On: Skeleton is immune to debuffs that inflict poison, burning, bleeding or suffocation
+				Off: Skeleton can be poisoned, burned, bled and suffocated
+				'''
+		}
+	}
+
+	TabaxiConfig: {
+		DisplayName: "[c/00FFD9:Tabaxi]"
+		Headers.Tabaxi: "[c/00FFD9:Tabaxi]"
+
+		tabaxiStats: {
+			Label: Stat Modifiers ([c/00FFD9:Tabaxi])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		tabaxiNoFallDmg: {
+			Label: "[i/s1:158] Fall Damage Immunity"
+			Tooltip:
+				'''
+				On: Tabaxi is immune to fall damage
+				Off: Tabaxi is not immune to fall damage
+				'''
+		}
+
+		tabaxiIntangibility: {
+			Label: "[i/s1:5364] Dash Intangibility"
+			Tooltip: Select the progression threshold necessary for Tabaxi's dash ability to go through blocks
+		}
+
+		tabaxiAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Wayward Dash)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		tabaxiAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Waypoint Teleport)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		tabaxiDashVelocity: {
+			Label: "[i/s1:4076][i/s1:4815] Velocity (Wayward Dash)"
+			Tooltip: Adjusts the velocity of Tabaxi's dash ability
+		}
+
+		tabaxiLight: {
+			Label: "[i/s1:88] Light Aura"
+			Tooltip:
+				'''
+				On: Tabaxi produces an aura of light
+				Off: Tabaxi does not produce an aura of light
+				'''
+		}
+
+		tabaxiNoEarlyTemple: {
+			Label: "[i/s1:5364][i/s1:5376] No Pre-Plantera Temple"
+			Tooltip:
+				'''
+				On: Tabaxi will die upon phasing into the Jungle Temple early
+				Off: Tabaxi will not die upon phasing into the Jungle Temple early
+				'''
+		}
+
+		tabaxiStuckPrevention: {
+			Label: "[i/s1:5364][i/s1:3751] Suffocation Prevention"
+			Tooltip:
+				'''
+				[c/FF3640:Off:] Exiting phase will leave you stuck in blocks
+				[c/F26E0A:Low:] Exiting phase will teleport you to the nearest pocket of air
+				[c/4DBF60:High:] If no nearby air pockets are found, you will be rewound to an unobstructed position
+				'''
+		}
+	}
+
+	VampireConfig: {
+		DisplayName: "[c/FF0033:Vampire]"
+		Headers.Vampire: "[c/FF0033:Vampire]"
+
+		vampireStats: {
+			Label: Stat Modifiers ([c/FF0033:Vampire])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		vampireBatEndurance: {
+			Label: "[i/s1:1165][i/s1:901] Endurance (Bat Transformation)"
+			Tooltip: Adjusts Vampire's Damage Resistance while transformed into a Bat
+		}
+
+		vampireLifeSteal: {
+			Tooltip: Adjusts the healing received from Vampire's tongue
+			Label: "[i/s1:4270] Tongue Lifesteal"
+		}
+
+		vampireAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Bat Transformation)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		vampireAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Leech Tongue)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		vampireHealingPotionDenial: {
+			Label: "[i/s1:4828] Unable To Use Healing Potions"
+			Tooltip:
+				'''
+				On: Vampire cannot use healing potions
+				Off: Vampire can use healing potions
+				'''
+		}
+
+		vampireSunlightWeakness: {
+			Label: "[i/s1:4747] Sunlight Weakness"
+			Tooltip:
+				'''
+				On: Vampire is weakened in sunlight
+				Off: Vampire is not weakened in sunlight
+				'''
+		}
+
+		vampireNoRegen: {
+			Label: "[i/s1:4366] No Passive Regeneration"
+			Tooltip:
+				'''
+				On: Vampire does not passively regenerate health
+				Off: Vampire passively regenerates health
+				'''
+		}
+
+		vampireBatVelocity: {
+			Label: "[i/s1:1520][i/s1:4815] Velocity (Bat Flight)"
+			Tooltip: Adjusts the flight velocity of Vampire's bat transformation
+		}
+
+		vampireBatFlightDuration: {
+			Label: "[i/s1:1520][i/s1:889] Duration (Bat Flight)"
+			Tooltip: Adjusts the flight duration of Vampire's bat transformation
+		}
+
+		vampireLight: {
+			Label: "[i/s1:88] Light Aura"
+			Tooltip:
+				'''
+				[c/FF3640:Disabled:] Vampire does not produce an aura of light
+				[c/F26E0A:Batform Only:] In batform, Vampire produces an aura of light
+				[c/F26E0A:Exclude Batform:] Outside of batform, Vampire produces an aura of light
+				[c/4DBF60:Enabled:] Vampire produces an aura of light
+				'''
+		}
+
+		vampireStealthDamage: {
+			Label: "[i/s1:4685][i/s1:1301] Damage (Stealth)"
+			Tooltip: Adjust damage dealt while in Vampire's stealth mode
+		}
+	}
+
+	SoulbeastConfig: {
+		DisplayName: "[c/00AAFF:Soulbeast]"
+		Headers.Soulbeast: "[c/00AAFF:Soulbeast]"
+
+		soulbeastStats: {
+			Label: Stat Modifiers ([c/00AAFF:Soulbeast])
+			Tooltip:
+				'''
+				Modify this race's stat changes
+				[c/F26E0A:To add a new stat modifier, delete/reassign the key of any existing modifiers containing "Key: None"]
+				[c/FF3640:WARNING: Setting stats too high or too low may result in unexpected ingame behavior!]
+				'''
+		}
+
+		soulbeastIntangibility: {
+			Label: "[i/s1:5364] Rend Intangibility"
+			Tooltip: Select the progression threshold for Soulbeast's rend ability to go through blocks
+		}
+
+		soulbeastShredDamage: {
+			Tooltip: Adjusts the damage output of Soulbeast's shredding claw
+			Label: "[i/s1:3997][i/s1:1301] Damage (Shred)"
+		}
+
+		soulbeastRendDamage: {
+			Tooltip: Adjusts the damage output of the claw generated as Soulbeast enters rend
+			Label: "[i/s1:3582][i/s1:1301] Damage (Rend)"
+		}
+
+		soulbeastAbility1: {
+			Label: "[i/s1:2703] Primary Ability (Rend)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		soulbeastAbility2: {
+			Label: "[i/s1:2704] Secondary Ability (Shred)"
+			Tooltip:
+				'''
+				On: Enables this ability
+				Off: Disables this ability
+				'''
+		}
+
+		soulbeastRendVelocity: {
+			Label: "[i/s1:3582][i/s1:4815] Velocity (Rend)"
+			Tooltip: Adjusts the velocity of Soulbeast's rend ability
+		}
+
+		soulbeastNoEarlyTemple: {
+			Label: "[i/s1:5364][i/s1:5376] No Pre-Plantera Temple"
+			Tooltip:
+				'''
+				On: Soulbeast will die upon phasing into the Jungle Temple early
+				Off: Soulbeast will not die upon phasing into the Jungle Temple early
+				'''
+		}
+
+		soulbeastStuckPrevention: {
+			Label: "[i/s1:5364][i/s1:3751] Suffocation Prevention"
+			Tooltip:
+				'''
+				[c/FF3640:Off:] Exiting phase will leave you stuck in blocks
+				[c/F26E0A:Low:] Exiting phase will teleport you to the nearest pocket of air
+				[c/4DBF60:High:] If no nearby air pockets are found, you will be rewound to an unobstructed position
+				'''
+		}
+
+		soulbeastRendDuration: {
+			Label: "[i/s1:3582][i/s1:889] Duration (Rend)"
+			Tooltip: Adjusts the duration of Soulbeast's rend ability
+		}
+
+		soulbeastHealingPotionDenial: {
+			Label: "[i/s1:4828] Unable To Use Healing Potions"
+			Tooltip:
+				'''
+				On: Soulbeast cannot use healing potions
+				Off: Soulbeast can use healing potions
+				'''
+		}
+
+		soulbeastNoRegen: {
+			Label: "[i/s1:4366] No Passive Regeneration"
+			Tooltip:
+				'''
+				On: Soulbeast does not passively regenerate health
+				Off: Soulbeast passively regenerates health
+				'''
+		}
+
+		soulbeastShredHealing: {
+			Label: "[i/s1:3997][i/s1:2323] Healing (Shred)"
+			Tooltip: Adjusts the healing output of Soulbeast's shredding claw
+		}
+	}
+
+	GoblinPrefixType: {
+		Tooltip: ""
+		Accelerative.Label: "[i/s1:3513][i/s1:405] Acceleration Cap (Accelerative)"
+		Bewitched.Label: "[i/s1:3513][i/s1:1301] Seeker Damage (Bewitched)"
+		Bombarding.Label: "[i/s1:3513][i/s1:1301] Flame Damage (Bombarding)"
+		Combustible.Label: "[i/s1:3033][i/s1:889] Debuff Duration (Combustible)"
+		Constructive.Label: "[i/s1:3033][i/s1:4056] Stat Boost Strength (Constructive)"
+		Explosive.Label: "[i/s1:3513][i/s1:1301] Explosion Damage (Explosive)"
+		Flawless.Label: "[i/s1:3033][i/s1:1301] Damage & Crit Bonus (Flawless)"
+		Fortunate.Label: "[i/s1:3515][i/s1:3311] Treasure Frequency (Fortunate)"
+		Hexed.Label: "[i/s1:3033][i/s1:1301] Seeker Damage (Hexed)"
+		Immolating.Label: "[i/s1:3513][i/s1:889] Debuff Duration (Immolating)"
+		Impactful.Label: "[i/s1:3033][i/s1:1301] Shockwave Damage (Impactful)"
+		Luminescent.Label: "[i/s1:3033][i/s1:88] Light Strength (Luminescent)"
+		Recreational.Label: "[i/s1:3515][i/s1:2323] Healing & Mana (Recreational)"
+		Regenerative.Label: "[i/s1:3033][i/s1:2323] Healing (Regenerative)"
+		Reinforced.Label: "[i/s1:3033][i/s1:901] Shield Protection (Reinforced)"
+		Resilient.Label: "[i/s1:3033][i/s1:2323] Healing (Resilient)"
+		Revitalizing.Label: "[i/s1:3513][i/s1:2323] Healing (Revitalizing)"
+		Streamlined.Label: "[i/s1:3033][i/s1:405] Acceleration Cap (Streamlined)"
+		Trailblazing.Label: "[i/s1:3515][i/s1:88] Light Strength (Trailblazing)"
+		Tranquilizing.Label: "[i/s1:3515][i/s1:889] Debuff Duration (Tranquilizing)"
+		Undying.Label: "[i/s1:3033][i/s1:188] Revival Health (Undying)"
+		Volatile.Label: "[i/s1:3033][i/s1:1301] Explosion Damage (Volatile)"
+		Warping.Label: "[i/s1:3513][i/s1:1301] Shockwave Damage (Warping)"
+	}
+
+	LihzahrdGolemType: {
+		Tooltip: ""
+		BoulderGolem.Label: "[i/s1:4807][i/s1:1301] Damage (Boulder Golem)"
+		TetherGolem.Label: "[i/s1:4807][i/s1:1301] Damage (Tether Golem)"
+		LaserGolem.Label: "[i/s1:4807][i/s1:1301] Damage (Laser Golem)"
+		BarrierGolem.Label: "[i/s1:4807][i/s1:1301] Damage (Barrier Golem)"
+		SpiderGolem.Label: "[i/s1:4807][i/s1:1301] Damage (Spider Golem)"
+		LifeGolem.Label: "[i/s1:4807][i/s1:2323] Healing (Life Golem)"
+	}
+
+	StuckPreventionTiers: {
+		Tooltip: ""
+		Off.Label: "[c/FF3640:Off]"
+		Low.Label: "[c/F26E0A:Low]"
+		High.Label: "[c/4DBF60:High]"
+	}
+
+	IntangibilityProgressionTiers: {
+		Tooltip: ""
+		Enabled.Label: "[c/4DBF60:Enabled]"
+		PostEOC.Label: "[c/F26E0A:Post Eye Of Cthulhu]"
+		PostEvilBoss.Label: "[c/F26E0A:Post Evil Biome Boss]"
+		PostSkeletron.Label: "[c/F26E0A:Post Skeletron]"
+		Hardmode.Label: "[c/F26E0A:Hardmode]"
+		PostMechBosses.Label: "[c/F26E0A:Post Mech Bosses]"
+		PostPlantera.Label: "[c/F26E0A:Post Plantera]"
+		PostGolem.Label: "[c/F26E0A:Post Golem]"
+		PostMoonLord.Label: "[c/F26E0A:Post Moon Lord]"
+		Disabled.Label: "[c/FF3640:Disabled]"
+	}
+
+	RaceSelectionPanelHeights: {
+		Tooltip: ""
+		zero.Label: "[c/F26E0A:+0px]"
+		p100.Label: "[c/4DBF60:+100px]"
+		p200.Label: "[c/4DBF60:+200px]"
+		p300.Label: "[c/4DBF60:+300px]"
+		p400.Label: "[c/4DBF60:+400px]"
+		p500.Label: "[c/4DBF60:+500px]"
+	}
+
+	LightTiers: {
+		Tooltip: ""
+		Off.Label: "[c/F26E0A:Disabled]"
+		BatOnly.Label: "[c/F26E0A:Batform Only]"
+		NotBat.Label: "[c/F26E0A:Exclude Batform]"
+		On.Label: "[c/4DBF60:Enabled]"
 	}
 }
 
 Buffs: {
 	AccelerativeBuff: {
 		DisplayName: Accelerative Buff
-		Description: Mods.MrPlagueRaces.Buffs.AccelerativeBuff.Description
+		Description: You accelerate to unbearable degrees
 	}
 
 	Airborne: {
 		DisplayName: Airborne
-		Description: Mods.MrPlagueRaces.Buffs.Airborne.Description
+		Description: Unable to charge-jump
 	}
 
 	Bodyswapped: {
 		DisplayName: Bodyswapped
-		Description: Mods.MrPlagueRaces.Buffs.Bodyswapped.Description
+		Description: Unable to switch bodies
 	}
 
 	Bombarded: {
 		DisplayName: Bombarded
-		Description: Mods.MrPlagueRaces.Buffs.Bombarded.Description
+		Description: Bombarding is on cooldown
 	}
 
 	BurnedOut: {
 		DisplayName: Burned Out
-		Description: Mods.MrPlagueRaces.Buffs.BurnedOut.Description
+		Description: Unable to breathe smoke
 	}
 
 	DarkInferno: {
 		DisplayName: Dark Inferno
-		Description: Mods.MrPlagueRaces.Buffs.DarkInferno.Description
+		Description: You are on fire!
 	}
 
 	Dashed: {
 		DisplayName: Dashed
-		Description: Mods.MrPlagueRaces.Buffs.Dashed.Description
+		Description: Unable to swoop
 	}
 
 	Fathoming: {
 		DisplayName: Fathoming
-		Description: Mods.MrPlagueRaces.Buffs.Fathoming.Description
+		Description: Unable to summon Shadowflame Harvesters
 	}
 
 	Fatigued: {
 		DisplayName: Fatigued
-		Description: Mods.MrPlagueRaces.Buffs.Fatigued.Description
+		Description: Unable to launch feather volleys
 	}
 
 	FlawlessBuff: {
 		DisplayName: Flawless Buff
-		Description: Mods.MrPlagueRaces.Buffs.FlawlessBuff.Description
+		Description: Critical strike chance and damage are greatly increased
 	}
 
 	FluidGrace: {
 		DisplayName: Fluid Grace
-		Description: Mods.MrPlagueRaces.Buffs.FluidGrace.Description
+		Description: Attack damage and movement speed are increased
 	}
 
 	Invoked: {
 		DisplayName: Invoked
-		Description: Mods.MrPlagueRaces.Buffs.Invoked.Description
+		Description: Bewitched is on cooldown
 	}
 
 	MolecularRecoil: {
 		DisplayName: Molecular Recoil
-		Description: Mods.MrPlagueRaces.Buffs.MolecularRecoil.Description
+		Description: Unable to rend
 	}
 
 	Mycobuffer: {
 		DisplayName: Mycobuffer
-		Description: Mods.MrPlagueRaces.Buffs.Mycobuffer.Description
+		Description: Mycelium is regenerating your bodily tissue
 	}
 
 	Mycobulwark: {
 		DisplayName: Mycobulwark
-		Description: Mods.MrPlagueRaces.Buffs.Mycobulwark.Description
+		Description: Mycelium is holding you together
 	}
 
 	Outstretched: {
 		DisplayName: Outstretched
-		Description: Mods.MrPlagueRaces.Buffs.Outstretched.Description
+		Description: Unable to leap
 	}
 
 	ParticleDeacceleration: {
 		DisplayName: Particle Deacceleration
-		Description: Mods.MrPlagueRaces.Buffs.ParticleDeacceleration.Description
+		Description: Unable to phase dash
 	}
 
 	Photosensitive: {
 		DisplayName: Photosensitive
-		Description: Mods.MrPlagueRaces.Buffs.Photosensitive.Description
+		Description: You are set on fire when attacked
 	}
 
 	Reanimated: {
 		DisplayName: Reanimated
-		Description: Mods.MrPlagueRaces.Buffs.Reanimated.Description
+		Description: Unable to become a spirit
 	}
 
 	Rebounded: {
 		DisplayName: Rebounded
-		Description: Mods.MrPlagueRaces.Buffs.Rebounded.Description
+		Description: Unable to replay timelines
 	}
 
 	Refueling: {
 		DisplayName: Refueling
-		Description: Mods.MrPlagueRaces.Buffs.Refueling.Description
+		Description: Unable to fire Sparkmines and Clustermines
 	}
 
 	Reincarnated: {
 		DisplayName: Reincarnated
-		Description: Mods.MrPlagueRaces.Buffs.Reincarnated.Description
+		Description: Undying is on cooldown
 	}
 
 	Rematerializing: {
 		DisplayName: Rematerializing
-		Description: Mods.MrPlagueRaces.Buffs.Rematerializing.Description
+		Description: Unable to rewind
 	}
 
 	ResilientBuff: {
 		DisplayName: Resilient Buff
-		Description: Mods.MrPlagueRaces.Buffs.ResilientBuff.Description
+		Description: Regeneration and defense are increased
 	}
 
 	RevitalizingBuff: {
 		DisplayName: Revitalizing Buff
-		Description: Mods.MrPlagueRaces.Buffs.RevitalizingBuff.Description
+		Description: Regeneration is increased
 	}
 
 	Shielded: {
 		DisplayName: Shielded
-		Description: Mods.MrPlagueRaces.Buffs.Shielded.Description
+		Description: Reinforced is on cooldown
 	}
 
 	Sluggish: {
 		DisplayName: Sluggish
-		Description: Mods.MrPlagueRaces.Buffs.Sluggish.Description
+		Description: Staying out of the sunlight lowers your regeneration and defense
 	}
 
 	SoulfireImbuement: {
 		DisplayName: Soulfire Imbuement
-		Description: Mods.MrPlagueRaces.Buffs.SoulfireImbuement.Description
+		Description: Mana regeneration is greatly increased
 	}
 
 	SoulFracture: {
 		DisplayName: Soul Fracture
-		Description: Mods.MrPlagueRaces.Buffs.SoulFracture.Description
+		Description:
+			'''
+			A wound to the soul itself
+			Movement speed is reduced
+			Defense is reduced
+			'''
 	}
 
 	Sporeless: {
 		DisplayName: Sporeless
-		Description: Mods.MrPlagueRaces.Buffs.Sporeless.Description
+		Description: Unable to generate Trapshrooms or Nymphshrooms
 	}
 
 	TemporalRecoil: {
 		DisplayName: Temporal Recoil
-		Description: Mods.MrPlagueRaces.Buffs.TemporalRecoil.Description
+		Description: Unable to rewind time
 	}
 
 	Tethered: {
 		DisplayName: Tethered
-		Description: Mods.MrPlagueRaces.Buffs.Tethered.Description
+		Description: You are stuck
 	}
 
 	Tranquilized: {
 		DisplayName: Tranquilized
-		Description: Mods.MrPlagueRaces.Buffs.Tranquilized.Description
+		Description: Movement speed is greatly reduced
 	}
 
 	Troglodyte: {
 		DisplayName: Troglodyte
-		Description: Mods.MrPlagueRaces.Buffs.Troglodyte.Description
+		Description: The sun lowers your endurance and makes you slower
 	}
 
 	Unravelled: {
 		DisplayName: Unravelled
-		Description: Mods.MrPlagueRaces.Buffs.Unravelled.Description
+		Description: Unable to spin
 	}
 
 	Unseen: {
 		DisplayName: Unseen
-		Description: Mods.MrPlagueRaces.Buffs.Unseen.Description
+		Description:
+			'''
+			Out of sight, out of mind
+			Ignored by most enemies
+			Dealt damage is greatly increased
+			'''
+	}
+
+	SoulSiphon: {
+		DisplayName: Soul Siphon
+		Description:
+			'''
+			Devouring the souls of your enemies
+			Life regeneration is greatly increased
+			'''
 	}
 }
 
@@ -278,7 +1717,7 @@ Projectiles: {
 	LifeBomb.DisplayName: Life Bomb
 	LifeGolem.DisplayName: Life Golem
 	MolotovFireball.DisplayName: Molotov Fireball
-	MolotovFlame.DisplayName: Molotov Flame
+	MolotovFlame.DisplayName: Molotov Flamekobold
 	Nymphshroom.DisplayName: Nymphshroom
 	PaintMenu.DisplayName: Paint Menu
 	PuffDust.DisplayName: Puff Dust

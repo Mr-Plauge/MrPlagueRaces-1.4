@@ -25,7 +25,6 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.aiStyle = 0;
-			Projectile.ownerHitCheck = true;
 			Projectile.timeLeft = 100;
 		}
 

@@ -6,6 +6,8 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using MrPlagueRaces.Common.Races;
+using MrPlagueRaces.Common.Races.Mushfolk;
 using static Terraria.ModLoader.ModContent;
 
 namespace MrPlagueRaces.Content.Buffs
@@ -51,7 +53,7 @@ namespace MrPlagueRaces.Content.Buffs
 						Player.lifeRegen = 0;
 					}
 					Player.lifeRegenTime = 0;
-					Player.lifeRegen += Player.statLifeMax2 / 5;
+					Player.lifeRegen += (Player.statLifeMax2 / 5) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<MushfolkConfig>().mushfolkHealing]);
 				}
 			}
 		}

@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using MrPlagueRaces.Content.Buffs;
+using MrPlagueRaces.Common.Races;
 using MrPlagueRaces.Common.Races.Lihzahrd;
 using static Terraria.ModLoader.ModContent;
 
@@ -23,7 +24,6 @@ namespace MrPlagueRaces.Content.Projectiles
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.aiStyle = 14;
-			Projectile.ownerHitCheck = true;
 			Projectile.timeLeft = 100;
 		}
 
@@ -46,8 +46,8 @@ namespace MrPlagueRaces.Content.Projectiles
 					float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
 					if (sqrDistanceToTarget / 16 < 150) {
 						SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
-						target.HealEffect(player.statDefense / 5);
-						target.statLife += player.statDefense / 5;
+						target.HealEffect((1 + (player.statDefense / 5)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.LifeGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.LifeGolem]]) : 1f));
+						target.statLife += (1 + (player.statDefense / 5)) * (int)(ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems.ContainsKey(LihzahrdGolemType.LifeGolem) ? (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<LihzahrdConfig>().lihzahrdGolems[LihzahrdGolemType.LifeGolem]]) : 1f);
 					}
 				}
 			}

@@ -43,7 +43,10 @@ namespace MrPlagueRaces.Common.UI.States
 			Undershirt,
 			Pants,
 			Shoes,
-			Count
+            DetailAux1,
+            DetailAux2,
+            DetailAux3,
+            Count
 		}
 
 		private enum HSLSliderId
@@ -69,19 +72,19 @@ namespace MrPlagueRaces.Common.UI.States
 
 		private readonly Player _player;
 
-		private UIColoredImageButton[] _colorPickers;
+		private UIRaceColoredImageButton[] _colorPickers;
 
 		private CategoryId _selectedPicker;
 
 		private Vector3 _currentColorHSL;
 
-		private UIColoredImageButton _clothingStylesCategoryButton;
+		private UIRaceColoredImageButton _clothingStylesCategoryButton;
 
-		private UIColoredImageButton _hairStylesCategoryButton;
+		private UIRaceColoredImageButton _hairStylesCategoryButton;
 
-		private UIColoredImageButton _charInfoCategoryButton;
+		private UIRaceColoredImageButton _charInfoCategoryButton;
 
-		private UIColoredImageButton _raceSelectCategoryButton;
+		private UIRaceColoredImageButton _raceSelectCategoryButton;
 
 		private UIElement _topContainer;
 
@@ -139,7 +142,17 @@ namespace MrPlagueRaces.Common.UI.States
 
 		public static string hoverText = "";
 
-		public MrPlagueUICharacterCreation(Player player)
+        private int previousScreenWidth = Main.screenWidth;
+
+        private int previousScreenHeight = Main.screenHeight;
+
+        private bool isInRaceSelect = false;
+
+        private bool isFirstTime = true;
+
+		private int detailColorCount = 1;
+
+        public MrPlagueUICharacterCreation(Player player)
 		{
 			int[] male = { 0, 2, 1, 3, 8 };
 			Item familiarShirt = new Item();
@@ -161,30 +174,59 @@ namespace MrPlagueRaces.Common.UI.States
 			}
 			_player.skinVariant = male[mrPlagueRacesPlayer.race.ClothStyle - 1];
 			_player.hair = mrPlagueRacesPlayer.race.HairStyle;
-			_player.hairColor = mrPlagueRacesPlayer.race.HairColor;
+            mrPlagueRacesPlayer.auxilaryHairstyle1 = mrPlagueRacesPlayer.race.AuxilaryHairstyle1;
+            mrPlagueRacesPlayer.auxilaryHairstyle2 = mrPlagueRacesPlayer.race.AuxilaryHairstyle2;
+			mrPlagueRacesPlayer.auxilaryHairstyle3 = mrPlagueRacesPlayer.race.AuxilaryHairstyle3;
+            _player.hairColor = mrPlagueRacesPlayer.race.HairColor;
 			_player.skinColor = mrPlagueRacesPlayer.race.SkinColor;
 			mrPlagueRacesPlayer.detailColor = mrPlagueRacesPlayer.race.DetailColor;
-			_player.eyeColor = mrPlagueRacesPlayer.race.EyeColor;
+            mrPlagueRacesPlayer.auxilaryDetailColor1 = mrPlagueRacesPlayer.race.AuxilaryDetailColor1;
+            mrPlagueRacesPlayer.auxilaryDetailColor2 = mrPlagueRacesPlayer.race.AuxilaryDetailColor2;
+            mrPlagueRacesPlayer.auxilaryDetailColor3 = mrPlagueRacesPlayer.race.AuxilaryDetailColor3;
+            _player.eyeColor = mrPlagueRacesPlayer.race.EyeColor;
 			_player.shirtColor = mrPlagueRacesPlayer.race.ShirtColor;
 			_player.underShirtColor = mrPlagueRacesPlayer.race.UnderShirtColor;
 			_player.pantsColor = mrPlagueRacesPlayer.race.PantsColor;
 			_player.shoeColor = mrPlagueRacesPlayer.race.ShoeColor;
-			BuildPage();
+			mrPlagueRacesPlayer.isNewPlayer = 1;
+			BuildPage(true);
 		}
 
-		private void BuildPage()
+		private int TiersToRemoveIfUIExceedsScreenHeight()
+		{
+			int[] screenHeightThresholdForCurrentTier = { 0, 0, 780, 870, 890, 920 }; // Represents the threshold(s) at which this tier of height increase exceeds the size of the actual screen
+            int totalTiersRemoved = 0;
+			for (int i = 5; i >= 0 ; i--)
+			{
+				if (Main.screenHeight < screenHeightThresholdForCurrentTier[i] && (int)ModContent.GetInstance<MrPlagueRacesConfig>().raceSelectionPanelHeight >= i)
+				{
+                    totalTiersRemoved++;
+				}
+			}
+			return totalTiersRemoved;
+		}
+		private void BuildPage(bool isFirstTime = false, bool makeUIBigger = false, bool isCorrectingRaceUIDimensions = false)
 		{
 			RemoveAllChildren();
 			int path = 4;
-			UIElement s = new UIElement
-			{
-				Width = StyleDimension.FromPixels(588f),
-				Height = StyleDimension.FromPixels(380 + path),
-				Top = StyleDimension.FromPixels(220f),
-				HAlign = 0.5f,
-				VAlign = 0f
-			};
-			s.SetPadding(0f);
+			UIElement s = new UIElement {};
+            if (makeUIBigger)
+            {
+				s.Width = StyleDimension.FromPixels(588f);
+                s.Height = StyleDimension.FromPixels(380 + MrPlagueRacesConfig.PanelHeightPixelIndex[(int)ModContent.GetInstance<MrPlagueRacesConfig>().raceSelectionPanelHeight - TiersToRemoveIfUIExceedsScreenHeight() - ((float)Main.screenWidth / (float)Main.screenHeight < 1f && (float)Main.screenWidth / (float)Main.screenHeight > 0.73f && MrPlagueRacesConfig.PanelHeightPixelIndex[(int)ModContent.GetInstance<MrPlagueRacesConfig>().raceSelectionPanelHeight] >= 400 && Main.screenWidth < 1200 ? 1 : 0)] + path);
+                s.Top = StyleDimension.FromPixels(220f);
+                s.HAlign = 0.5f;
+                s.VAlign = MrPlagueRacesConfig.PanelHeightOffsetIndex[(int)ModContent.GetInstance<MrPlagueRacesConfig>().raceSelectionPanelHeight - TiersToRemoveIfUIExceedsScreenHeight()] * ((float)Main.screenWidth / (float)Main.screenHeight < 1f ? 0f : 1f);
+            }
+            else
+            {
+				s.Width = StyleDimension.FromPixels(588f);
+				s.Height = StyleDimension.FromPixels(380 + path);
+				s.Top = StyleDimension.FromPixels(220f);
+				s.HAlign = 0.5f;
+				s.VAlign = 0f;
+            }
+            s.SetPadding(0f);
 			Append(s);
 			UIPanel listenPort = new UIPanel
 			{
@@ -216,7 +258,9 @@ namespace MrPlagueRaces.Common.UI.States
 			{
 				Width = StyleDimension.FromPixelsAndPercent(1f, 0f),
 				Height = StyleDimension.FromPixelsAndPercent(1f, 0f),
-				BackgroundColor = Color.Transparent,
+				Left = StyleDimension.FromPixelsAndPercent(50f, 0f),
+                Top = StyleDimension.FromPixelsAndPercent(50f, 0f),
+                BackgroundColor = Color.Transparent,
 				BorderColor = Color.Transparent
 			};
 			Append(statHoverText);
@@ -232,24 +276,35 @@ namespace MrPlagueRaces.Common.UI.States
 			MakeClothStylesMenu(uIElement);
 			MakeRaceSelectMenu(uIElement);
 			MakeCategoriesBar(modPack);
-			Click_CharInfo(null, null);
+			if (isFirstTime)
+			{
+				Click_CharInfo(null, null);
+				isFirstTime = false;
+                _charInfoCategoryButton.SetSelected(selected: true, shouldStartHovering: false);
+
+            }
+			else if (isCorrectingRaceUIDimensions)
+            {
+                Click_RaceSelect(null, null);
+            }
+			else
+            {
+                UnselectAllCategories();
+            }
 		}
 
 		private void MakeCharPreview(UIPanel container)
 		{
-			float iP = 70f;
-			for (float serverPassword = 0f; serverPassword <= 1f; serverPassword += 1f)
+			// {T} Removed the loop here, since it was just creating duplicate UICharacter elements with the exact same parameters.
+			UICharacter element = new(_player, animated: true, hasBackPanel: false, 1.5f)
 			{
-				UICharacter element = new UICharacter(_player, animated: true, hasBackPanel: false, 1.5f)
-				{
-					Width = StyleDimension.FromPixels(80f),
-					Height = StyleDimension.FromPixelsAndPercent(80f, 0f),
-					Top = StyleDimension.FromPixelsAndPercent(0f - iP, 0f),
-					VAlign = 0f,
-					HAlign = 0.5f
-				};
-				container.Append(element);
-			}
+				Width = StyleDimension.FromPixels(80f),
+				Height = StyleDimension.FromPixelsAndPercent(80f, 0f),
+				Top = StyleDimension.FromPixelsAndPercent(-70f, 0f),
+				VAlign = 0f,
+				HAlign = 0.5f
+			};
+			container.Append(element);
 		}
 
 		private void MakeHairstylesMenu(UIElement middleInnerPanel)
@@ -266,40 +321,65 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			middleInnerPanel.Append(s2);
 			s2.SetPadding(0f);
-			UIList netPlayers = new UIList
+			UIList hairList = new UIList
 			{
 				Width = StyleDimension.FromPixelsAndPercent(-18f, 1f),
 				Height = StyleDimension.FromPixelsAndPercent(-6f, 1f)
 			};
-			netPlayers.SetPadding(4f);
-			s2.Append(netPlayers);
-			UIScrollbar serverPassword = new UIScrollbar
+			hairList.SetPadding(4f);
+			s2.Append(hairList);
+			UIScrollbar hairScrollbar = new UIScrollbar
 			{
 				HAlign = 1f,
 				Height = StyleDimension.FromPixelsAndPercent(-30f, 1f),
 				Top = StyleDimension.FromPixels(10f)
 			};
-			serverPassword.SetView(100f, 1000f);
-			netPlayers.SetScrollbar(serverPassword);
-			s2.Append(serverPassword);
-			int text = mrPlagueRacesPlayer.GetRaceHairCount(_player);
-			UIElement language = new UIElement
+			hairScrollbar.SetView(100f, 1000f);
+			hairList.SetScrollbar(hairScrollbar);
+			s2.Append(hairScrollbar);
+			int hairCount = mrPlagueRacesPlayer.GetRaceHairCount(_player, 0);
+            int hairCountAux1 = mrPlagueRacesPlayer.GetRaceHairCount(_player, 1);
+            int hairCountAux2 = mrPlagueRacesPlayer.GetRaceHairCount(_player, 2);
+            int hairCountAux3 = mrPlagueRacesPlayer.GetRaceHairCount(_player, 3);
+			int[] hairCategories = { hairCount, hairCountAux1, hairCountAux2, hairCountAux3 };
+			int totalHair = (int)(Math.Ceiling((double)hairCount / 10) * 10) + (int)(Math.Ceiling((double)hairCountAux1 / 10) * 10) + (int)(Math.Ceiling((double)hairCountAux2 / 10) * 10) + (int)(Math.Ceiling((double)hairCountAux3 / 10) * 10);
+			int activeHairAuxilaries = (Math.Clamp(hairCountAux1, 0, 1)) + (Math.Clamp(hairCountAux2, 0, 1)) + (Math.Clamp(hairCountAux3, 0, 1));
+			int currentHairAuxilary = 0;
+            UIElement hairPanel = new UIElement
 			{
 				Width = StyleDimension.FromPixelsAndPercent(0f, 1f),
-				Height = StyleDimension.FromPixelsAndPercent(48 * (text / 10 + ((text % 10 != 0) ? 1 : 0)), 0f)
+				Height = StyleDimension.FromPixelsAndPercent(48 * (totalHair / 10 + ((totalHair % 10 != 0) ? 1 : 0)) + (24f * activeHairAuxilaries), 0f)
 			};
-			netPlayers.Add(language);
-			language.SetPadding(0f);
-			for (int worldName = 0; worldName < text; worldName++)
+			hairList.Add(hairPanel);
+			hairPanel.SetPadding(0f);
+			int totalCounter = 0;
+			for (int hairCategory = 0; hairCategory < 1 + activeHairAuxilaries; hairCategory++)
 			{
-				UIHairStyleButton newMOTD = new UIHairStyleButton(_player, worldName)
+                for (int currentCounter = 0; currentCounter < hairCategories[hairCategory]; currentCounter++)
+                {
+                    UIMultiHairStyleButton hairButton = new UIMultiHairStyleButton(_player, currentCounter, hairCategory)
+                    {
+                        Left = StyleDimension.FromPixels((float)(totalCounter % 10) * 54f + 6f),
+                        Top = StyleDimension.FromPixels((float)(totalCounter / 10) * 48f + 1f + (24f * currentHairAuxilary))
+                    };
+                    hairButton.SetSnapPoint("Middle", totalCounter);
+                    hairPanel.Append(hairButton);
+                    totalCounter++;
+                }
+				totalCounter += (int)(Math.Ceiling((double)totalCounter / 10) * 10) - totalCounter;
+				currentHairAuxilary++;
+				if (currentHairAuxilary <= activeHairAuxilaries)
 				{
-					Left = StyleDimension.FromPixels((float)(worldName % 10) * 54f + 6f),
-					Top = StyleDimension.FromPixels((float)(worldName / 10) * 48f + 1f)
-				};
-				newMOTD.SetSnapPoint("Middle", worldName);
-				language.Append(newMOTD);
-			}
+                    UIHorizontalSeparator element = new UIHorizontalSeparator
+                    {
+                        Left = StyleDimension.FromPixelsAndPercent(0f, 0.01f),
+                        Top = StyleDimension.FromPixels((float)(totalCounter / 10) * 48f + 1f + (24f * currentHairAuxilary) - 12f),
+                        Width = StyleDimension.FromPixelsAndPercent(0f, 0.961f),
+                        Color = Color.Lerp(Color.White, new Color(63, 65, 151, 255), 0.85f) * 0.9f
+                    };
+                    hairPanel.Append(element);
+                }
+            }
 			_hairstylesContainer = s2;
 		}
 
@@ -346,23 +426,23 @@ namespace MrPlagueRaces.Common.UI.States
 					Color = Color.Lerp(Color.White, new Color(63, 65, 151, 255), 0.85f) * 0.9f
 				};
 				i.Append(element);
-				UIColoredImageButton uIColoredImageButton = CreatePickerWithoutClick(CategoryId.Clothing, "MrPlagueRaces/Assets/Textures/UI/" + ((k == 0) ? "ClothStyleMale" : "ClothStyleFemale"), 0f, 0f);
-				uIColoredImageButton.Top = StyleDimension.FromPixelsAndPercent(num + 92, 0f);
-				uIColoredImageButton.Left = StyleDimension.FromPixels((float)k * 230f + 126f + (float)num3 + 6f);
-				uIColoredImageButton.HAlign = 0f;
-				uIColoredImageButton.VAlign = 0f;
-				i.Append(uIColoredImageButton);
+				UIColoredImageButton UIColoredImageButton = CreatePickerWithoutClick_Original(CategoryId.Clothing, "MrPlagueRaces/Assets/Textures/UI/" + ((k == 0) ? "ClothStyleMale" : "ClothStyleFemale"), 0f, 0f);
+				UIColoredImageButton.Top = StyleDimension.FromPixelsAndPercent(num + 92, 0f);
+				UIColoredImageButton.Left = StyleDimension.FromPixels((float)k * 230f + 126f + (float)num3 + 6f);
+				UIColoredImageButton.HAlign = 0f;
+				UIColoredImageButton.VAlign = 0f;
+				i.Append(UIColoredImageButton);
 				if (k == 0)
 				{
-					uIColoredImageButton.OnLeftMouseDown += Click_CharGenderMale;
-					_genderMale = uIColoredImageButton;
+					UIColoredImageButton.OnLeftMouseDown += Click_CharGenderMale;
+					_genderMale = UIColoredImageButton;
 				}
 				else
 				{
-					uIColoredImageButton.OnLeftMouseDown += Click_CharGenderFemale;
-					_genderFemale = uIColoredImageButton;
+					UIColoredImageButton.OnLeftMouseDown += Click_CharGenderFemale;
+					_genderFemale = UIColoredImageButton;
 				}
-				uIColoredImageButton.SetSnapPoint("Low", k * 4);
+				UIColoredImageButton.SetSnapPoint("Low", k * 4);
 			}
 			UIElement uIElement = new UIElement
 			{
@@ -372,34 +452,34 @@ namespace MrPlagueRaces.Common.UI.States
 				VAlign = 1f
 			};
 			i.Append(uIElement);
-			UIColoredImageButton uIColoredImageButton2 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Copy", (AssetRequestMode)1), isSmall: true)
+			UIColoredImageButton UIColoredImageButton2 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Copy", (AssetRequestMode)1), isSmall: true)
 			{
 				VAlign = 0.5f,
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(0f, 0f)
 			};
-			uIColoredImageButton2.OnLeftMouseDown += Click_CopyPlayerTemplate;
-			uIElement.Append(uIColoredImageButton2);
-			_copyTemplateButton = uIColoredImageButton2;
-			UIColoredImageButton uIColoredImageButton3 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Paste", (AssetRequestMode)1), isSmall: true)
+			UIColoredImageButton2.OnLeftMouseDown += Click_CopyPlayerTemplate;
+			uIElement.Append(UIColoredImageButton2);
+			_copyTemplateButton = UIColoredImageButton2;
+			UIColoredImageButton UIColoredImageButton3 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Paste", (AssetRequestMode)1), isSmall: true)
 			{
 				VAlign = 0.5f,
 				HAlign = 0.5f
 			};
-			uIColoredImageButton3.OnLeftMouseDown += Click_PastePlayerTemplate;
-			uIElement.Append(uIColoredImageButton3);
-			_pasteTemplateButton = uIColoredImageButton3;
-			UIColoredImageButton uIColoredImageButton4 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Randomize", (AssetRequestMode)1), isSmall: true)
+			UIColoredImageButton3.OnLeftMouseDown += Click_PastePlayerTemplate;
+			uIElement.Append(UIColoredImageButton3);
+			_pasteTemplateButton = UIColoredImageButton3;
+			UIColoredImageButton UIColoredImageButton4 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Randomize", (AssetRequestMode)1), isSmall: true)
 			{
 				VAlign = 0.5f,
 				HAlign = 1f
 			};
-			uIColoredImageButton4.OnLeftMouseDown += Click_RandomizePlayer;
-			uIElement.Append(uIColoredImageButton4);
-			_randomizePlayerButton = uIColoredImageButton4;
-			uIColoredImageButton2.SetSnapPoint("Low", 1);
-			uIColoredImageButton3.SetSnapPoint("Low", 2);
-			uIColoredImageButton4.SetSnapPoint("Low", 3);
+			UIColoredImageButton4.OnLeftMouseDown += Click_RandomizePlayer;
+			uIElement.Append(UIColoredImageButton4);
+			_randomizePlayerButton = UIColoredImageButton4;
+			UIColoredImageButton2.SetSnapPoint("Low", 1);
+			UIColoredImageButton3.SetSnapPoint("Low", 2);
+			UIColoredImageButton4.SetSnapPoint("Low", 3);
 			_clothStylesContainer = i;
 		}
 
@@ -466,8 +546,8 @@ namespace MrPlagueRaces.Common.UI.States
 			raceSelectList.Add(selectContainer);
 			selectContainer.SetPadding(0f);
 			for (int raceId = 0; raceId < raceCount; raceId++)
-			{
-				UIRaceButton uIRaceButton = new UIRaceButton(_player, raceId)
+            {
+                UIRaceButton uIRaceButton = new UIRaceButton(_player, raceId)
 				{
 					Left = StyleDimension.FromPixels((float)(raceId % 5) * 48f),
 					Top = StyleDimension.FromPixels((float)(raceId / 5) * 84f)
@@ -478,7 +558,7 @@ namespace MrPlagueRaces.Common.UI.States
 				if (raceId == raceCount - 1) {
 					UIRaceSkeletonButton uIRaceSkeletonButton = new UIRaceSkeletonButton(_player)
 					{
-						Width = StyleDimension.FromPixelsAndPercent(0f, 0.6f),
+						Width = StyleDimension.FromPixelsAndPercent(0f, 0.95f),
 						HAlign = 0.5f,
 						Left = StyleDimension.FromPixels(-6f),
 						Top = StyleDimension.FromPixels((float)(raceId / 5) * 84f + 92f - 8)
@@ -529,12 +609,7 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			statContainer.Append(uIRaceInfoPanel);
 			uIRaceInfoPanel.UpdateStats();
-			/*UIRaceNameButton uIRaceSkeletonButton = new UIRaceNameButton(_player);
-			uIRaceSkeletonButton.Width = StyleDimension.FromPixelsAndPercent(0f, 0.25f);
-			uIRaceSkeletonButton.HAlign = 0.7f;
-			uIRaceSkeletonButton.Left = StyleDimension.FromPixels(-136);
-			i.Append(uIRaceSkeletonButton);*/
-			statContainer.Height = StyleDimension.FromPixelsAndPercent(uIRaceInfoPanel.totalHeight + 8, 0f);
+            statContainer.Height = StyleDimension.FromPixelsAndPercent(uIRaceInfoPanel.totalHeight + 8, 0f);
 			_raceSelectContainer = i;
 		}
 
@@ -542,17 +617,20 @@ namespace MrPlagueRaces.Common.UI.States
 		{
 			float i = -288f;
 			float text = 48f;
-			_colorPickers = new UIColoredImageButton[12];
+			_colorPickers = new UIRaceColoredImageButton[15];
 			categoryContainer.Append(CreateColorPicker(CategoryId.HairColor, "MrPlagueRaces/Assets/Textures/UI/ColorHair", i, text));
 			categoryContainer.Append(CreateColorPicker(CategoryId.Eye, "MrPlagueRaces/Assets/Textures/UI/ColorEye", i, text));
 			categoryContainer.Append(CreateColorPicker(CategoryId.Skin, "MrPlagueRaces/Assets/Textures/UI/ColorSkin", i, text));
-			categoryContainer.Append(CreateColorPicker(CategoryId.Detail, "MrPlagueRaces/Assets/Textures/UI/ColorDetail", i, text));
+			categoryContainer.Append(CreateColorPicker(CategoryId.Detail, "MrPlagueRaces/Assets/Textures/UI/ColorDetailQuarter", i, text, true));
 			categoryContainer.Append(CreateColorPicker(CategoryId.Shirt, "MrPlagueRaces/Assets/Textures/UI/ColorShirt", i, text));
 			categoryContainer.Append(CreateColorPicker(CategoryId.Undershirt, "MrPlagueRaces/Assets/Textures/UI/ColorUndershirt", i, text));
 			categoryContainer.Append(CreateColorPicker(CategoryId.Pants, "MrPlagueRaces/Assets/Textures/UI/ColorPants", i, text));
 			categoryContainer.Append(CreateColorPicker(CategoryId.Shoes, "MrPlagueRaces/Assets/Textures/UI/ColorShoes", i, text));
-			_colorPickers[5].SetMiddleTexture(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/ColorEyeBack", (AssetRequestMode)1));
-			_clothingStylesCategoryButton = CreatePickerWithoutClick(CategoryId.Clothing, "MrPlagueRaces/Assets/Textures/UI/ClothStyleMale", i, text);
+            categoryContainer.Append(CreateColorPicker(CategoryId.DetailAux1, "MrPlagueRaces/Assets/Textures/UI/ColorDetailQuarterOpposite", i, text, true, true));
+            categoryContainer.Append(CreateColorPicker(CategoryId.DetailAux2, "MrPlagueRaces/Assets/Textures/UI/ColorDetailQuarterBottom", i, text, true, false, true));
+            categoryContainer.Append(CreateColorPicker(CategoryId.DetailAux3, "MrPlagueRaces/Assets/Textures/UI/ColorDetailQuarterBottomOpposite", i, text, true, true, true));
+            _colorPickers[5].SetMiddleTexture(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/ColorEyeBack", (AssetRequestMode)1));
+            _clothingStylesCategoryButton = CreatePickerWithoutClick(CategoryId.Clothing, _player.Male ? "MrPlagueRaces/Assets/Textures/UI/ClothStyleMale" : "MrPlagueRaces/Assets/Textures/UI/ClothStyleFemale", i, text);
 			_clothingStylesCategoryButton.OnLeftMouseDown += Click_ClothStyles;
 			_clothingStylesCategoryButton.SetSnapPoint("Top", 2);
 			categoryContainer.Append(_clothingStylesCategoryButton);
@@ -565,9 +643,10 @@ namespace MrPlagueRaces.Common.UI.States
 			_charInfoCategoryButton.OnLeftMouseDown += Click_CharInfo;
 			_charInfoCategoryButton.SetSnapPoint("Top", 0);
 			categoryContainer.Append(_charInfoCategoryButton);
-			_raceSelectCategoryButton = CreatePickerWithoutClick(CategoryId.RaceSelect, "MrPlagueRaces/Assets/Textures/UI/RaceSelect", i, text);
+            _raceSelectCategoryButton = CreatePickerWithoutClick(CategoryId.RaceSelect, "MrPlagueRaces/Assets/Textures/UI/RaceSelect", i, text);
 			_raceSelectCategoryButton.OnLeftMouseDown += Click_RaceSelect;
-			_raceSelectCategoryButton.SetSnapPoint("Top", 1);
+            _raceSelectCategoryButton.OnLeftMouseDown += Click_MakeClickSound;
+            _raceSelectCategoryButton.SetSnapPoint("Top", 1);
 			categoryContainer.Append(_raceSelectCategoryButton);
 			UpdateColorPickers();
 			UIHorizontalSeparator element = new UIHorizontalSeparator
@@ -613,28 +692,50 @@ namespace MrPlagueRaces.Common.UI.States
 			_helpGlyphRight.SetText(text2);
 		}
 
-		private UIColoredImageButton CreateColorPicker(CategoryId id, string texturePath, float xPositionStart, float xPositionPerId)
+		private UIRaceColoredImageButton CreateColorPicker(CategoryId id, string texturePath, float xPositionStart, float xPositionPerId, bool shouldBeSmall = false, bool xInvert = false, bool yInvert = false)
 		{
-			UIColoredImageButton uIColoredImageButton = new UIColoredImageButton(ModContent.Request<Texture2D>(texturePath, (AssetRequestMode)1));
-			_colorPickers[(int)id] = uIColoredImageButton;
-			uIColoredImageButton.VAlign = 0f;
-			uIColoredImageButton.HAlign = 0f;
-			uIColoredImageButton.Left.Set(xPositionStart + (float)id * xPositionPerId, 0.5f);
-			uIColoredImageButton.OnLeftMouseDown += Click_ColorPicker;
-			uIColoredImageButton.SetSnapPoint("Top", (int)id);
-			return uIColoredImageButton;
+			UIRaceColoredImageButton UIRaceColoredImageButton = new UIRaceColoredImageButton(ModContent.Request<Texture2D>(texturePath, (AssetRequestMode)1), shouldBeSmall, xInvert, yInvert);
+			_colorPickers[(int)id] = UIRaceColoredImageButton;
+			UIRaceColoredImageButton.VAlign = 0f;
+			UIRaceColoredImageButton.HAlign = 0f;
+			UIRaceColoredImageButton.Left.Set(xPositionStart + (float)id * xPositionPerId, 0.5f);
+			UIRaceColoredImageButton.OnLeftMouseDown += Click_ColorPicker;
+			UIRaceColoredImageButton.SetSnapPoint("Top", (int)id);
+			if (shouldBeSmall)
+			{
+				if (xInvert)
+				{
+                    UIRaceColoredImageButton.Left = StyleDimension.FromPixelsAndPercent(364f, 0f);
+                    UIRaceColoredImageButton.Top = StyleDimension.FromPixelsAndPercent(yInvert ? 21.99f : 0f, 0f);
+                }
+				else
+				{
+                    UIRaceColoredImageButton.Left = _colorPickers[(int)CategoryId.Detail].Left;
+                    UIRaceColoredImageButton.Top = StyleDimension.FromPixelsAndPercent(yInvert ? 21.99f : 0f, 0f);
+                }
+			}
+            return UIRaceColoredImageButton;
 		}
 
-		private UIColoredImageButton CreatePickerWithoutClick(CategoryId id, string texturePath, float xPositionStart, float xPositionPerId)
+		private UIRaceColoredImageButton CreatePickerWithoutClick(CategoryId id, string texturePath, float xPositionStart, float xPositionPerId)
 		{
-			UIColoredImageButton uIColoredImageButton = new UIColoredImageButton(ModContent.Request<Texture2D>(texturePath, (AssetRequestMode)1));
-			uIColoredImageButton.VAlign = 0f;
-			uIColoredImageButton.HAlign = 0f;
-			uIColoredImageButton.Left.Set(xPositionStart + (float)id * xPositionPerId, 0.5f);
-			return uIColoredImageButton;
-		}
+			UIRaceColoredImageButton UIRaceColoredImageButton = new UIRaceColoredImageButton(ModContent.Request<Texture2D>(texturePath, (AssetRequestMode)1));
+			UIRaceColoredImageButton.VAlign = 0f;
+			UIRaceColoredImageButton.HAlign = 0f;
+			UIRaceColoredImageButton.Left.Set(xPositionStart + (float)id * xPositionPerId, 0.5f);
+			return UIRaceColoredImageButton;
+        }
 
-		private void MakeInfoMenu(UIElement parentContainer)
+        private UIColoredImageButton CreatePickerWithoutClick_Original(CategoryId id, string texturePath, float xPositionStart, float xPositionPerId)
+        {
+            UIColoredImageButton UIColoredImageButton = new UIColoredImageButton(ModContent.Request<Texture2D>(texturePath, (AssetRequestMode)1));
+            UIColoredImageButton.VAlign = 0f;
+            UIColoredImageButton.HAlign = 0f;
+            UIColoredImageButton.Left.Set(xPositionStart + (float)id * xPositionPerId, 0.5f);
+            return UIColoredImageButton;
+        }
+
+        private void MakeInfoMenu(UIElement parentContainer)
 		{
 			UIElement i = new UIElement
 			{
@@ -795,38 +896,38 @@ namespace MrPlagueRaces.Common.UI.States
 			};
 			uIPanel.Append(uIText);
 			uIElement.Append(uIPanel);
-			UIColoredImageButton uIColoredImageButton = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Copy", (AssetRequestMode)1), isSmall: true)
+			UIColoredImageButton UIColoredImageButton = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Copy", (AssetRequestMode)1), isSmall: true)
 			{
 				VAlign = 1f,
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(0f, 0f)
 			};
-			uIColoredImageButton.OnLeftMouseDown += Click_CopyHex;
-			uIElement.Append(uIColoredImageButton);
-			_copyHexButton = uIColoredImageButton;
-			UIColoredImageButton uIColoredImageButton2 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Paste", (AssetRequestMode)1), isSmall: true)
+			UIColoredImageButton.OnLeftMouseDown += Click_CopyHex;
+			uIElement.Append(UIColoredImageButton);
+			_copyHexButton = UIColoredImageButton;
+			UIColoredImageButton UIColoredImageButton2 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Paste", (AssetRequestMode)1), isSmall: true)
 			{
 				VAlign = 1f,
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(40f, 0f)
 			};
-			uIColoredImageButton2.OnLeftMouseDown += Click_PasteHex;
-			uIElement.Append(uIColoredImageButton2);
-			_pasteHexButton = uIColoredImageButton2;
-			UIColoredImageButton uIColoredImageButton3 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Randomize", (AssetRequestMode)1), isSmall: true)
+			UIColoredImageButton2.OnLeftMouseDown += Click_PasteHex;
+			uIElement.Append(UIColoredImageButton2);
+			_pasteHexButton = UIColoredImageButton2;
+			UIColoredImageButton UIColoredImageButton3 = new UIColoredImageButton(ModContent.Request<Texture2D>("MrPlagueRaces/Assets/Textures/UI/Randomize", (AssetRequestMode)1), isSmall: true)
 			{
 				VAlign = 1f,
 				HAlign = 0f,
 				Left = StyleDimension.FromPixelsAndPercent(80f, 0f)
 			};
-			uIColoredImageButton3.OnLeftMouseDown += Click_RandomizeSingleColor;
-			uIElement.Append(uIColoredImageButton3);
-			_randomColorButton = uIColoredImageButton3;
+			UIColoredImageButton3.OnLeftMouseDown += Click_RandomizeSingleColor;
+			uIElement.Append(UIColoredImageButton3);
+			_randomColorButton = UIColoredImageButton3;
 			_hslContainer = uIElement;
 			_hslHexText = uIText;
-			uIColoredImageButton.SetSnapPoint("Low", 0);
-			uIColoredImageButton2.SetSnapPoint("Low", 1);
-			uIColoredImageButton3.SetSnapPoint("Low", 2);
+			UIColoredImageButton.SetSnapPoint("Low", 0);
+			UIColoredImageButton2.SetSnapPoint("Low", 1);
+			UIColoredImageButton3.SetSnapPoint("Low", 2);
 		}
 
 		private UIColoredSlider CreateHSLSlider(HSLSliderId id)
@@ -913,6 +1014,38 @@ namespace MrPlagueRaces.Common.UI.States
 			Color color = ScaledHslToRgb(_currentColorHSL.X, _currentColorHSL.Y, _currentColorHSL.Z);
 			ApplyPendingColor(color);
 			_colorPickers[(int)_selectedPicker]?.SetColor(color);
+			if ((int)_selectedPicker == 7)
+			{
+                switch (detailColorCount)
+                {
+                    case 1:
+                        _colorPickers[12]?.SetColor(color);
+                        _colorPickers[13]?.SetColor(color);
+                        _colorPickers[14]?.SetColor(color);
+                        break;
+                    case 2:
+                        _colorPickers[13]?.SetColor(color);
+                        break;
+                }
+            }
+			else if ((int)_selectedPicker == 12)
+            {
+                switch (detailColorCount)
+                {
+                    case 2:
+                        _colorPickers[14]?.SetColor(color);
+                        break;
+                }
+            }
+            else if ((int)_selectedPicker == 13)
+            {
+                switch (detailColorCount)
+                {
+                    case 3:
+                        _colorPickers[14]?.SetColor(color);
+                        break;
+                }
+            }
 			if (_selectedPicker == CategoryId.HairColor)
 			{
 				_hairStylesCategoryButton.SetColor(color);
@@ -964,7 +1097,58 @@ namespace MrPlagueRaces.Common.UI.States
 			case CategoryId.Shoes:
 				_player.shoeColor = pendingColor;
 				break;
-			}
+            case CategoryId.DetailAux1:
+				switch (detailColorCount)
+				{
+					case 1:
+                        mrPlagueRacesPlayer.detailColor = pendingColor;
+                        break;
+					case 2:
+                        mrPlagueRacesPlayer.auxilaryDetailColor1 = pendingColor;
+                        break;
+                    case 3:
+                        mrPlagueRacesPlayer.auxilaryDetailColor1 = pendingColor;
+                        break;
+                    case 4:
+                        mrPlagueRacesPlayer.auxilaryDetailColor1 = pendingColor;
+                        break;
+                }
+                break;
+            case CategoryId.DetailAux2:
+                switch (detailColorCount)
+                {
+                    case 1:
+                        mrPlagueRacesPlayer.detailColor = pendingColor;
+                        break;
+                    case 2:
+                        mrPlagueRacesPlayer.detailColor = pendingColor;
+                        break;
+                    case 3:
+                        mrPlagueRacesPlayer.auxilaryDetailColor2 = pendingColor;
+                        break;
+                    case 4:
+                        mrPlagueRacesPlayer.auxilaryDetailColor2 = pendingColor;
+                        break;
+                }
+                break;
+            case CategoryId.DetailAux3:
+                switch (detailColorCount)
+                {
+                    case 1:
+                        mrPlagueRacesPlayer.detailColor = pendingColor;
+                        break;
+                    case 2:
+                        mrPlagueRacesPlayer.auxilaryDetailColor1 = pendingColor;
+                        break;
+                    case 3:
+                        mrPlagueRacesPlayer.auxilaryDetailColor2 = pendingColor;
+                        break;
+                    case 4:
+                        mrPlagueRacesPlayer.auxilaryDetailColor3 = pendingColor;
+                        break;
+                }
+                break;
+            }
 		}
 
 		private void UpdateHexText(Color pendingColor)
@@ -1049,26 +1233,82 @@ namespace MrPlagueRaces.Common.UI.States
 					continue;
 				}
 				return;
+            }
+			BuildPage();
+			if (text == 12)
+			{
+				switch (detailColorCount)
+				{
+					case 1:
+                        SelectColorPicker((CategoryId)7);
+                        break;
+					default:
+                        SelectColorPicker((CategoryId)text);
+                        break;
+                }
 			}
-			SelectColorPicker((CategoryId)text);
+			else if (text == 13)
+			{
+                switch (detailColorCount)
+                {
+                    case 1:
+                        SelectColorPicker((CategoryId)7);
+                        break;
+                    case 2:
+                        SelectColorPicker((CategoryId)7);
+                        break;
+                    default:
+                        SelectColorPicker((CategoryId)text);
+                        break;
+                }
+            }
+			else if (text == 14)
+			{
+                switch (detailColorCount)
+                {
+                    case 1:
+                        SelectColorPicker((CategoryId)7);
+                        break;
+                    case 2:
+                        SelectColorPicker((CategoryId)12);
+                        break;
+                    case 3:
+                        SelectColorPicker((CategoryId)13);
+                        break;
+                    default:
+                        SelectColorPicker((CategoryId)text);
+                        break;
+                }
+            }
+			else
+			{
+				SelectColorPicker((CategoryId)text);
+			}
 		}
 
 		private void Click_RaceSelect(UIMouseEvent evt, UIElement listeningElement)
 		{
-			SoundEngine.PlaySound(SoundID.MenuTick);
 			UnselectAllCategories();
-			_selectedPicker = CategoryId.RaceSelect;
+            BuildPage(false, true);
+            isInRaceSelect = true;
+            _selectedPicker = CategoryId.RaceSelect;
 			_middleContainer.Append(_raceSelectContainer);
-			_raceSelectCategoryButton.SetSelected(selected: true);
-		}
+			_raceSelectCategoryButton.SetSelected(selected: true, shouldStartHovering: true);
+        }
 
-		private void Click_ClothStyles(UIMouseEvent evt, UIElement listeningElement)
+        private void Click_MakeClickSound(UIMouseEvent evt, UIElement listeningElement)
+        {
+            SoundEngine.PlaySound(SoundID.MenuTick);
+        }
+
+        private void Click_ClothStyles(UIMouseEvent evt, UIElement listeningElement)
 		{
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			UnselectAllCategories();
+            BuildPage();
 			_selectedPicker = CategoryId.Clothing;
 			_middleContainer.Append(_clothStylesContainer);
-			_clothingStylesCategoryButton.SetSelected(selected: true);
+			_clothingStylesCategoryButton.SetSelected(selected: true, shouldStartHovering: true);
 			UpdateSelectedGender();
 		}
 
@@ -1076,19 +1316,21 @@ namespace MrPlagueRaces.Common.UI.States
 		{
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			UnselectAllCategories();
+			BuildPage();
 			_selectedPicker = CategoryId.HairStyle;
 			MakeHairstylesMenu(_middleContainer);
 			_middleContainer.Append(_hairstylesContainer);
-			_hairStylesCategoryButton.SetSelected(selected: true);
+			_hairStylesCategoryButton.SetSelected(selected: true, shouldStartHovering: true);
 		}
 
 		private void Click_CharInfo(UIMouseEvent evt, UIElement listeningElement)
 		{
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			UnselectAllCategories();
+			BuildPage();
 			_selectedPicker = CategoryId.CharInfo;
 			_middleContainer.Append(_infoContainer);
-			_charInfoCategoryButton.SetSelected(selected: true);
+			_charInfoCategoryButton.SetSelected(selected: true, shouldStartHovering: true);
 		}
 
 		private void Click_CharClothStyle(UIMouseEvent evt, UIElement listeningElement)
@@ -1187,8 +1429,20 @@ namespace MrPlagueRaces.Common.UI.States
 				{
 					"shoeColor",
 					GetHexText(_player.shoeColor)
-				}
-			};
+				},
+                {
+                    "auxilaryDetailColor1",
+                    GetHexText(mrPlagueRacesPlayer.auxilaryDetailColor1)
+                },
+                {
+                    "auxilaryDetailColor2",
+                    GetHexText(mrPlagueRacesPlayer.auxilaryDetailColor2)
+                },
+                {
+                    "auxilaryDetailColor3",
+                    GetHexText(mrPlagueRacesPlayer.auxilaryDetailColor3)
+                },
+            };
 			JsonSerializerSettings val = new JsonSerializerSettings();
 			val.TypeNameHandling = ((TypeNameHandling)4);
 			val.MetadataPropertyHandling = ((MetadataPropertyHandling)1);
@@ -1272,8 +1526,20 @@ namespace MrPlagueRaces.Common.UI.States
 							if (dictionary2.TryGetValue("shoecolor", out value) && GetHexColor((string)value, out flag))
 							{
 								_player.shoeColor = ScaledHslToRgb(flag);
-							}
-							Click_CharClothStyle(null, null);
+                            }
+                            if (dictionary2.TryGetValue("auxilarydetailcolor1", out value) && GetHexColor((string)value, out flag))
+                            {
+                                mrPlagueRacesPlayer.auxilaryDetailColor1 = ScaledHslToRgb(flag);
+                            }
+                            if (dictionary2.TryGetValue("auxilarydetailcolor2", out value) && GetHexColor((string)value, out flag))
+                            {
+                                mrPlagueRacesPlayer.auxilaryDetailColor2 = ScaledHslToRgb(flag);
+                            }
+                            if (dictionary2.TryGetValue("auxilarydetailcolor3", out value) && GetHexColor((string)value, out flag))
+                            {
+                                mrPlagueRacesPlayer.auxilaryDetailColor3 = ScaledHslToRgb(flag);
+                            }
+                            Click_CharClothStyle(null, null);
 							UpdateColorPickers();
 						}
 					}
@@ -1290,7 +1556,10 @@ namespace MrPlagueRaces.Common.UI.States
 			SoundEngine.PlaySound(SoundID.MenuTick);
 			Player player = _player;
 			player.hair = Main.rand.Next(mrPlagueRacesPlayer.GetRaceHairCount(_player));
-			player.eyeColor = ScaledHslToRgb(GetRandomColorVector());
+            mrPlagueRacesPlayer.auxilaryHairstyle1 = Main.rand.Next(mrPlagueRacesPlayer.GetRaceHairCount(_player, 1));
+            mrPlagueRacesPlayer.auxilaryHairstyle2 = Main.rand.Next(mrPlagueRacesPlayer.GetRaceHairCount(_player, 2));
+            mrPlagueRacesPlayer.auxilaryHairstyle3 = Main.rand.Next(mrPlagueRacesPlayer.GetRaceHairCount(_player, 3));
+            player.eyeColor = ScaledHslToRgb(GetRandomColorVector());
 			while (player.eyeColor.R + player.eyeColor.G + player.eyeColor.B > 300)
 			{
 				player.eyeColor = ScaledHslToRgb(GetRandomColorVector());
@@ -1307,7 +1576,10 @@ namespace MrPlagueRaces.Common.UI.States
 			player.underShirtColor = ScaledHslToRgb(GetRandomColorVector());
 			player.pantsColor = ScaledHslToRgb(GetRandomColorVector());
 			player.shoeColor = ScaledHslToRgb(GetRandomColorVector());
-			player.skinVariant = _validClothStyles[Main.rand.Next(_validClothStyles.Length)];
+            mrPlagueRacesPlayer.auxilaryDetailColor1 = ScaledHslToRgb(GetRandomColorVector());
+            mrPlagueRacesPlayer.auxilaryDetailColor2 = ScaledHslToRgb(GetRandomColorVector());
+            mrPlagueRacesPlayer.auxilaryDetailColor3 = ScaledHslToRgb(GetRandomColorVector());
+            player.skinVariant = _validClothStyles[Main.rand.Next(_validClothStyles.Length)];
 			switch (player.hair + 1)
 			{
 			case 5:
@@ -1348,7 +1620,7 @@ namespace MrPlagueRaces.Common.UI.States
 			SoundEngine.PlaySound(SoundID.MenuOpen);
 			_player.name = "";
 			Main.clrInput();
-			UICreateRace uIVirtualKeyboard = new UICreateRace();
+			UICreateRace uIVirtualKeyboard = new UICreateRace(OnCancledNaming);
 			//uIVirtualKeyboard.SetMaxInputLength(20);
 			Main.MenuUI.SetState(uIVirtualKeyboard);
 		}
@@ -1481,7 +1753,8 @@ namespace MrPlagueRaces.Common.UI.States
 
 		private void UnselectAllCategories()
 		{
-			UIColoredImageButton[] colorPickers = _colorPickers;
+			isInRaceSelect = false;
+			UIRaceColoredImageButton[] colorPickers = _colorPickers;
 			for (int i = 0; i < colorPickers.Length; i++)
 			{
 				colorPickers[i]?.SetSelected(selected: false);
@@ -1519,7 +1792,7 @@ namespace MrPlagueRaces.Common.UI.States
 			{
 				if (_colorPickers[i] != null)
 				{
-					_colorPickers[i].SetSelected(i == (int)selection);
+					_colorPickers[i].SetSelected(i == (int)selection, i == (int)selection);
 				}
 			}
 			Vector3 currentColorHSL = Vector3.One;
@@ -1549,7 +1822,39 @@ namespace MrPlagueRaces.Common.UI.States
 			case CategoryId.Shoes:
 				currentColorHSL = RgbToScaledHsl(_player.shoeColor);
 				break;
-			}
+            case CategoryId.DetailAux1:
+                switch (detailColorCount)
+                {
+                    case 1:
+                        _colorPickers[12].SetColor(mrPlagueRacesPlayer.detailColor);
+                        _colorPickers[13].SetColor(mrPlagueRacesPlayer.detailColor);
+                        _colorPickers[14].SetColor(mrPlagueRacesPlayer.detailColor);
+                        break;
+                    case 2:
+                        _colorPickers[12].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                        _colorPickers[13].SetColor(mrPlagueRacesPlayer.detailColor);
+                        _colorPickers[14].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                        break;
+                    case 3:
+                        _colorPickers[12].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                        _colorPickers[13].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                        _colorPickers[14].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                        break;
+                    case 4:
+                        _colorPickers[12].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                        _colorPickers[13].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                        _colorPickers[14].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor3);
+                        break;
+                }
+                currentColorHSL = RgbToScaledHsl(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                break;
+            case CategoryId.DetailAux2:
+                currentColorHSL = RgbToScaledHsl(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                break;
+            case CategoryId.DetailAux3:
+                currentColorHSL = RgbToScaledHsl(mrPlagueRacesPlayer.auxilaryDetailColor3);
+                break;
+            }
 			_currentColorHSL = currentColorHSL;
 			UpdateHexText(ScaledHslToRgb(currentColorHSL.X, currentColorHSL.Y, currentColorHSL.Z));
 		}
@@ -1557,7 +1862,8 @@ namespace MrPlagueRaces.Common.UI.States
 		private void UpdateColorPickers()
 		{
 			var mrPlagueRacesPlayer = _player.GetModPlayer<MrPlagueRacesPlayer>();
-			_ = _selectedPicker;
+			detailColorCount = mrPlagueRacesPlayer.GetDetailColorCount(_player);
+            _ = _selectedPicker;
 			_colorPickers[4].SetColor(_player.hairColor);
 			_hairStylesCategoryButton.SetColor(_player.hairColor);
 			_colorPickers[5].SetColor(_player.eyeColor);
@@ -1567,11 +1873,104 @@ namespace MrPlagueRaces.Common.UI.States
 			_colorPickers[9].SetColor(_player.underShirtColor);
 			_colorPickers[10].SetColor(_player.pantsColor);
 			_colorPickers[11].SetColor(_player.shoeColor);
-		}
+            switch (detailColorCount)
+            {
+                case 1:
+                    _colorPickers[12].SetColor(mrPlagueRacesPlayer.detailColor);
+                    _colorPickers[13].SetColor(mrPlagueRacesPlayer.detailColor);
+                    _colorPickers[14].SetColor(mrPlagueRacesPlayer.detailColor);
+                    break;
+                case 2:
+                    _colorPickers[12].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                    _colorPickers[13].SetColor(mrPlagueRacesPlayer.detailColor);
+                    _colorPickers[14].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                    break;
+                case 3:
+                    _colorPickers[12].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                    _colorPickers[13].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                    _colorPickers[14].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                    break;
+                case 4:
+                    _colorPickers[12].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor1);
+                    _colorPickers[13].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor2);
+                    _colorPickers[14].SetColor(mrPlagueRacesPlayer.auxilaryDetailColor3);
+                    break;
+            }
+        }
 
 		public override void Draw(SpriteBatch spriteBatch)
-		{
-			base.Draw(spriteBatch);
+        {
+            if (detailColorCount == 1)
+            {
+				_colorPickers[7].SetSelected(_colorPickers[7].IsSelected() || _colorPickers[12].IsSelected() || _colorPickers[13].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[7].IsHovered() || _colorPickers[12].IsHovered() || _colorPickers[13].IsHovered() || _colorPickers[14].IsHovered());
+                _colorPickers[12].SetSelected(_colorPickers[7].IsSelected() || _colorPickers[12].IsSelected() || _colorPickers[13].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[7].IsHovered() || _colorPickers[12].IsHovered() || _colorPickers[13].IsHovered() || _colorPickers[14].IsHovered());
+                _colorPickers[13].SetSelected(_colorPickers[7].IsSelected() || _colorPickers[12].IsSelected() || _colorPickers[13].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[7].IsHovered() || _colorPickers[12].IsHovered() || _colorPickers[13].IsHovered() || _colorPickers[14].IsHovered());
+                _colorPickers[14].SetSelected(_colorPickers[7].IsSelected() || _colorPickers[12].IsSelected() || _colorPickers[13].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[7].IsHovered() || _colorPickers[12].IsHovered() || _colorPickers[13].IsHovered() || _colorPickers[14].IsHovered());
+
+            }
+            else if (detailColorCount == 2)
+            {
+                _colorPickers[7].SetSelected(_colorPickers[7].IsSelected() || _colorPickers[13].IsSelected(), _colorPickers[7].IsHovered() || _colorPickers[13].IsHovered());
+                _colorPickers[13].SetSelected(_colorPickers[7].IsSelected() || _colorPickers[13].IsSelected(), _colorPickers[7].IsHovered() || _colorPickers[13].IsHovered());
+                _colorPickers[12].SetSelected(_colorPickers[12].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[12].IsHovered() || _colorPickers[14].IsHovered());
+                _colorPickers[14].SetSelected(_colorPickers[12].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[12].IsHovered() || _colorPickers[14].IsHovered());
+
+            }
+            else if (detailColorCount == 3)
+            {
+                _colorPickers[7].SetSelected(_colorPickers[7].IsSelected(), _colorPickers[7].IsHovered());
+                _colorPickers[12].SetSelected(_colorPickers[12].IsSelected(), _colorPickers[12].IsHovered());
+                _colorPickers[13].SetSelected(_colorPickers[13].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[13].IsHovered() || _colorPickers[14].IsHovered());
+                _colorPickers[14].SetSelected(_colorPickers[13].IsSelected() || _colorPickers[14].IsSelected(), _colorPickers[13].IsHovered() || _colorPickers[14].IsHovered());
+
+            }
+            else
+            {
+                _colorPickers[7].SetSelected(_colorPickers[7].IsSelected(), _colorPickers[7].IsHovered());
+                _colorPickers[12].SetSelected(_colorPickers[12].IsSelected(), _colorPickers[12].IsHovered());
+                _colorPickers[13].SetSelected(_colorPickers[13].IsSelected(), _colorPickers[13].IsHovered());
+                _colorPickers[14].SetSelected(_colorPickers[14].IsSelected(), _colorPickers[14].IsHovered());
+            }
+            if (isInRaceSelect)
+			{
+                if (previousScreenHeight != Main.screenHeight)
+                {
+                    BuildPage(false, true, true);
+                    previousScreenHeight = Main.screenHeight;
+                }
+                if (previousScreenWidth != Main.screenWidth)
+                {
+                    BuildPage(false, true, true);
+                    previousScreenWidth = Main.screenWidth;
+                }
+            }
+            int LinesCount(string s)
+            {
+                int count = 0;
+                int position = 0;
+                while ((position = s.IndexOf('\n', position)) != -1)
+                {
+                    count++;
+                    position++;
+                }
+                return count;
+            }
+            statHoverText.Remove();
+			statHoverText = new UITextPanel<string>(hoverText)
+			{
+				Width = StyleDimension.FromPixelsAndPercent(1f, 0f),
+				Height = StyleDimension.FromPixelsAndPercent(LinesCount(hoverText) == 1 ? 67.5f : (50f * LinesCount(hoverText)) - (22f * (LinesCount(hoverText) > 2 ? LinesCount(hoverText) - 2 : 0)), 0f),
+				Left = StyleDimension.FromPixelsAndPercent(Main.mouseX + 10f, 0f),
+				Top = StyleDimension.FromPixelsAndPercent(Main.mouseY + 12f, 0f),
+				BackgroundColor = new Color(33, 43, 79) * 0.95f
+            };
+			if (hoverText == "")
+			{
+				statHoverText.BorderColor = Color.Transparent;
+                statHoverText.BackgroundColor = Color.Transparent;
+            }
+            Append(statHoverText);
+            base.Draw(spriteBatch);
 			string result = null;
 			if (_copyHexButton.IsMouseHovering)
 			{
@@ -1611,9 +2010,6 @@ namespace MrPlagueRaces.Common.UI.States
 				}
 				Utils.DrawBorderStringFourWay(spriteBatch, FontAssets.MouseText.Value, result, vector.X, vector.Y, new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), Color.Black, Vector2.Zero);
 			}
-			statHoverText.Left = StyleDimension.FromPixelsAndPercent(Main.mouseX + 10f, 0f);
-			statHoverText.Top = StyleDimension.FromPixelsAndPercent(Main.mouseY + 12f, 0f);
-			statHoverText.SetText(hoverText);
 			SetupGamepadPoints(spriteBatch);
 		}
 
