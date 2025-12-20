@@ -215,8 +215,8 @@ namespace MrPlagueRaces.Common.Races.Tabaxi
                         {
                             player.controlUseItem = false;
                         }
-                        Vector2 velocity = ((Vector2.Normalize(mrPlagueRacesPlayer.mouseWorld - player.Center) * tabaxiPlayer.phaseActiveCounter * 5f) * (tabaxiPlayer.meetsIntangibilityRequirement(ModContent.GetInstance<TabaxiConfig>().tabaxiIntangibility) ? 1f : 0.4f)) * (int)(1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<TabaxiConfig>().tabaxiDashVelocity]);
-						player.maxFallSpeed = 1000000f;
+                        Vector2 velocity = ((Vector2.Normalize(mrPlagueRacesPlayer.mouseWorld - player.Center) * tabaxiPlayer.phaseActiveCounter * 5f) * (tabaxiPlayer.meetsIntangibilityRequirement(ModContent.GetInstance<TabaxiConfig>().tabaxiIntangibility) ? 1f : 0.4f)) * (1f + StatConfigHelpers.RacialStatPercentageFloatIndex[(int)ModContent.GetInstance<TabaxiConfig>().tabaxiDashVelocity]);
+                        player.maxFallSpeed = 1000000f;
 						player.gravity = 0f;
                         player.velocity = velocity;
 						if (player.controlUp) {
